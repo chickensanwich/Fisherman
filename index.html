@@ -96,7 +96,7 @@
 
     <!-- Chat Screen -->
     <div class="chat-container hidden" id="chat-container">
-        <!-- Sidebar toggle button (from v2) -->
+        <!-- Sidebar toggle button (mobile) -->
         <button class="sidebar-toggle" id="sidebar-toggle">
             <i class="fas fa-bars"></i>
         </button>
@@ -125,6 +125,9 @@
                     <i class="fas fa-user"></i>
                 </div>
                 <div class="user-name" id="user-name-display">User Name</div>
+                <button id="dark-toggle" class="dark-toggle" title="Toggle dark mode">
+                    <i class="fas fa-moon"></i>
+                </button>
                 <button class="logout-btn" onclick="logout()">
                     <i class="fas fa-sign-out-alt"></i>
                 </button>
@@ -137,7 +140,6 @@
                     <h1>Welcome to FisherMen Chatbot</h1>
                     <p>How can I assist you today?</p>
                 </div>
-                <!-- Chat messages will be populated dynamically -->
             </div>
             <div class="chat-input-container">
                 <form id="chat-form">
@@ -145,6 +147,9 @@
                         <textarea id="chat-input" placeholder="Type your message here..." rows="1"></textarea>
                         <button type="submit" class="send-btn">
                             <i class="fas fa-paper-plane"></i>
+                        </button>
+                        <button type="button" id="export-chat" class="export-btn" title="Export chat">
+                            <i class="fas fa-download"></i>
                         </button>
                     </div>
                 </form>
@@ -187,7 +192,7 @@
 
     <div class="overlay hidden" id="overlay"></div>
 
-    <!-- Inline signup validation (from v1) -->
+    <!-- Inline signup validation -->
     <script>
     function validateSignup() {
         const fishermanId = document.getElementById('signup-fisherman-id').value;

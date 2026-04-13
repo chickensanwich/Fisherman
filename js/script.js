@@ -3,8 +3,6 @@ let loginForm, signupForm, chatForm, feedbackForm;
 let loginContainer, signupContainer, chatContainer, feedbackPopup, overlay;
 let chatMessages, chatInput, chatHistory, newChatBtn, searchChats, userNameDisplay;
 let languageSelect;
-let sidebarToggle;
-let sidebar;
 
 const BACKEND_URL = "http://localhost:8000"
 
@@ -31,11 +29,21 @@ document.addEventListener('DOMContentLoaded', () => {
     searchChats = document.getElementById('search-chats');
     userNameDisplay = document.getElementById('user-name-display');
     languageSelect = document.getElementById('language-select');
-    sidebarToggle = document.getElementById('sidebar-toggle');
-    sidebar = document.querySelector('.sidebar');
     
     // Initialize the application
     initApp();
+
+    // Dark mode
+   const darkToggle = document.getElementById('dark-toggle');
+   if (darkToggle) {
+   const isDark = localStorage.getItem('darkMode') === 'true';
+   document.documentElement.classList.toggle('dark', isDark);
+   darkToggle.addEventListener('click', () => {
+   document.documentElement.classList.toggle('dark');
+   localStorage.setItem('darkMode', document.documentElement.classList.contains('dark'));
+    });
+}
+
     
     // Event Listeners
     if (loginForm) loginForm.addEventListener('submit', handleLogin);
@@ -44,9 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (feedbackForm) feedbackForm.addEventListener('submit', handleFeedbackSubmit);
     if (newChatBtn) newChatBtn.addEventListener('click', createNewChat);
     if (searchChats) searchChats.addEventListener('input', searchChatHistory);
-    if (sidebarToggle) sidebarToggle.addEventListener('click', () => {
-        sidebar.classList.toggle('expanded');
-    });
     
     // Add event listener for closing feedback popup
     document.addEventListener('click', function(e) {
@@ -111,11 +116,12 @@ function handleSignup(e) {
     
     const name = document.getElementById('signup-name').value.trim();
     const fishermanId = document.getElementById('signup-fisherman-id').value.trim();
+    const country = document.getElementById('signup-country').value;
     const location = document.getElementById('signup-location').value.trim();
     const password = document.getElementById('signup-password').value.trim();
     const confirmPassword = document.getElementById('signup-confirm-password').value.trim();
     
-    if (!name || !fishermanId || !location || !password || !confirmPassword) {
+    if (!name || !fishermanId || !country || !location || !password || !confirmPassword) {
         alert("Please fill out all fields.");
         return;
     }
@@ -131,6 +137,7 @@ function handleSignup(e) {
     const user = {
         name,
         fishermanId,
+        country,
         location
     };
     
@@ -180,7 +187,10 @@ function showChatInterface(user) {
 async function handleChatSubmit(e) {
     e.preventDefault();
     
-    const message = chatInput.value.trim();
+    let message = chatInput.value.trim();
+    // Sanitize: Escape HTML/JS to prevent XSS
+    message = message.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+
     if (!message) return;
     
     // Add user message to chat
@@ -515,6 +525,25 @@ function updateChatHistoryUI() {
         document.querySelector('.chat-item').classList.add('active');
     }
 }
+// Export chat
+document.getElementById('export-chat').addEventListener('click', () => {
+  const chatHistory = getChatHistory();
+  if (!chatHistory.length) {
+    alert('No chat history to export. Start a conversation first.');
+    return;
+  }
+  const currentChat = chatHistory[0];
+  const safeTitle = (currentChat.title || 'chat').replace(/[^a-z0-9]/gi, '_');
+  const dataStr = JSON.stringify(currentChat, null, 2);
+  const blob = new Blob([dataStr], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `fishermen-chat-${safeTitle}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
 
 function searchChatHistory() {
     const searchTerm = document.getElementById('search-chats').value.toLowerCase();
@@ -589,4 +618,3 @@ window.togglePasswordVisibility = togglePasswordVisibility;
 window.showSignup = showSignup;
 window.showLogin = showLogin;
 window.logout = logout;
-window.closeFeedbackPopup = closeFeedbackPopup;

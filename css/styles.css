@@ -46,7 +46,6 @@ h1, h2, h3, h4, h5, h6 {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    min-height: 100dvh;
     padding: 20px;
     background: linear-gradient(135deg, rgba(26, 115, 232, 0.05) 0%, rgba(0, 184, 212, 0.05) 100%);
 }
@@ -195,7 +194,8 @@ label {
 
 input[type="text"],
 input[type="password"],
-textarea {
+textarea,
+select {
     width: 100%;
     padding: 12px 16px;
     border: 1px solid var(--border-color);
@@ -207,7 +207,8 @@ textarea {
 
 input[type="text"]:focus,
 input[type="password"]:focus,
-textarea:focus {
+textarea:focus,
+select:focus {
     border-color: var(--primary-color);
     outline: none;
     box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.2);
@@ -250,11 +251,9 @@ textarea:focus {
 .chat-container {
     display: flex;
     height: 100vh;
-    height: 100dvh;
     width: 100%;
     overflow: hidden;
     background: linear-gradient(135deg, rgba(26, 115, 232, 0.03) 0%, rgba(0, 184, 212, 0.03) 100%);
-    position: relative;
 }
 
 .sidebar {
@@ -265,10 +264,6 @@ textarea:focus {
     flex-direction: column;
     transition: var(--transition-standard);
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
-}
-
-.sidebar-toggle {
-    display: none;
 }
 
 .sidebar-header {
@@ -442,7 +437,6 @@ textarea:focus {
     display: flex;
     flex-direction: column;
     background-color: var(--background-secondary);
-    min-height: 0;
 }
 
 .chat-messages {
@@ -451,7 +445,6 @@ textarea:focus {
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    min-height: 0;
 }
 
 .welcome-message {
@@ -754,42 +747,32 @@ textarea:focus {
     }
     
     .sidebar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 300px;
-        max-width: 80vw;
-        height: 100vh;
-        height: 100dvh;
-        transform: translateX(-100%);
-        overflow-y: auto;
-        z-index: 20;
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        width: 100%;
+        height: auto;
+        max-height: 60px;
+        overflow: hidden;
+        transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
     
     .sidebar.expanded {
-        transform: translateX(0);
+        max-height: 100vh;
     }
     
     .sidebar-toggle {
         display: block;
-        position: fixed;
+        position: absolute;
         top: 15px;
-        left: 15px;
-        z-index: 30;
-        background: white;
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
+        right: 15px;
+        z-index: 10;
+        background: none;
+        border: none;
         color: var(--primary-color);
         font-size: 20px;
         cursor: pointer;
-        padding: 10px 12px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     }
     
     .main-chat {
-        height: 100vh;
-        height: 100dvh;
+        height: calc(100vh - 60px);
     }
     
     .form-container {
@@ -832,3 +815,27 @@ textarea:focus {
         font-size: 16px;
     }
 }
+/* Dark mode vars */
+:root.dark {
+  --background-color: #121212;
+  --background-secondary: #1e1e1e;
+  --text-color: #e8eaed;
+  --text-secondary: #9aa0a6;
+  --border-color: #333;
+}
+.dark-toggle {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px;
+  transition: 0.3s;
+}
+.dark-toggle:hover { color: var(--primary-color); transform: scale(1.1); }
+
+.export-btn {
+  background: none; border: none; color: var(--text-secondary);
+  cursor: pointer; font-size: 18px; padding: 8px; transition: 0.3s;
+}
+.export-btn:hover { color: var(--secondary-color); transform: scale(1.2); }
