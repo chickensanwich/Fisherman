@@ -11,7 +11,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <!-- Login Screen -->
     <div class="container" id="login-container">
         <div class="form-container">
             <div class="logo">
@@ -20,10 +19,6 @@
             </div>
             <h2>Login</h2>
             <form id="login-form">
-                <div class="form-group">
-                    <label for="login-name">Name</label>
-                    <input type="text" id="login-name" placeholder="Enter your name" required>
-                </div>
                 <div class="form-group">
                     <label for="login-fisherman-id">Fisherman ID</label>
                     <input type="text" id="login-fisherman-id" placeholder="Enter your Fisherman ID" required>
@@ -41,7 +36,6 @@
         </div>
     </div>
 
-    <!-- Sign Up Screen -->
     <div class="container hidden" id="signup-container">
         <div class="form-container">
             <div class="logo">
@@ -49,7 +43,7 @@
                 <h1>FisherMen Chatbot</h1>
             </div>
             <h2>Sign Up</h2>
-            <form id="signup-form" onsubmit="return validateSignup()">
+            <form id="signup-form">
                 <div class="form-group">
                     <label for="signup-name">Name</label>
                     <input type="text" id="signup-name" placeholder="Enter your name" required>
@@ -59,31 +53,19 @@
                     <input type="text" id="signup-fisherman-id" placeholder="Enter your Fisherman ID" required>
                 </div>
                 <div class="form-group">
-                    <label for="signup-country">Country</label>
-                    <select id="signup-country" required>
-                        <option value="">Select Country</option>
-                        <option value="Australia">Australia</option>
-                        <option value="Malaysia">Malaysia</option>
-                        <option value="India">India</option>
-                        <option value="Bangladesh">Bangladesh</option>
-                        <option value="USA">USA</option>
-                        <option value="UK">UK</option>
-                    </select>
-                </div>
-                <div class="form-group">
                     <label for="signup-location">Location</label>
                     <input type="text" id="signup-location" placeholder="Enter your location" required>
                 </div>
                 <div class="form-group">
                     <label for="signup-password">Password</label>
-                    <input type="password" id="signup-password" placeholder="Enter your password" minlength="8" required>
+                    <input type="password" id="signup-password" placeholder="Enter your password" required>
                     <span class="toggle-password" onclick="togglePasswordVisibility('signup-password')">
                         <i class="fas fa-eye"></i>
                     </span>
                 </div>
                 <div class="form-group">
                     <label for="signup-confirm-password">Confirm Password</label>
-                    <input type="password" id="signup-confirm-password" placeholder="Confirm your password" minlength="8" required>
+                    <input type="password" id="signup-confirm-password" placeholder="Confirm your password" required>
                     <span class="toggle-password" onclick="togglePasswordVisibility('signup-confirm-password')">
                         <i class="fas fa-eye"></i>
                     </span>
@@ -94,13 +76,7 @@
         </div>
     </div>
 
-    <!-- Chat Screen -->
     <div class="chat-container hidden" id="chat-container">
-        <!-- Sidebar toggle button (mobile) -->
-        <button class="sidebar-toggle" id="sidebar-toggle">
-            <i class="fas fa-bars"></i>
-        </button>
-
         <div class="sidebar">
             <div class="sidebar-header">
                 <div class="logo">
@@ -126,14 +102,13 @@
                 </div>
                 <div class="user-name" id="user-name-display">User Name</div>
                 <button id="dark-toggle" class="dark-toggle" title="Toggle dark mode">
-                    <i class="fas fa-moon"></i>
+                   <i class="fas fa-moon"></i>
                 </button>
                 <button class="logout-btn" onclick="logout()">
                     <i class="fas fa-sign-out-alt"></i>
                 </button>
             </div>
         </div>
-
         <div class="main-chat">
             <div class="chat-messages" id="chat-messages">
                 <div class="welcome-message">
@@ -158,7 +133,6 @@
         </div>
     </div>
 
-    <!-- Feedback Popup -->
     <div class="feedback-popup hidden" id="feedback-popup">
         <div class="feedback-content">
             <h3>What was the issue with this response?</h3>
@@ -191,40 +165,6 @@
     </div>
 
     <div class="overlay hidden" id="overlay"></div>
-
-    <!-- Inline signup validation -->
-    <script>
-    function validateSignup() {
-        const fishermanId = document.getElementById('signup-fisherman-id').value;
-        const password = document.getElementById('signup-password').value;
-        const confirmPassword = document.getElementById('signup-confirm-password').value;
-        const country = document.getElementById('signup-country').value;
-
-        if (!country) {
-            alert("Please select a country");
-            return false;
-        }
-
-        const idRegex = /^[a-zA-Z0-9]+$/;
-        if (!idRegex.test(fishermanId)) {
-            alert("Fisherman ID must contain only letters and numbers");
-            return false;
-        }
-
-        if (password.length < 8) {
-            alert("Password must be at least 8 characters long");
-            return false;
-        }
-
-        if (password !== confirmPassword) {
-            alert("Passwords do not match");
-            return false;
-        }
-
-        return true;
-    }
-    </script>
-
     <script src="js/script.js" defer></script>
 </body>
 </html>

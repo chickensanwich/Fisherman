@@ -1,599 +1,810 @@
-// Global variables for DOM elements
+// ==================== CONFIG ====================
+const BACKEND_URL = "http://localhost:8000";
+let currentToken = null;
+let currentChatId = null;
+
+// DOM Elements
 let loginForm, signupForm, chatForm, feedbackForm;
 let loginContainer, signupContainer, chatContainer, feedbackPopup, overlay;
 let chatMessages, chatInput, chatHistory, newChatBtn, searchChats, userNameDisplay;
-let languageSelect;
 
-const BACKEND_URL = "http://localhost:8000"
-
-// DOM Elements
+// ==================== INIT ====================
 document.addEventListener('DOMContentLoaded', () => {
-    // Form elements
     loginForm = document.getElementById('login-form');
     signupForm = document.getElementById('signup-form');
     chatForm = document.getElementById('chat-form');
     feedbackForm = document.getElementById('feedback-form');
-    
-    // Container elements
+
     loginContainer = document.getElementById('login-container');
     signupContainer = document.getElementById('signup-container');
     chatContainer = document.getElementById('chat-container');
     feedbackPopup = document.getElementById('feedback-popup');
     overlay = document.getElementById('overlay');
-    
-    // Chat elements
+
     chatMessages = document.getElementById('chat-messages');
     chatInput = document.getElementById('chat-input');
     chatHistory = document.getElementById('chat-history');
     newChatBtn = document.getElementById('new-chat-btn');
     searchChats = document.getElementById('search-chats');
     userNameDisplay = document.getElementById('user-name-display');
-    languageSelect = document.getElementById('language-select');
-    
-    // Initialize the application
-    initApp();
+
+    loginForm.addEventListener('submit', handleLogin);
+    signupForm.addEventListener('submit', handleSignup);
+    chatForm.addEventListener('submit', handleChatSubmit);
+    feedbackForm.addEventListener('submit', handleFeedbackSubmit);
+    newChatBtn.addEventListener('click', startNewChatUI);
+    searchChats.addEventListener('input', searchChatHistory);
+
+    chatInput.addEventListener('input', () => {
+        chatInput.style.height = 'auto';
+        chatInput.style.height = (chatInput.scrollHeight) + 'px';
+    });
 
     // Dark mode
-   const darkToggle = document.getElementById('dark-toggle');
-   if (darkToggle) {
-   const isDark = localStorage.getItem('darkMode') === 'true';
-   document.documentElement.classList.toggle('dark', isDark);
-   darkToggle.addEventListener('click', () => {
-   document.documentElement.classList.toggle('dark');
-   localStorage.setItem('darkMode', document.documentElement.classList.contains('dark'));
-    });
-}
-
-    
-    // Event Listeners
-    if (loginForm) loginForm.addEventListener('submit', handleLogin);
-    if (signupForm) signupForm.addEventListener('submit', handleSignup);
-    if (chatForm) chatForm.addEventListener('submit', handleChatSubmit);
-    if (feedbackForm) feedbackForm.addEventListener('submit', handleFeedbackSubmit);
-    if (newChatBtn) newChatBtn.addEventListener('click', createNewChat);
-    if (searchChats) searchChats.addEventListener('input', searchChatHistory);
-    
-    // Add event listener for closing feedback popup
-    document.addEventListener('click', function(e) {
-        if (e.target.matches('.btn-secondary') && e.target.textContent === 'Cancel') {
-            closeFeedbackPopup();
-        }
-    });
-    
-    // Auto-resize textarea
-    if (chatInput) {
-        chatInput.addEventListener('input', () => {
-            chatInput.style.height = 'auto';
-            chatInput.style.height = (chatInput.scrollHeight) + 'px';
+    const darkToggle = document.getElementById('dark-toggle');
+    if (darkToggle) {
+        const isDark = localStorage.getItem('darkMode') === 'true';
+        document.documentElement.classList.toggle('dark', isDark);
+        darkToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('darkMode', document.documentElement.classList.contains('dark'));
         });
     }
+
+    initApp();
 });
 
-// Initialize the application
-function initApp() {
-    // Check if user is logged in
-    const currentUser = localStorage.getItem('currentUser');
-    if (currentUser) {
-        const user = JSON.parse(currentUser);
-        showChatInterface(user);
-        loadChatHistory();
+async function initApp() {
+    const token = localStorage.getItem('token');
+    if (token) {
+        currentToken = token;
+        showChatInterface();
+        await loadUserChats();
+        await loadUserInfo();        //Load and display user name
+        currentChatId = null;
     } else {
         showLogin();
     }
 }
+// ==================== LOAD AND DISPLAY USER NAME ====================
+async function loadUserInfo() {
+    if (!currentToken) return;
 
-// Authentication Functions
-function handleLogin(e) {
+    try {
+        // Get user info from backend (we'll add this endpoint)
+        const res = await fetch(`${BACKEND_URL}/user`, {
+            method: 'GET',
+            headers: { 
+                'Authorization': `Bearer ${currentToken}` 
+            }
+        });
+
+        if (res.ok) {
+            const user = await res.json();
+            const userNameEl = document.getElementById('user-name-display');
+            if (userNameEl) {
+                userNameEl.textContent = user.name || "Fisherman";
+            }
+        }
+    } catch (e) {
+        console.error("Failed to load user info:", e);
+        // Fallback
+        document.getElementById('user-name-display').textContent = "Fisherman";
+    }
+}
+// ==================== AUTH ====================
+async function handleLogin(e) {
     e.preventDefault();
-    
-    const name = document.getElementById('login-name').value.trim();
     const fishermanId = document.getElementById('login-fisherman-id').value.trim();
     const password = document.getElementById('login-password').value.trim();
-    
-    if (!name || !fishermanId || !password) {
-        alert("Please fill out all fields.");
+
+    if (!fishermanId || !password) {
+        alert("Please enter Fisherman ID and Password");
         return;
     }
-    
-    // In a real application, you would validate credentials against a server
-    // For this demo, we'll simulate a successful login
-    const user = {
-        name,
-        fishermanId,
-        location: 'Unknown' // In a real app, this would come from the server
-    };
-    
-    // Save user to local storage
-    localStorage.setItem('currentUser', JSON.stringify(user));
-    
-    // Show chat interface
-    showChatInterface(user);
-    appendSystemMessage(`Welcome back, ${name}! 👋`);
+
+    try {
+        const formData = new URLSearchParams();
+        formData.append('username', fishermanId);
+        formData.append('password', password);
+
+        const res = await fetch(`${BACKEND_URL}/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: formData
+        });
+
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => ({}));
+            throw new Error(errorData.detail || "Invalid credentials");
+        }
+
+        const data = await res.json();
+        currentToken = data.access_token;
+        localStorage.setItem('token', currentToken);
+
+        showChatInterface();
+        appendSystemMessage("Welcome back! 👋");
+        await loadUserChats();
+        await createNewChat();
+    } catch (err) {
+        alert("Login failed: " + err.message);
+    }
 }
 
-function handleSignup(e) {
+async function handleSignup(e) {
     e.preventDefault();
-    
     const name = document.getElementById('signup-name').value.trim();
     const fishermanId = document.getElementById('signup-fisherman-id').value.trim();
-    const country = document.getElementById('signup-country').value;
     const location = document.getElementById('signup-location').value.trim();
     const password = document.getElementById('signup-password').value.trim();
     const confirmPassword = document.getElementById('signup-confirm-password').value.trim();
-    
-    if (!name || !fishermanId || !country || !location || !password || !confirmPassword) {
-        alert("Please fill out all fields.");
-        return;
-    }
-    
-    // Validate passwords match
+
     if (password !== confirmPassword) {
         alert('Passwords do not match!');
         return;
     }
-    
-    // In a real application, you would send this data to a server
-    // For this demo, we'll simulate a successful signup
-    const user = {
-        name,
-        fishermanId,
-        country,
-        location
-    };
-    
-    // Save user to local storage
-    localStorage.setItem('currentUser', JSON.stringify(user));
-    
-    // Show chat interface
-    showChatInterface(user);
-    appendSystemMessage(`Welcome aboard, ${name}! 🎣`);
-}
 
-function logout() {
-    // Clear user data
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('chatHistory');
-    
-    // Append system message (though chat is hidden, for consistency)
-    appendSystemMessage("You have logged out successfully.");
-    
-    // Show login screen
-    showLogin();
-}
-
-// UI Navigation Functions
-function showLogin() {
-    document.getElementById('login-container').classList.remove('hidden');
-    document.getElementById('signup-container').classList.add('hidden');
-    document.getElementById('chat-container').classList.add('hidden');
-}
-
-function showSignup() {
-    document.getElementById('login-container').classList.add('hidden');
-    document.getElementById('signup-container').classList.remove('hidden');
-    document.getElementById('chat-container').classList.add('hidden');
-}
-
-function showChatInterface(user) {
-    document.getElementById('login-container').classList.add('hidden');
-    document.getElementById('signup-container').classList.add('hidden');
-    document.getElementById('chat-container').classList.remove('hidden');
-    
-    // Update user name display
-    document.getElementById('user-name-display').textContent = user.name;
-}
-
-// Chat Functions
-async function handleChatSubmit(e) {
-    e.preventDefault();
-    
-    let message = chatInput.value.trim();
-    // Sanitize: Escape HTML/JS to prevent XSS
-    message = message.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-
-    if (!message) return;
-    
-    // Add user message to chat
-    addMessage(message, 'user');
-    
-    // Clear input
-    chatInput.value = '';
-    chatInput.style.height = 'auto';
-    
-    // Send message
-    await sendMessage(message);
-}
-
-async function sendMessage(message) {
-    // Show typing indicator
-    showTypingIndicator();
-    
     try {
-        const response = await fetch(`${BACKEND_URL}/chat`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ message }),
+        const res = await fetch(`${BACKEND_URL}/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, fisherman_id: fishermanId, location, password })
         });
 
-        if (!response.ok) {
-            throw new Error(`Server error ${response.status}`);
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => ({}));
+            throw new Error(errorData.detail || "Registration failed");
         }
 
-        const data = await response.json();
-        removeTypingIndicator();
-        addMessage(data.reply, 'bot');
-        
-        // Handle audio response if toggle is enabled
-        
-        // Save chat to history
-        saveChatToHistory(message, data.reply);
+        const data = await res.json();
+        currentToken = data.access_token;
+        localStorage.setItem('token', currentToken);
+
+        showChatInterface();
+        appendSystemMessage(`Welcome aboard, ${name}! 🎣`);
+        await loadUserChats();
+        await createNewChat();
     } catch (err) {
-        console.error("Chatbot fetch error:", err);
-        removeTypingIndicator();
-        addMessage("⚠️ Couldn't reach the chatbot server. Please ensure it's running.", 'bot');
+        alert("Signup failed: " + err.message);
     }
 }
 
+function logout() {
+    localStorage.removeItem('token');
+    currentToken = null;
+    currentChatId = null;
+    showLogin();
+}
+
+// ==================== UI NAVIGATION ====================
+function showLogin() {
+    loginContainer.classList.remove('hidden');
+    signupContainer.classList.add('hidden');
+    chatContainer.classList.add('hidden');
+}
+
+function showSignup() {
+    loginContainer.classList.add('hidden');
+    signupContainer.classList.remove('hidden');
+    chatContainer.classList.add('hidden');
+}
+
+function showChatInterface() {
+    loginContainer.classList.add('hidden');
+    signupContainer.classList.add('hidden');
+    chatContainer.classList.remove('hidden');
+}
+
+// ==================== CHAT HISTORY & CREATION ====================
+async function loadUserChats() {
+    if (!currentToken) return;
+
+    try {
+        const res = await fetch(`${BACKEND_URL}/chats`, {
+            method: 'GET',
+            headers: { 
+                'Authorization': `Bearer ${currentToken}` 
+            }
+        });
+
+        if (!res.ok) {
+            if (res.status === 401) {
+                alert("Session expired. Please login again.");
+                logout();
+                return;
+            }
+            throw new Error(`HTTP ${res.status}`);
+        }
+
+        const chats = await res.json();
+        renderChatHistory(chats);
+    } catch (e) {
+        console.error("Failed to load chats:", e);
+    }
+}
+function renderChatHistory(chats) {
+    chatHistory.innerHTML = '';
+    chats.forEach(chat => {
+        const item = document.createElement('div');
+        item.classList.add('chat-item');
+        if (chat._id === currentChatId) item.classList.add('active');
+
+        const date = new Date(chat.updated_at).toLocaleDateString('en-US', {month:'short', day:'numeric'});
+        const pinIcon = chat.pinned ? '📌 ' : '';
+
+        item.innerHTML = `
+            <i class="fas fa-comment"></i>
+            <div class="chat-item-title" style="flex:1; cursor:pointer;">
+                ${pinIcon}${chat.title || 'New Chat'}
+            </div>
+            <small style="opacity:0.7;">${date}</small>
+            <button class="menu-dots" title="More options">⋮</button>
+        `;
+
+        const dots = item.querySelector('.menu-dots');
+
+        // Open menu
+        dots.addEventListener('click', (e) => {
+            e.stopImmediatePropagation();
+            showChatMenu(item, chat._id, chat.pinned || false);
+        });
+
+        // Click anywhere on chat item (except dots) to load chat
+        item.addEventListener('click', (e) => {
+            if (!e.target.closest('.menu-dots') && !e.target.closest('.chat-dropdown')) {
+                loadSpecificChat(chat._id, chat.messages || []);
+            }
+        });
+
+        chatHistory.appendChild(item);
+    });
+}
+async function loadSpecificChat(chatId, messages) {
+    currentChatId = chatId;
+    chatMessages.innerHTML = '';
+
+    if (messages && messages.length > 0) {
+        messages.forEach(msg => addMessage(msg.content, msg.sender));
+    } else {
+        const welcomeDiv = document.createElement('div');
+        welcomeDiv.classList.add('welcome-message');
+        welcomeDiv.innerHTML = '<h1>Welcome to FisherMen Chatbot</h1><p>How can I assist you today?</p>';
+        chatMessages.appendChild(welcomeDiv);
+    }
+    await loadUserChats();
+}
+// ==================== DELETE CHAT ====================
+async function deleteChat(chatId) {
+    if (!currentToken) return;
+
+    try {
+        const res = await fetch(`${BACKEND_URL}/chats/${chatId}`, {
+            method: 'DELETE',
+            headers: { 
+                'Authorization': `Bearer ${currentToken}` 
+            }
+        });
+
+        if (!res.ok) {
+            if (res.status === 404) {
+                alert("Chat not found or you do not have permission to delete it.");
+                return;
+            }
+            if (res.status === 401) {
+                alert("Session expired. Please login again.");
+                logout();
+                return;
+            }
+            throw new Error(`HTTP ${res.status}`);
+        }
+
+        // If the currently open chat was deleted, reset the main view
+        if (currentChatId === chatId) {
+            currentChatId = null;
+            chatMessages.innerHTML = '';
+            const welcomeDiv = document.createElement('div');
+            welcomeDiv.classList.add('welcome-message');
+            welcomeDiv.innerHTML = '<h1>Welcome to FisherMen Chatbot</h1><p>How can I assist you today?</p>';
+            chatMessages.appendChild(welcomeDiv);
+        }
+
+        await loadUserChats();   // Refresh sidebar
+    } catch (e) {
+        console.error("Failed to delete chat:", e);
+        alert("Could not delete the chat. Please try again.");
+    }
+}
+// ==================== SHOW / TOGGLE 3-DOTS MENU ====================
+function showChatMenu(chatItem, chatId, isPinned) {
+    const existingMenu = chatItem.querySelector('.chat-dropdown');
+    
+    // Toggle: if menu already open, close it
+    if (existingMenu) {
+        cleanupMenu();
+        return;
+    }
+
+    // Close any other open menus first
+    cleanupMenu();
+
+    const menu = document.createElement('div');
+    menu.className = 'chat-dropdown show';
+
+    menu.innerHTML = `
+        <button class="menu-rename"><i class="fas fa-edit"></i> Rename</button>
+        <button class="menu-pin"><i class="fas fa-thumbtack"></i> ${isPinned ? 'Unpin' : 'Pin'} chat</button>
+        <button class="menu-share"><i class="fas fa-share-alt"></i> Share</button>
+        <button class="menu-delete" style="color:var(--danger-color)"><i class="fas fa-trash-alt"></i> Delete</button>
+    `;
+
+    chatItem.appendChild(menu);
+
+    // Disable clicks on other chat items
+    document.querySelectorAll('.chat-item').forEach(item => {
+        if (item !== chatItem) {
+            item.style.pointerEvents = 'none';
+        }
+    });
+
+    // Button handlers
+    menu.querySelector('.menu-rename').addEventListener('click', (e) => {
+        e.stopImmediatePropagation();
+        cleanupMenu();
+        renameChat(chatId);
+    });
+
+    menu.querySelector('.menu-pin').addEventListener('click', (e) => {
+        e.stopImmediatePropagation();
+        cleanupMenu();
+        togglePin(chatId, !isPinned);
+    });
+
+    menu.querySelector('.menu-share').addEventListener('click', (e) => {
+        e.stopImmediatePropagation();
+        cleanupMenu();
+        shareChat(chatId);
+    });
+
+    menu.querySelector('.menu-delete').addEventListener('click', (e) => {
+        e.stopImmediatePropagation();
+        cleanupMenu();
+        if (confirm('Delete this chat permanently?')) {
+            deleteChat(chatId);
+        }
+    });
+
+    // Close when clicking outside
+    const closeHandler = (e) => {
+        if (!chatItem.contains(e.target)) {
+            cleanupMenu();
+        }
+    };
+
+    setTimeout(() => document.addEventListener('click', closeHandler), 10);
+}
+
+// ==================== CLEANUP MENU & RESTORE CLICKS ====================
+function cleanupMenu() {
+    // Remove all dropdown menus
+    document.querySelectorAll('.chat-dropdown').forEach(menu => {
+        if (menu.parentNode) menu.remove();
+    });
+
+    // Re-enable clicks on ALL chat items
+    document.querySelectorAll('.chat-item').forEach(item => {
+        item.style.pointerEvents = 'auto';
+    });
+
+    // Remove any lingering global click listeners (safe to call multiple times)
+    document.removeEventListener('click', cleanupMenu);
+}
+
+// Cleanup helper
+function cleanup(menu, allChatItems) {
+    if (menu && menu.parentNode) menu.remove();
+    allChatItems.forEach(item => item.style.pointerEvents = 'auto');
+    document.removeEventListener('click', cleanup);   // This line is safe as we re-add listener each time
+}
+// ==================== TOGGLE PIN ====================
+async function togglePin(chatId, newPinnedState) {
+    try {
+        const res = await fetch(`${BACKEND_URL}/chats/${chatId}/pin`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${currentToken}`
+            },
+            body: JSON.stringify({ pinned: newPinnedState })
+        });
+
+        if (res.ok) {
+            await loadUserChats();
+        } else {
+            alert("Failed to pin/unpin chat.");
+        }
+    } catch (e) {
+        console.error(e);
+        alert("Could not update pin status.");
+    }
+}
+// ==================== RENAME CHAT TITLE ====================
+async function renameChat(chatId) {
+    const newTitle = prompt("Enter new title for this chat:", "");
+    if (!newTitle || newTitle.trim() === "") return;
+
+    try {
+        const res = await fetch(`${BACKEND_URL}/chats/${chatId}/title`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${currentToken}`
+            },
+            body: JSON.stringify({ title: newTitle.trim() })
+        });
+
+        if (res.ok) {
+            await loadUserChats();   // Refresh sidebar with new title
+        } else {
+            alert("Failed to rename chat.");
+        }
+    } catch (e) {
+        console.error(e);
+        alert("Could not rename the chat.");
+    }
+}
+
+// ==================== SHARE CHAT (WhatsApp, Messenger, Facebook) ====================
+async function shareChat(chatId) {
+    try {
+        const res = await fetch(`${BACKEND_URL}/chats/${chatId}`, {
+            method: 'GET',
+            headers: { 
+                'Authorization': `Bearer ${currentToken}` 
+            }
+        });
+
+        if (!res.ok) throw new Error("Failed to load chat");
+
+        const chat = await res.json();
+
+        // Build clean share text
+        let shareText = ` ${chat.title || 'FisherMen Chatbot Conversation'}\n\n`;
+        if (chat.messages && chat.messages.length > 0) {
+            chat.messages.forEach(msg => {
+                const sender = msg.sender === 'user' ? 'You' : 'FisherMen Bot';
+                shareText += `${sender}: ${msg.content}\n\n`;
+            });
+        }
+        shareText += `\n Shared from FisherMen Chatbot`;
+
+        const encodedText = encodeURIComponent(shareText);
+
+        // Create nice modal
+        const modal = document.createElement('div');
+        modal.className = 'share-modal';
+        modal.innerHTML = `
+            <h3>Share this chat</h3>
+            <div class="share-options">
+                <button class="share-btn whatsapp-btn" title="Share on WhatsApp">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+                    <span>WhatsApp</span>
+                </button>
+                <button class="share-btn facebook-btn" title="Share on Facebook">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook">
+                    <span>Facebook</span>
+                </button>
+                <button class="share-btn messenger-btn" title="Share on Messenger">
+                    <img src="https://img.icons8.com/color/48/facebook-messenger--v1.png" alt="Messenger">
+                    <span>Messenger</span>
+                </button>
+            </div>
+            <div class="copy-option">
+                <button id="copy-btn">📋 Copy to clipboard</button>
+            </div>
+            <button onclick="this.closest('.share-modal').remove()" style="margin-top:20px; width:100%; padding:10px; background:none; border:1px solid var(--border-color); border-radius:8px; cursor:pointer;">
+                Cancel
+            </button>
+        `;
+
+        document.body.appendChild(modal);
+
+        // WhatsApp
+        modal.querySelector('.whatsapp-btn').addEventListener('click', () => {
+            window.open(`https://wa.me/?text=${encodedText}`, '_blank');
+            modal.remove();
+        });
+
+        // Facebook
+        modal.querySelector('.facebook-btn').addEventListener('click', () => {
+            window.open(`https://www.facebook.com/sharer/sharer.php?quote=${encodedText}`, '_blank');
+            modal.remove();
+        });
+
+        // Messenger
+        modal.querySelector('.messenger-btn').addEventListener('click', () => {
+            window.open(`https://www.messenger.com/t/?text=${encodedText}`, '_blank');
+            modal.remove();
+        });
+
+        // Copy to clipboard
+        modal.querySelector('#copy-btn').addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(shareText);
+                const btn = modal.querySelector('#copy-btn');
+                const originalText = btn.textContent;
+                btn.textContent = '✅ Copied!';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                }, 2000);
+            } catch (err) {
+                alert("Failed to copy to clipboard");
+            }
+        });
+
+    } catch (e) {
+        console.error(e);
+        alert("Could not share the chat. Please try again.");
+    }
+}
+async function createNewChat() {
+    if (!currentToken) return;
+
+    try {
+        const res = await fetch(`${BACKEND_URL}/chats`, {
+            method: 'POST',
+            headers: { 
+                'Authorization': `Bearer ${currentToken}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!res.ok) {
+            if (res.status === 401) {
+                alert("Session expired. Please login again.");
+                logout();
+                return;
+            }
+            throw new Error(`HTTP ${res.status}`);
+        }
+
+        const data = await res.json();
+        currentChatId = data.chat_id;
+
+        await loadUserChats();
+    } catch (e) {
+        console.error("Could not create new chat:", e);
+        alert("Could not create new chat. Please try again.");
+    }
+}
+// ==================== NEW CHAT BUTTON - ONLY RESET UI (no backend call) ====================
+function startNewChatUI() {
+    // If current chat is already empty, just reset UI
+    currentChatId = null;
+    chatMessages.innerHTML = '';
+
+    const welcomeDiv = document.createElement('div');
+    welcomeDiv.classList.add('welcome-message');
+    welcomeDiv.innerHTML = `
+        <h1>Welcome to FisherMen Chatbot</h1>
+        <p>How can I assist you today?</p>
+        <p style="margin-top:20px; font-size:15px; color:var(--text-secondary);">
+            Send your first message to create the chat
+        </p>
+    `;
+    chatMessages.appendChild(welcomeDiv);
+
+    // Optional: remove active highlight from sidebar
+    document.querySelectorAll('.chat-item').forEach(item => item.classList.remove('active'));
+}
+
+// ==================== CHAT SEND ====================
+async function handleChatSubmit(e) {
+    e.preventDefault();
+    let message = chatInput.value.trim();
+    
+    if (!message || !currentToken) return;
+
+    // Auto-create a new chat ONLY when user actually sends a message
+    if (!currentChatId) {
+        await createNewChat();
+        if (!currentChatId) {
+            alert("Failed to create a new chat. Please try again.");
+            return;
+        }
+    }
+
+    addMessage(message, 'user');
+    chatInput.value = '';
+    chatInput.style.height = 'auto';
+
+    await sendMessageToBackend(message);
+}
+
+async function sendMessageToBackend(message) {
+    if (!currentToken || !currentChatId) {
+        removeTypingIndicator();
+        addMessage("⚠️ Please login and create a new chat first.", 'bot');
+        return;
+    }
+
+    showTypingIndicator();
+
+    try {
+        const res = await fetch(`${BACKEND_URL}/chat`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${currentToken}`
+            },
+            body: JSON.stringify({ 
+                message: message,
+                chat_id: currentChatId 
+            })
+        });
+
+        if (!res.ok) {
+            if (res.status === 401) {
+                alert("Session expired. Please login again.");
+                logout();
+                return;
+            }
+            const errorData = await res.json().catch(() => ({}));
+            console.error("Chat API error:", res.status, errorData);
+            throw new Error(`Server error: ${res.status}`);
+        }
+
+        const data = await res.json();
+        removeTypingIndicator();
+        addMessage(data.reply, 'bot');
+        await loadUserChats();   // Refresh sidebar
+    } catch (err) {
+        removeTypingIndicator();
+        console.error("Chat request failed:", err);
+        addMessage("⚠️ Couldn't reach the chatbot server. Please ensure the backend is running properly.", 'bot');
+    }
+}
+
+// ==================== UI HELPER FUNCTIONS ====================
 function addMessage(content, sender) {
     const messageDiv = document.createElement('div');
     messageDiv.classList.add('message', `${sender}-message`);
-    
+
     const messageContent = document.createElement('div');
     messageContent.classList.add('message-content');
     messageContent.textContent = content;
-    
+
     messageDiv.appendChild(messageContent);
-    
+
     const timestampSpan = document.createElement('span');
     timestampSpan.classList.add('timestamp');
     timestampSpan.textContent = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
     messageDiv.appendChild(timestampSpan);
-    
-    // Add feedback buttons for bot messages
+
     if (sender === 'bot') {
         const feedbackDiv = document.createElement('div');
         feedbackDiv.classList.add('message-feedback');
-        
+
         const thumbsUpBtn = document.createElement('button');
         thumbsUpBtn.classList.add('feedback-btn', 'thumbs-up');
         thumbsUpBtn.innerHTML = '<i class="fas fa-thumbs-up"></i>';
-        thumbsUpBtn.addEventListener('click', () => handleFeedback(messageDiv, true));
-        
+        thumbsUpBtn.onclick = () => handleFeedback(true, content);
+
         const thumbsDownBtn = document.createElement('button');
         thumbsDownBtn.classList.add('feedback-btn', 'thumbs-down');
         thumbsDownBtn.innerHTML = '<i class="fas fa-thumbs-down"></i>';
-        thumbsDownBtn.addEventListener('click', () => handleFeedback(messageDiv, false));
-        
+        thumbsDownBtn.onclick = () => showFeedbackPopup(content);
+
         feedbackDiv.appendChild(thumbsUpBtn);
         feedbackDiv.appendChild(thumbsDownBtn);
         messageDiv.appendChild(feedbackDiv);
     }
-    
+
     chatMessages.appendChild(messageDiv);
-    
-    // Scroll to bottom
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
 function showTypingIndicator() {
     const typingDiv = document.createElement('div');
     typingDiv.classList.add('message', 'bot-message', 'typing-indicator');
-    
-    const typingContent = document.createElement('div');
-    typingContent.classList.add('message-content');
-    typingContent.innerHTML = '<span class="dot"></span><span class="dot"></span><span class="dot"></span>';
-    
-    typingDiv.appendChild(typingContent);
+    typingDiv.innerHTML = `<div class="message-content"><span></span><span></span><span></span></div>`;
     chatMessages.appendChild(typingDiv);
-    
-    // Scroll to bottom
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
 function removeTypingIndicator() {
-    const typingIndicator = document.querySelector('.typing-indicator');
-    if (typingIndicator) {
-        typingIndicator.remove();
-    }
+    const typing = document.querySelector('.typing-indicator');
+    if (typing) typing.remove();
 }
 
-// Text-to-Speech (TTS) for English
-
-
-// Handle Audio Response from Server
+function appendSystemMessage(text) {
+    const sysMsg = document.createElement("div");
+    sysMsg.classList.add("message", "bot-message");
+    sysMsg.innerHTML = `<div class="message-content" style="background:#e8f5e9;color:#2e7d32;">${text}</div>`;
+    chatMessages.appendChild(sysMsg);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
 
 // Feedback Functions
-async function handleFeedback(messageDiv, isPositive) {
-    const thumbsUp = messageDiv.querySelector('.thumbs-up');
-    const thumbsDown = messageDiv.querySelector('.thumbs-down');
-    
-    // Reset both buttons
-    thumbsUp.classList.remove('active', 'thumbs-up-animation');
-    thumbsDown.classList.remove('active', 'thumbs-down-animation');
-    
-    const reportedMessage = messageDiv.querySelector('.message-content').textContent;
-    
-    if (isPositive) {
-        // Thumbs up was clicked
-        thumbsUp.classList.add('active', 'thumbs-up-animation');
-        thumbsUp.style.color = 'var(--secondary-color)';
-        
-        // Send positive feedback to server
-        await sendFeedback({
-            type: 'positive',
-            message: reportedMessage
+// ==================== HANDLE FEEDBACK (Positive + Negative) ====================
+async function handleFeedback(isPositive, messageContent) {
+    if (!currentToken) return;
+
+    const feedbackType = isPositive ? "positive" : "negative";
+    const reason = isPositive ? "helpful" : "other";   // default reason for positive
+
+    try {
+        const res = await fetch(`${BACKEND_URL}/feedback`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${currentToken}`
+            },
+            body: JSON.stringify({
+                type: feedbackType,
+                reason: reason,
+                comments: "",                    // empty for quick like
+                message: messageContent
+            })
         });
-    } else {
-        // Thumbs down was clicked
-        thumbsDown.classList.add('active', 'thumbs-down-animation');
-        thumbsDown.style.color = 'var(--danger-color)';
-        
-        // Show feedback popup
-        showFeedbackPopup(reportedMessage);
+
+        if (res.ok) {
+            // Optional: visual feedback
+            console.log(`✅ ${isPositive ? 'Positive' : 'Negative'} feedback saved`);
+        } else {
+            console.error("Failed to save feedback");
+        }
+    } catch (err) {
+        console.error("Feedback submission error:", err);
     }
 }
 
 function showFeedbackPopup(message) {
-    // Store the message being reported
     feedbackPopup.dataset.reportedMessage = message;
-    
-    // Show popup and overlay
     feedbackPopup.classList.remove('hidden');
     overlay.classList.remove('hidden');
 }
 
-function closeFeedbackPopup() {
-    // Hide popup and overlay
-    feedbackPopup.classList.add('hidden');
-    overlay.classList.add('hidden');
-    
-    // Reset form
-    document.getElementById('feedback-form').reset();
-}
-
 async function handleFeedbackSubmit(e) {
     e.preventDefault();
-    
-    // Get selected feedback option
-    const feedbackOption = document.querySelector('input[name="feedback"]:checked');
-    const feedbackText = document.getElementById('feedback-text').value;
+    const reason = document.querySelector('input[name="feedback"]:checked')?.value || "other";
+    const comments = document.getElementById('feedback-text').value.trim();
     const reportedMessage = feedbackPopup.dataset.reportedMessage;
-    
-    const feedbackData = {
-        type: 'negative',
-        reason: feedbackOption ? feedbackOption.value : 'not specified',
-        comments: feedbackText,
-        message: reportedMessage
-    };
-    
-    // Send feedback to server
-    await sendFeedback(feedbackData);
-    
-    // Close popup
+
+    if (currentToken) {
+        try {
+            await fetch(`${BACKEND_URL}/feedback`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${currentToken}`
+                },
+                body: JSON.stringify({ 
+                    type: "negative", 
+                    reason, 
+                    comments, 
+                    message: reportedMessage 
+                })
+            });
+        } catch (err) {
+            console.error("Failed to submit feedback:", err);
+        }
+    }
+
     closeFeedbackPopup();
-    
-    // Show thank you message
     alert('Thank you for your feedback!');
 }
 
-async function sendFeedback(feedbackData) {
-    try {
-        const response = await fetch(`${BACKEND_URL}/feedback`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(feedbackData),
-        });
-        
-        if (!response.ok) {
-            throw new Error('Failed to save feedback');
-        }
-        
-        console.log('Feedback saved successfully');
-    } catch (error) {
-        console.error('Error saving feedback:', error);
-        // Optionally show error to user
-        // alert('Failed to save feedback. Please try again.');
-    }
+function closeFeedbackPopup() {
+    feedbackPopup.classList.add('hidden');
+    overlay.classList.add('hidden');
+    feedbackForm.reset();
 }
 
-// Chat History Functions
-function createNewChat() {
-    // Clear current chat
-    chatMessages.innerHTML = '';
-    
-    // Add welcome message
-    const welcomeDiv = document.createElement('div');
-    welcomeDiv.classList.add('welcome-message');
-    welcomeDiv.innerHTML = '<h1>Welcome to FisherMen Chatbot</h1><p>How can I assist you today?</p>';
-    chatMessages.appendChild(welcomeDiv);
-    
-    // Add new chat to history
-    const chatId = 'chat_' + Date.now();
-    const newChat = {
-        id: chatId,
-        title: 'New Chat',
-        timestamp: Date.now(),
-        messages: []
-    };
-    
-    // Save to local storage
-    const chatHistory = getChatHistory();
-    chatHistory.unshift(newChat);
-    localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
-    
-    // Update chat history UI
-    updateChatHistoryUI();
-}
-
-function saveChatToHistory(userMessage, botResponse) {
-    let chatHistory = getChatHistory();
-    
-    // If no chats exist, create a new one
-    if (chatHistory.length === 0) {
-        createNewChat();
-        chatHistory = getChatHistory();
-    }
-    
-    // Add messages to the most recent chat
-    const currentChat = chatHistory[0];
-    currentChat.messages.push(
-        { sender: 'user', content: userMessage },
-        { sender: 'bot', content: botResponse }
-    );
-    
-    // Update chat title based on first user message if it's still "New Chat"
-    if (currentChat.title === 'New Chat' && currentChat.messages.length === 2) {
-        currentChat.title = userMessage.substring(0, 30) + (userMessage.length > 30 ? '...' : '');
-    }
-    
-    // Save to local storage
-    localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
-    
-    // Update chat history UI
-    updateChatHistoryUI();
-}
-
-function loadChatHistory() {
-    const chatHistory = getChatHistory();
-    
-    if (chatHistory.length === 0) {
-        // If no chat history, create a new chat
-        createNewChat();
-    } else {
-        // Load the most recent chat
-        loadChat(chatHistory[0]);
-        
-        // Update chat history UI
-        updateChatHistoryUI();
-    }
-}
-
-function loadChat(chat) {
-    // Clear current chat
-    chatMessages.innerHTML = '';
-    
-    // Load messages
-    if (chat.messages && chat.messages.length > 0) {
-        chat.messages.forEach(message => {
-            addMessage(message.content, message.sender);
-        });
-    } else {
-        // Add welcome message if no messages
-        const welcomeDiv = document.createElement('div');
-        welcomeDiv.classList.add('welcome-message');
-        welcomeDiv.innerHTML = '<h1>Welcome to FisherMen Chatbot</h1><p>How can I assist you today?</p>';
-        chatMessages.appendChild(welcomeDiv);
-    }
-}
-
-function updateChatHistoryUI() {
-    const chatHistory = getChatHistory();
-    chatHistory.sort((a, b) => b.timestamp - a.timestamp);
-    
-    // Clear current history
-    document.getElementById('chat-history').innerHTML = '';
-    
-    // Add each chat to the sidebar
-    chatHistory.forEach(chat => {
-        const chatItem = document.createElement('div');
-        chatItem.classList.add('chat-item');
-        chatItem.dataset.chatId = chat.id;
-        
-        chatItem.innerHTML = `
-            <i class="fas fa-comment"></i>
-            <div class="chat-item-title">${chat.title}</div>
-        `;
-        
-        chatItem.addEventListener('click', () => {
-            // Load this chat
-            loadChat(chat);
-            
-            // Update active state
-            document.querySelectorAll('.chat-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            chatItem.classList.add('active');
-        });
-        
-        document.getElementById('chat-history').appendChild(chatItem);
-    });
-    
-    // Set first chat as active
-    if (chatHistory.length > 0) {
-        document.querySelector('.chat-item').classList.add('active');
-    }
-}
-// Export chat
-document.getElementById('export-chat').addEventListener('click', () => {
-  const chatHistory = getChatHistory();
-  if (!chatHistory.length) {
-    alert('No chat history to export. Start a conversation first.');
-    return;
-  }
-  const currentChat = chatHistory[0];
-  const safeTitle = (currentChat.title || 'chat').replace(/[^a-z0-9]/gi, '_');
-  const dataStr = JSON.stringify(currentChat, null, 2);
-  const blob = new Blob([dataStr], {type: 'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `fishermen-chat-${safeTitle}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
-});
-
-
-function searchChatHistory() {
-    const searchTerm = document.getElementById('search-chats').value.toLowerCase();
-    const chatHistory = getChatHistory();
-    
-    // Filter chats based on search term
-    const filteredChats = chatHistory.filter(chat => 
-        chat.title.toLowerCase().includes(searchTerm) || 
-        chat.messages.some(msg => msg.content.toLowerCase().includes(searchTerm))
-    );
-    
-    // Clear current history
-    document.getElementById('chat-history').innerHTML = '';
-    
-    // Add filtered chats to the sidebar
-    filteredChats.forEach(chat => {
-        const chatItem = document.createElement('div');
-        chatItem.classList.add('chat-item');
-        chatItem.dataset.chatId = chat.id;
-        
-        chatItem.innerHTML = `
-            <i class="fas fa-comment"></i>
-            <div class="chat-item-title">${chat.title}</div>
-        `;
-        
-        chatItem.addEventListener('click', () => {
-            // Load this chat
-            loadChat(chat);
-            
-            // Update active state
-            document.querySelectorAll('.chat-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            chatItem.classList.add('active');
-        });
-        
-        document.getElementById('chat-history').appendChild(chatItem);
-    });
-}
-
-function getChatHistory() {
-    const chatHistory = localStorage.getItem('chatHistory');
-    return chatHistory ? JSON.parse(chatHistory) : [];
-}
-
-// Utility Functions
+// Toggle password visibility
 function togglePasswordVisibility(inputId) {
     const input = document.getElementById(inputId);
     const icon = input.nextElementSibling.querySelector('i');
-    
     if (input.type === 'password') {
         input.type = 'text';
         icon.classList.remove('fa-eye');
@@ -605,16 +816,36 @@ function togglePasswordVisibility(inputId) {
     }
 }
 
-function appendSystemMessage(text) {
-    const sysMsg = document.createElement("div");
-    sysMsg.classList.add("system-message");
-    sysMsg.textContent = text;
-    chatMessages.appendChild(sysMsg);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+// Export chat
+document.getElementById('export-chat').addEventListener('click', () => {
+    const messages = Array.from(chatMessages.querySelectorAll('.message')).map(m => ({
+        sender: m.classList.contains('user-message') ? 'user' : 'bot',
+        content: m.querySelector('.message-content').textContent,
+        time: m.querySelector('.timestamp').textContent
+    }));
+    const dataStr = JSON.stringify(messages, null, 2);
+    const blob = new Blob([dataStr], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `fishermen-chat-${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+});
+
+// Search chat history
+function searchChatHistory() {
+    const term = searchChats.value.toLowerCase();
+    const items = chatHistory.querySelectorAll('.chat-item');
+    items.forEach(item => {
+        const title = item.querySelector('.chat-item-title').textContent.toLowerCase();
+        item.style.display = title.includes(term) ? 'flex' : 'none';
+    });
 }
 
-// Helper Functions for Window
+// Expose global functions for inline onclick handlers
 window.togglePasswordVisibility = togglePasswordVisibility;
 window.showSignup = showSignup;
 window.showLogin = showLogin;
 window.logout = logout;
+window.closeFeedbackPopup = closeFeedbackPopup;

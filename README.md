@@ -13,5 +13,11 @@ AI-powered chatbot for Bangladeshi fishermen using **Neo4j knowledge graph** + *
 ```bash
 pip install -r requirements.txt  
 start neo4j instance
+ollama serve         
+ollama pull gemma3:1b
 uvicorn server:app --reload
 Open index.html in browser
+
+
+## Architecture
+Fisherman Query → FastAPI → Neo4j RAG → Ollama → Bengali Reply

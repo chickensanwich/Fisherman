@@ -1,12 +1,12 @@
 fastapi
-uvicorn
-neo4j
+uvicorn[standard]
+motor
 pydantic
-googletrans==4.0.0-rc1  # Specific version to avoid API changes
-gtts
-pymongo
-# Add any other packages, e.g., difflib, random, datetime are built-in so not needed
-
-python-multipart  # If needed for file uploads, but not in your code
-ollama
+bcrypt
+python-jose[cryptography]
+python-multipart
+neo4j
+deep-translator
+langdetect
 httpx
+ollama
