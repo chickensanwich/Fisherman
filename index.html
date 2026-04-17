@@ -11,7 +11,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <!-- Login Screen -->
     <div class="container" id="login-container">
         <div class="form-container">
             <div class="logo">
@@ -41,7 +40,6 @@
         </div>
     </div>
 
-    <!-- Sign Up Screen -->
     <div class="container hidden" id="signup-container">
         <div class="form-container">
             <div class="logo">
@@ -94,9 +92,7 @@
         </div>
     </div>
 
-    <!-- Chat Screen -->
     <div class="chat-container hidden" id="chat-container">
-        <!-- Sidebar toggle button (mobile) -->
         <button class="sidebar-toggle" id="sidebar-toggle">
             <i class="fas fa-bars"></i>
         </button>
@@ -117,9 +113,7 @@
                     <input type="text" placeholder="Search chats" id="search-chats">
                 </div>
             </div>
-            <div class="chat-history" id="chat-history">
-                <!-- Chat history will be populated dynamically -->
-            </div>
+            <div class="chat-history" id="chat-history"></div>
             <div class="user-info">
                 <div class="user-avatar">
                     <i class="fas fa-user"></i>
@@ -145,6 +139,9 @@
                 <form id="chat-form">
                     <div class="chat-input-box">
                         <textarea id="chat-input" placeholder="Type your message here..." rows="1"></textarea>
+                        <button type="button" class="voice-btn" id="voice-btn" title="Voice input">
+                            <i class="fas fa-microphone"></i>
+                        </button>
                         <button type="submit" class="send-btn">
                             <i class="fas fa-paper-plane"></i>
                         </button>
@@ -158,7 +155,6 @@
         </div>
     </div>
 
-    <!-- Feedback Popup -->
     <div class="feedback-popup hidden" id="feedback-popup">
         <div class="feedback-content">
             <h3>What was the issue with this response?</h3>
@@ -190,9 +186,26 @@
         </div>
     </div>
 
+    <div class="voice-popup hidden" id="voice-popup">
+        <div class="voice-content">
+            <h3>Voice Input</h3>
+            <div class="voice-bars">
+                <span class="voice-bar"></span>
+                <span class="voice-bar"></span>
+                <span class="voice-bar"></span>
+                <span class="voice-bar"></span>
+                <span class="voice-bar"></span>
+                <span class="voice-bar"></span>
+                <span class="voice-bar"></span>
+            </div>
+            <div class="voice-buttons">
+                <button type="button" class="btn-primary" id="voice-done-btn">Done</button>
+            </div>
+        </div>
+    </div>
+
     <div class="overlay hidden" id="overlay"></div>
 
-    <!-- Inline signup validation -->
     <script>
     function validateSignup() {
         const fishermanId = document.getElementById('signup-fisherman-id').value;
