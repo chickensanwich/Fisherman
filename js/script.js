@@ -3,31 +3,25 @@ let loginForm, signupForm, chatForm, feedbackForm;
 let loginContainer, signupContainer, chatContainer, feedbackPopup, overlay;
 let chatMessages, chatInput, chatHistory, newChatBtn, searchChats, userNameDisplay;
 let languageSelect;
-let sidebarToggle;
-let sidebar;
-let voicePopup, voiceBtn, voiceDoneBtn;
-let recognition = null;
-let isRecording = false;
-let finalTranscript = '';
-let speechRecognitionLang = 'en-US';
-let currentChatId = null;
 
 const BACKEND_URL = "http://localhost:8000"
 
 // DOM Elements
 document.addEventListener('DOMContentLoaded', () => {
+    // Form elements
     loginForm = document.getElementById('login-form');
     signupForm = document.getElementById('signup-form');
     chatForm = document.getElementById('chat-form');
     feedbackForm = document.getElementById('feedback-form');
-
+    
+    // Container elements
     loginContainer = document.getElementById('login-container');
     signupContainer = document.getElementById('signup-container');
     chatContainer = document.getElementById('chat-container');
     feedbackPopup = document.getElementById('feedback-popup');
     overlay = document.getElementById('overlay');
-    voicePopup = document.getElementById('voice-popup');
-
+    
+    // Chat elements
     chatMessages = document.getElementById('chat-messages');
     chatInput = document.getElementById('chat-input');
     chatHistory = document.getElementById('chat-history');
@@ -35,65 +29,47 @@ document.addEventListener('DOMContentLoaded', () => {
     searchChats = document.getElementById('search-chats');
     userNameDisplay = document.getElementById('user-name-display');
     languageSelect = document.getElementById('language-select');
-    sidebarToggle = document.getElementById('sidebar-toggle');
-    sidebar = document.querySelector('.sidebar');
-    voiceBtn = document.getElementById('voice-btn');
-    voiceDoneBtn = document.getElementById('voice-done-btn');
-
+    
+    // Initialize the application
     initApp();
-    initSpeechRecognition();
 
-    const darkToggle = document.getElementById('dark-toggle');
-    if (darkToggle) {
-        const isDark = localStorage.getItem('darkMode') === 'true';
-        document.documentElement.classList.toggle('dark', isDark);
-        darkToggle.addEventListener('click', () => {
-            document.documentElement.classList.toggle('dark');
-            localStorage.setItem('darkMode', document.documentElement.classList.contains('dark'));
+    // Hamburger menu toggle
+    const sidebarToggle = document.getElementById('sidebar-toggle');
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebarToggle && sidebar) {
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('expanded');
         });
     }
 
+    // Dark mode
+   const darkToggle = document.getElementById('dark-toggle');
+   if (darkToggle) {
+   const isDark = localStorage.getItem('darkMode') === 'true';
+   document.documentElement.classList.toggle('dark', isDark);
+   darkToggle.addEventListener('click', () => {
+   document.documentElement.classList.toggle('dark');
+   localStorage.setItem('darkMode', document.documentElement.classList.contains('dark'));
+    });
+}
+
+    
+    // Event Listeners
     if (loginForm) loginForm.addEventListener('submit', handleLogin);
     if (signupForm) signupForm.addEventListener('submit', handleSignup);
     if (chatForm) chatForm.addEventListener('submit', handleChatSubmit);
     if (feedbackForm) feedbackForm.addEventListener('submit', handleFeedbackSubmit);
     if (newChatBtn) newChatBtn.addEventListener('click', createNewChat);
     if (searchChats) searchChats.addEventListener('input', searchChatHistory);
-    if (sidebarToggle) {
-        sidebarToggle.addEventListener('click', () => {
-            if (sidebar) sidebar.classList.toggle('expanded');
-        });
-    }
-    if (voiceBtn) voiceBtn.addEventListener('click', openVoicePopup);
-    if (voiceDoneBtn) voiceDoneBtn.addEventListener('click', closeVoicePopup);
-
-    const exportChatBtn = document.getElementById('export-chat');
-    if (exportChatBtn) {
-        exportChatBtn.addEventListener('click', () => {
-            const history = getChatHistory();
-            if (!history.length) {
-                alert('No chat history to export. Start a conversation first.');
-                return;
-            }
-            const currentChat = history.find(chat => chat.id === currentChatId) || history[0];
-            const safeTitle = (currentChat.title || 'chat').replace(/[^a-z0-9]/gi, '_');
-            const dataStr = JSON.stringify(currentChat, null, 2);
-            const blob = new Blob([dataStr], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `fishermen-chat-${safeTitle}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
-        });
-    }
-
+    
+    // Add event listener for closing feedback popup
     document.addEventListener('click', function(e) {
         if (e.target.matches('.btn-secondary') && e.target.textContent === 'Cancel') {
             closeFeedbackPopup();
         }
     });
-
+    
+    // Auto-resize textarea
     if (chatInput) {
         chatInput.addEventListener('input', () => {
             chatInput.style.height = 'auto';
@@ -102,7 +78,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// Initialize the application
 function initApp() {
+    // Check if user is logged in
     const currentUser = localStorage.getItem('currentUser');
     if (currentUser) {
         const user = JSON.parse(currentUser);
@@ -113,117 +91,82 @@ function initApp() {
     }
 }
 
-function initSpeechRecognition() {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
-    if (!SpeechRecognition) {
-        recognition = null;
-        return;
-    }
-
-    recognition = new SpeechRecognition();
-    recognition.continuous = true;
-    recognition.interimResults = true;
-    recognition.maxAlternatives = 1;
-    recognition.lang = speechRecognitionLang;
-
-    recognition.onstart = () => {
-        isRecording = true;
-        finalTranscript = '';
-        if (voiceBtn) voiceBtn.classList.add('recording');
-    };
-
-    recognition.onresult = (event) => {
-        let interimTranscript = '';
-
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-            const transcript = event.results[i][0].transcript;
-            if (event.results[i].isFinal) {
-                finalTranscript += transcript + ' ';
-            } else {
-                interimTranscript += transcript;
-            }
-        }
-
-        if (chatInput) {
-            chatInput.value = (finalTranscript + interimTranscript).trim();
-            chatInput.style.height = 'auto';
-            chatInput.style.height = (chatInput.scrollHeight) + 'px';
-        }
-    };
-
-    recognition.onerror = (event) => {
-        console.error('Speech recognition error:', event.error);
-        isRecording = false;
-        if (voiceBtn) voiceBtn.classList.remove('recording');
-    };
-
-    recognition.onend = () => {
-        isRecording = false;
-        if (voiceBtn) voiceBtn.classList.remove('recording');
-    };
-}
-
 // Authentication Functions
 function handleLogin(e) {
     e.preventDefault();
-
+    
     const name = document.getElementById('login-name').value.trim();
     const fishermanId = document.getElementById('login-fisherman-id').value.trim();
     const password = document.getElementById('login-password').value.trim();
-
+    
     if (!name || !fishermanId || !password) {
         alert("Please fill out all fields.");
         return;
     }
-
+    
+    // In a real application, you would validate credentials against a server
+    // For this demo, we'll simulate a successful login
     const user = {
         name,
         fishermanId,
-        location: 'Unknown'
+        location: 'Unknown' // In a real app, this would come from the server
     };
-
+    
+    // Save user to local storage
     localStorage.setItem('currentUser', JSON.stringify(user));
+    
+    // Show chat interface
     showChatInterface(user);
     appendSystemMessage(`Welcome back, ${name}! 👋`);
 }
 
 function handleSignup(e) {
     e.preventDefault();
-
+    
     const name = document.getElementById('signup-name').value.trim();
     const fishermanId = document.getElementById('signup-fisherman-id').value.trim();
     const country = document.getElementById('signup-country').value;
     const location = document.getElementById('signup-location').value.trim();
     const password = document.getElementById('signup-password').value.trim();
     const confirmPassword = document.getElementById('signup-confirm-password').value.trim();
-
+    
     if (!name || !fishermanId || !country || !location || !password || !confirmPassword) {
         alert("Please fill out all fields.");
         return;
     }
-
+    
+    // Validate passwords match
     if (password !== confirmPassword) {
         alert('Passwords do not match!');
         return;
     }
-
+    
+    // In a real application, you would send this data to a server
+    // For this demo, we'll simulate a successful signup
     const user = {
         name,
         fishermanId,
         country,
         location
     };
-
+    
+    // Save user to local storage
     localStorage.setItem('currentUser', JSON.stringify(user));
+    
+    // Show chat interface
     showChatInterface(user);
     appendSystemMessage(`Welcome aboard, ${name}! 🎣`);
 }
 
 function logout() {
+    // Clear user data
     localStorage.removeItem('currentUser');
     localStorage.removeItem('chatHistory');
+    
+    // Append system message (though chat is hidden, for consistency)
     appendSystemMessage("You have logged out successfully.");
+    
+    // Show login screen
     showLogin();
 }
 
@@ -244,37 +187,36 @@ function showChatInterface(user) {
     document.getElementById('login-container').classList.add('hidden');
     document.getElementById('signup-container').classList.add('hidden');
     document.getElementById('chat-container').classList.remove('hidden');
+    
+    // Update user name display
     document.getElementById('user-name-display').textContent = user.name;
 }
 
 // Chat Functions
 async function handleChatSubmit(e) {
     e.preventDefault();
-
+    
     let message = chatInput.value.trim();
-    message = message
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
+    // Sanitize: Escape HTML/JS to prevent XSS
+    message = message.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 
     if (!message) return;
-
-    if (!currentChatId) {
-        createNewChat();
-    }
-
+    
+    // Add user message to chat
     addMessage(message, 'user');
+    
+    // Clear input
     chatInput.value = '';
     chatInput.style.height = 'auto';
-
+    
+    // Send message
     await sendMessage(message);
 }
 
 async function sendMessage(message) {
+    // Show typing indicator
     showTypingIndicator();
-
+    
     try {
         const response = await fetch(`${BACKEND_URL}/chat`, {
             method: "POST",
@@ -288,65 +230,73 @@ async function sendMessage(message) {
 
         const data = await response.json();
         removeTypingIndicator();
-        addMessage(data.reply, 'bot');
+        addMessage(data.reply, 'bot', data.kg_context || '');
+
+        // Handle audio response if toggle is enabled
+
+        // Save chat to history
         saveChatToHistory(message, data.reply);
     } catch (err) {
         console.error("Chatbot fetch error:", err);
         removeTypingIndicator();
-        const errorReply = "⚠️ Couldn't reach the chatbot server. Please ensure it's running.";
-        addMessage(errorReply, 'bot');
-        saveChatToHistory(message, errorReply);
+        addMessage("⚠️ Couldn't reach the chatbot server. Please ensure it's running.", 'bot');
     }
 }
 
-function addMessage(content, sender) {
+function addMessage(content, sender, kgContext = '') {
     const messageDiv = document.createElement('div');
     messageDiv.classList.add('message', `${sender}-message`);
-
+    if (kgContext) messageDiv.dataset.kgContext = kgContext;
+    
     const messageContent = document.createElement('div');
     messageContent.classList.add('message-content');
     messageContent.textContent = content;
-
+    
     messageDiv.appendChild(messageContent);
-
+    
     const timestampSpan = document.createElement('span');
     timestampSpan.classList.add('timestamp');
     timestampSpan.textContent = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
     messageDiv.appendChild(timestampSpan);
-
+    
+    // Add feedback buttons for bot messages
     if (sender === 'bot') {
         const feedbackDiv = document.createElement('div');
         feedbackDiv.classList.add('message-feedback');
-
+        
         const thumbsUpBtn = document.createElement('button');
         thumbsUpBtn.classList.add('feedback-btn', 'thumbs-up');
         thumbsUpBtn.innerHTML = '<i class="fas fa-thumbs-up"></i>';
         thumbsUpBtn.addEventListener('click', () => handleFeedback(messageDiv, true));
-
+        
         const thumbsDownBtn = document.createElement('button');
         thumbsDownBtn.classList.add('feedback-btn', 'thumbs-down');
         thumbsDownBtn.innerHTML = '<i class="fas fa-thumbs-down"></i>';
         thumbsDownBtn.addEventListener('click', () => handleFeedback(messageDiv, false));
-
+        
         feedbackDiv.appendChild(thumbsUpBtn);
         feedbackDiv.appendChild(thumbsDownBtn);
         messageDiv.appendChild(feedbackDiv);
     }
-
+    
     chatMessages.appendChild(messageDiv);
+    
+    // Scroll to bottom
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
 function showTypingIndicator() {
     const typingDiv = document.createElement('div');
     typingDiv.classList.add('message', 'bot-message', 'typing-indicator');
-
+    
     const typingContent = document.createElement('div');
     typingContent.classList.add('message-content');
     typingContent.innerHTML = '<span class="dot"></span><span class="dot"></span><span class="dot"></span>';
-
+    
     typingDiv.appendChild(typingContent);
     chatMessages.appendChild(typingDiv);
+    
+    // Scroll to bottom
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
@@ -357,87 +307,85 @@ function removeTypingIndicator() {
     }
 }
 
+// Text-to-Speech (TTS) for English
+
+
+// Handle Audio Response from Server
+
 // Feedback Functions
 async function handleFeedback(messageDiv, isPositive) {
     const thumbsUp = messageDiv.querySelector('.thumbs-up');
     const thumbsDown = messageDiv.querySelector('.thumbs-down');
-
+    
+    // Reset both buttons
     thumbsUp.classList.remove('active', 'thumbs-up-animation');
     thumbsDown.classList.remove('active', 'thumbs-down-animation');
-
+    
     const reportedMessage = messageDiv.querySelector('.message-content').textContent;
-
+    
     if (isPositive) {
+        // Thumbs up was clicked
         thumbsUp.classList.add('active', 'thumbs-up-animation');
         thumbsUp.style.color = 'var(--secondary-color)';
-
+        
+        // Send positive feedback to server
         await sendFeedback({
             type: 'positive',
-            message: reportedMessage
+            message: reportedMessage,
+            kg_context: messageDiv.dataset.kgContext || ''
         });
     } else {
+        // Thumbs down was clicked
         thumbsDown.classList.add('active', 'thumbs-down-animation');
         thumbsDown.style.color = 'var(--danger-color)';
-        showFeedbackPopup(reportedMessage);
+        
+        // Show feedback popup
+        showFeedbackPopup(reportedMessage, messageDiv.dataset.kgContext || '');
     }
 }
 
-function showFeedbackPopup(message) {
+function showFeedbackPopup(message, kgContext = '') {
+    // Store the message being reported
     feedbackPopup.dataset.reportedMessage = message;
+    feedbackPopup.dataset.kgContext = kgContext;
+    
+    // Show popup and overlay
     feedbackPopup.classList.remove('hidden');
     overlay.classList.remove('hidden');
 }
 
 function closeFeedbackPopup() {
+    // Hide popup and overlay
     feedbackPopup.classList.add('hidden');
     overlay.classList.add('hidden');
+    
+    // Reset form
     document.getElementById('feedback-form').reset();
-}
-
-function openVoicePopup() {
-    if (!recognition) {
-        alert("Your browser does not support voice input.");
-        return;
-    }
-
-    if (voicePopup && overlay) {
-        recognition.lang = speechRecognitionLang;
-        finalTranscript = '';
-        recognition.start();
-        voicePopup.classList.remove('hidden');
-        overlay.classList.remove('hidden');
-    }
-}
-
-function closeVoicePopup() {
-    if (voicePopup && overlay) {
-        if (recognition && isRecording) {
-            recognition.stop();
-        }
-        voicePopup.classList.add('hidden');
-        overlay.classList.add('hidden');
-        if (chatInput) {
-            chatInput.focus();
-        }
-    }
 }
 
 async function handleFeedbackSubmit(e) {
     e.preventDefault();
-
+    
+    // Get selected feedback option
     const feedbackOption = document.querySelector('input[name="feedback"]:checked');
     const feedbackText = document.getElementById('feedback-text').value;
     const reportedMessage = feedbackPopup.dataset.reportedMessage;
-
+    
     const feedbackData = {
         type: 'negative',
         reason: feedbackOption ? feedbackOption.value : 'not specified',
         comments: feedbackText,
-        message: reportedMessage
+        message: reportedMessage,
+        kg_context: feedbackPopup.dataset.kgContext || ''
     };
-
+    
+    // Send feedback to server
     await sendFeedback(feedbackData);
+    
+    // Close popup
     closeFeedbackPopup();
+    
+    // Show thank you message
     alert('Thank you for your feedback!');
 }
 
@@ -450,26 +398,31 @@ async function sendFeedback(feedbackData) {
             },
             body: JSON.stringify(feedbackData),
         });
-
+        
         if (!response.ok) {
             throw new Error('Failed to save feedback');
         }
-
+        
         console.log('Feedback saved successfully');
     } catch (error) {
         console.error('Error saving feedback:', error);
+        // Optionally show error to user
+        // alert('Failed to save feedback. Please try again.');
     }
 }
 
 // Chat History Functions
 function createNewChat() {
+    // Clear current chat
     chatMessages.innerHTML = '';
-
+    
+    // Add welcome message
     const welcomeDiv = document.createElement('div');
     welcomeDiv.classList.add('welcome-message');
     welcomeDiv.innerHTML = '<h1>Welcome to FisherMen Chatbot</h1><p>How can I assist you today?</p>';
     chatMessages.appendChild(welcomeDiv);
-
+    
+    // Add new chat to history
     const chatId = 'chat_' + Date.now();
     const newChat = {
         id: chatId,
@@ -477,67 +430,70 @@ function createNewChat() {
         timestamp: Date.now(),
         messages: []
     };
-
-    currentChatId = chatId;
-
-    const history = getChatHistory();
-    history.unshift(newChat);
-    localStorage.setItem('chatHistory', JSON.stringify(history));
-
+    
+    // Save to local storage
+    const chatHistory = getChatHistory();
+    chatHistory.unshift(newChat);
+    localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+    
+    // Update chat history UI
     updateChatHistoryUI();
 }
 
 function saveChatToHistory(userMessage, botResponse) {
-    let history = getChatHistory();
-
-    if (history.length === 0) {
+    let chatHistory = getChatHistory();
+    
+    // If no chats exist, create a new one
+    if (chatHistory.length === 0) {
         createNewChat();
-        history = getChatHistory();
+        chatHistory = getChatHistory();
     }
-
-    let currentChat = history.find(chat => chat.id === currentChatId);
-
-    if (!currentChat) {
-        currentChat = history[0];
-        currentChatId = currentChat.id;
-    }
-
+    
+    // Add messages to the most recent chat
+    const currentChat = chatHistory[0];
     currentChat.messages.push(
         { sender: 'user', content: userMessage },
         { sender: 'bot', content: botResponse }
     );
-
+    
+    // Update chat title based on first user message if it's still "New Chat"
     if (currentChat.title === 'New Chat' && currentChat.messages.length === 2) {
         currentChat.title = userMessage.substring(0, 30) + (userMessage.length > 30 ? '...' : '');
     }
-
-    currentChat.timestamp = Date.now();
-
-    localStorage.setItem('chatHistory', JSON.stringify(history));
+    
+    // Save to local storage
+    localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+    
+    // Update chat history UI
     updateChatHistoryUI();
 }
 
 function loadChatHistory() {
-    const history = getChatHistory();
-
-    if (history.length === 0) {
+    const chatHistory = getChatHistory();
+    
+    if (chatHistory.length === 0) {
+        // If no chat history, create a new chat
         createNewChat();
     } else {
-        currentChatId = history[0].id;
-        loadChat(history[0]);
+        // Load the most recent chat
+        loadChat(chatHistory[0]);
+        
+        // Update chat history UI
         updateChatHistoryUI();
     }
 }
 
 function loadChat(chat) {
-    currentChatId = chat.id;
+    // Clear current chat
     chatMessages.innerHTML = '';
-
+    
+    // Load messages
     if (chat.messages && chat.messages.length > 0) {
         chat.messages.forEach(message => {
             addMessage(message.content, message.sender);
         });
     } else {
+        // Add welcome message if no messages
         const welcomeDiv = document.createElement('div');
         welcomeDiv.classList.add('welcome-message');
         welcomeDiv.innerHTML = '<h1>Welcome to FisherMen Chatbot</h1><p>How can I assist you today?</p>';
@@ -546,104 +502,121 @@ function loadChat(chat) {
 }
 
 function updateChatHistoryUI() {
-    const history = getChatHistory();
-    history.sort((a, b) => b.timestamp - a.timestamp);
-
+    const chatHistory = getChatHistory();
+    chatHistory.sort((a, b) => b.timestamp - a.timestamp);
+    
+    // Clear current history
     document.getElementById('chat-history').innerHTML = '';
-
-    history.forEach(chat => {
+    
+    // Add each chat to the sidebar
+    chatHistory.forEach(chat => {
         const chatItem = document.createElement('div');
         chatItem.classList.add('chat-item');
         chatItem.dataset.chatId = chat.id;
-
-        if (chat.id === currentChatId) {
-            chatItem.classList.add('active');
-        }
-
+        
         chatItem.innerHTML = `
             <i class="fas fa-comment"></i>
             <div class="chat-item-title">${chat.title}</div>
         `;
-
+        
         chatItem.addEventListener('click', () => {
-            const latestHistory = getChatHistory();
-            const latestChat = latestHistory.find(item => item.id === chat.id);
-            loadChat(latestChat || chat);
+            // Load this chat
+            loadChat(chat);
 
+            // Update active state
             document.querySelectorAll('.chat-item').forEach(item => {
                 item.classList.remove('active');
             });
             chatItem.classList.add('active');
 
-            if (window.innerWidth <= 768 && sidebar) {
-                sidebar.classList.remove('expanded');
+            // Auto-collapse sidebar on mobile after selecting a chat
+            if (window.innerWidth <= 768) {
+                document.querySelector('.sidebar').classList.remove('expanded');
             }
         });
-
+        
         document.getElementById('chat-history').appendChild(chatItem);
     });
-
-    if (!currentChatId && history.length > 0) {
-        currentChatId = history[0].id;
-        const firstItem = document.querySelector('.chat-item');
-        if (firstItem) firstItem.classList.add('active');
+    
+    // Set first chat as active
+    if (chatHistory.length > 0) {
+        document.querySelector('.chat-item').classList.add('active');
     }
 }
+// Export chat
+document.getElementById('export-chat').addEventListener('click', () => {
+  const chatHistory = getChatHistory();
+  if (!chatHistory.length) {
+    alert('No chat history to export. Start a conversation first.');
+    return;
+  }
+  const currentChat = chatHistory[0];
+  const safeTitle = (currentChat.title || 'chat').replace(/[^a-z0-9]/gi, '_');
+  const dataStr = JSON.stringify(currentChat, null, 2);
+  const blob = new Blob([dataStr], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `fishermen-chat-${safeTitle}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
 
 function searchChatHistory() {
     const searchTerm = document.getElementById('search-chats').value.toLowerCase();
-    const history = getChatHistory();
-
-    const filteredChats = history.filter(chat =>
-        chat.title.toLowerCase().includes(searchTerm) ||
+    const chatHistory = getChatHistory();
+    
+    // Filter chats based on search term
+    const filteredChats = chatHistory.filter(chat => 
+        chat.title.toLowerCase().includes(searchTerm) || 
         chat.messages.some(msg => msg.content.toLowerCase().includes(searchTerm))
     );
-
+    
+    // Clear current history
     document.getElementById('chat-history').innerHTML = '';
-
+    
+    // Add filtered chats to the sidebar
     filteredChats.forEach(chat => {
         const chatItem = document.createElement('div');
         chatItem.classList.add('chat-item');
         chatItem.dataset.chatId = chat.id;
-
-        if (chat.id === currentChatId) {
-            chatItem.classList.add('active');
-        }
-
+        
         chatItem.innerHTML = `
             <i class="fas fa-comment"></i>
             <div class="chat-item-title">${chat.title}</div>
         `;
-
+        
         chatItem.addEventListener('click', () => {
-            const latestHistory = getChatHistory();
-            const latestChat = latestHistory.find(item => item.id === chat.id);
-            loadChat(latestChat || chat);
+            // Load this chat
+            loadChat(chat);
 
+            // Update active state
             document.querySelectorAll('.chat-item').forEach(item => {
                 item.classList.remove('active');
             });
             chatItem.classList.add('active');
 
-            if (window.innerWidth <= 768 && sidebar) {
-                sidebar.classList.remove('expanded');
+            // Auto-collapse sidebar on mobile after selecting a chat
+            if (window.innerWidth <= 768) {
+                document.querySelector('.sidebar').classList.remove('expanded');
             }
         });
-
+        
         document.getElementById('chat-history').appendChild(chatItem);
     });
 }
 
 function getChatHistory() {
-    const history = localStorage.getItem('chatHistory');
-    return history ? JSON.parse(history) : [];
+    const chatHistory = localStorage.getItem('chatHistory');
+    return chatHistory ? JSON.parse(chatHistory) : [];
 }
 
 // Utility Functions
 function togglePasswordVisibility(inputId) {
     const input = document.getElementById(inputId);
     const icon = input.nextElementSibling.querySelector('i');
-
+    
     if (input.type === 'password') {
         input.type = 'text';
         icon.classList.remove('fa-eye');
@@ -668,4 +641,3 @@ window.togglePasswordVisibility = togglePasswordVisibility;
 window.showSignup = showSignup;
 window.showLogin = showLogin;
 window.logout = logout;
-window.closeFeedbackPopup = closeFeedbackPopup;

@@ -17,14 +17,6 @@
     --transition-standard: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-:root.dark {
-    --background-color: #121212;
-    --background-secondary: #1e1e1e;
-    --text-color: #e8eaed;
-    --text-secondary: #9aa0a6;
-    --border-color: #333;
-}
-
 * {
     margin: 0;
     padding: 0;
@@ -54,7 +46,6 @@ h1, h2, h3, h4, h5, h6 {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    min-height: 100dvh;
     padding: 20px;
     background: linear-gradient(135deg, rgba(26, 115, 232, 0.05) 0%, rgba(0, 184, 212, 0.05) 100%);
 }
@@ -84,6 +75,7 @@ h1, h2, h3, h4, h5, h6 {
     transform: translateY(0);
 }
 
+/* Button ripple effect */
 .btn-primary::after {
     content: '';
     position: absolute;
@@ -211,7 +203,6 @@ select {
     font-size: 16px;
     transition: var(--transition-standard);
     background-color: rgba(255, 255, 255, 0.8);
-    color: var(--text-color);
 }
 
 input[type="text"]:focus,
@@ -222,13 +213,6 @@ select:focus {
     outline: none;
     box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.2);
     background-color: white;
-}
-
-:root.dark input[type="text"]:focus,
-:root.dark input[type="password"]:focus,
-:root.dark textarea:focus,
-:root.dark select:focus {
-    background-color: #202124;
 }
 
 .toggle-password {
@@ -267,11 +251,9 @@ select:focus {
 .chat-container {
     display: flex;
     height: 100vh;
-    height: 100dvh;
     width: 100%;
     overflow: hidden;
     background: linear-gradient(135deg, rgba(26, 115, 232, 0.03) 0%, rgba(0, 184, 212, 0.03) 100%);
-    position: relative;
 }
 
 .sidebar {
@@ -282,10 +264,6 @@ select:focus {
     flex-direction: column;
     transition: var(--transition-standard);
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
-}
-
-.sidebar-toggle {
-    display: none;
 }
 
 .sidebar-header {
@@ -364,7 +342,6 @@ select:focus {
     border: none;
     width: 100%;
     font-size: 14px;
-    color: var(--text-color);
 }
 
 .search-box input:focus {
@@ -414,7 +391,6 @@ select:focus {
     border-top: 1px solid var(--border-color);
     display: flex;
     align-items: center;
-    gap: 8px;
 }
 
 .user-avatar {
@@ -425,7 +401,7 @@ select:focus {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-right: 4px;
+    margin-right: 12px;
     transition: var(--transition-standard);
 }
 
@@ -442,7 +418,6 @@ select:focus {
     font-weight: 500;
 }
 
-.dark-toggle,
 .logout-btn {
     background: none;
     border: none;
@@ -450,12 +425,6 @@ select:focus {
     cursor: pointer;
     font-size: 16px;
     transition: var(--transition-standard);
-    padding: 4px;
-}
-
-.dark-toggle:hover {
-    color: var(--primary-color);
-    transform: scale(1.1);
 }
 
 .logout-btn:hover {
@@ -468,7 +437,6 @@ select:focus {
     display: flex;
     flex-direction: column;
     background-color: var(--background-secondary);
-    min-height: 0;
 }
 
 .chat-messages {
@@ -477,7 +445,6 @@ select:focus {
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    min-height: 0;
 }
 
 .welcome-message {
@@ -503,6 +470,7 @@ select:focus {
     max-width: 80%;
 }
 
+/* Message animations */
 .user-message, .bot-message {
     animation: messageAppear 0.3s ease-out;
 }
@@ -602,7 +570,6 @@ select:focus {
     padding: 8px 16px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     transition: var(--transition-standard);
-    gap: 4px;
 }
 
 .chat-input-box:focus-within {
@@ -617,7 +584,6 @@ select:focus {
     resize: none;
     padding: 8px 0;
     max-height: 150px;
-    color: var(--text-color);
 }
 
 .chat-input-box textarea:focus {
@@ -625,39 +591,19 @@ select:focus {
     box-shadow: none;
 }
 
-.voice-btn,
-.send-btn,
-.export-btn {
+.send-btn {
     background: none;
     border: none;
-    color: var(--text-secondary);
+    color: var(--primary-color);
     font-size: 18px;
     cursor: pointer;
     padding: 8px;
     transition: var(--transition-standard);
 }
 
-.send-btn {
-    color: var(--primary-color);
-}
-
-.voice-btn:hover,
-.send-btn:hover,
-.export-btn:hover {
-    transform: scale(1.2);
-}
-
-.voice-btn:hover,
 .send-btn:hover {
     color: var(--primary-dark);
-}
-
-.export-btn:hover {
-    color: var(--secondary-color);
-}
-
-.voice-btn.recording {
-    color: var(--danger-color);
+    transform: scale(1.2);
 }
 
 .disclaimer {
@@ -667,6 +613,7 @@ select:focus {
     text-align: center;
 }
 
+/* Typing indicator animation */
 .typing-indicator {
     display: flex;
     align-items: center;
@@ -704,7 +651,7 @@ select:focus {
     }
 }
 
-/* Popups */
+/* Feedback Popup */
 .overlay {
     position: fixed;
     top: 0;
@@ -717,8 +664,7 @@ select:focus {
     backdrop-filter: blur(3px);
 }
 
-.feedback-popup,
-.voice-popup {
+.feedback-popup {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -732,8 +678,7 @@ select:focus {
     to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
 }
 
-.feedback-content,
-.voice-content {
+.feedback-content {
     background-color: var(--background-color);
     border-radius: var(--border-radius);
     padding: 24px;
@@ -742,8 +687,7 @@ select:focus {
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
-.feedback-content h3,
-.voice-content h3 {
+.feedback-content h3 {
     margin-bottom: 16px;
     font-size: 18px;
     color: var(--primary-dark);
@@ -790,46 +734,14 @@ select:focus {
     box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.2);
 }
 
-.feedback-buttons,
-.voice-buttons {
+.feedback-buttons {
     display: flex;
     justify-content: flex-end;
     gap: 12px;
 }
 
-.voice-content {
-    max-width: 420px;
-    text-align: center;
-}
-
-.voice-bars {
-    height: 80px;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    gap: 8px;
-    margin: 20px 0 24px;
-}
-
-.voice-bar {
-    width: 10px;
-    height: 24px;
-    border-radius: 999px;
-    background: linear-gradient(180deg, var(--accent-color), var(--primary-color));
-    animation: voiceBounce 1s ease-in-out infinite;
-}
-
-.voice-bar:nth-child(1) { animation-delay: 0s; }
-.voice-bar:nth-child(2) { animation-delay: 0.1s; }
-.voice-bar:nth-child(3) { animation-delay: 0.2s; }
-.voice-bar:nth-child(4) { animation-delay: 0.3s; }
-.voice-bar:nth-child(5) { animation-delay: 0.2s; }
-.voice-bar:nth-child(6) { animation-delay: 0.1s; }
-.voice-bar:nth-child(7) { animation-delay: 0s; }
-
-@keyframes voiceBounce {
-    0%, 100% { height: 20px; }
-    50% { height: 64px; }
+.sidebar-toggle {
+    display: none;
 }
 
 /* Responsive Styles */
@@ -837,50 +749,41 @@ select:focus {
     .chat-container {
         flex-direction: column;
     }
-
+    
     .sidebar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 300px;
-        max-width: 80vw;
-        height: 100vh;
-        height: 100dvh;
-        transform: translateX(-100%);
-        overflow-y: auto;
-        z-index: 20;
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        width: 100%;
+        height: auto;
+        max-height: 60px;
+        overflow: hidden;
+        transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
-
+    
     .sidebar.expanded {
-        transform: translateX(0);
+        max-height: 100vh;
+        overflow-y: auto;
     }
-
+    
     .sidebar-toggle {
         display: block;
-        position: fixed;
+        position: absolute;
         top: 15px;
-        left: 15px;
-        z-index: 30;
-        background: white;
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
+        right: 15px;
+        z-index: 10;
+        background: none;
+        border: none;
         color: var(--primary-color);
         font-size: 20px;
         cursor: pointer;
-        padding: 10px 12px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     }
-
+    
     .main-chat {
-        height: 100vh;
-        height: 100dvh;
+        height: calc(100vh - 60px);
     }
-
+    
     .form-container {
         padding: 24px;
     }
-
+    
     .message {
         max-width: 90%;
     }
@@ -890,35 +793,54 @@ select:focus {
     .form-container {
         padding: 20px;
     }
-
-    .btn-primary,
-    .btn-secondary {
+    
+    .btn-primary, .btn-secondary {
         padding: 10px 16px;
         font-size: 14px;
     }
-
+    
     .logo img {
         width: 60px;
         height: 60px;
     }
-
+    
     .logo h1 {
         font-size: 20px;
     }
-
+    
     h2 {
         font-size: 20px;
     }
-
+    
     .welcome-message h1 {
         font-size: 24px;
     }
-
+    
     .welcome-message p {
         font-size: 16px;
     }
-
-    .voice-content {
-        width: calc(100vw - 32px);
-    }
 }
+/* Dark mode vars */
+:root.dark {
+  --background-color: #121212;
+  --background-secondary: #1e1e1e;
+  --text-color: #e8eaed;
+  --text-secondary: #9aa0a6;
+  --border-color: #333;
+}
+.dark-toggle {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px;
+  transition: 0.3s;
+}
+.dark-toggle:hover { color: var(--primary-color); transform: scale(1.1); }
+
+.export-btn {
+  background: none; border: none; color: var(--text-secondary);
+  cursor: pointer; font-size: 18px; padding: 8px; transition: 0.3s;
+}
+.export-btn:hover { color: var(--secondary-color); transform: scale(1.2); }

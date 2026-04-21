@@ -20,6 +20,7 @@
                 <th>Reason</th>
                 <th>Comments</th>
                 <th>Message</th>
+                <th>Knowledge Graph Context</th>
                 <th>Timestamp</th>
             </tr>
         </thead>
@@ -46,6 +47,7 @@
                         <td>${fb.reason || 'N/A'}</td>
                         <td>${fb.comments || 'N/A'}</td>
                         <td>${fb.message}</td>
+                        <td><pre style="white-space:pre-wrap;margin:0;font-size:0.8em">${fb.kg_context || 'N/A'}</pre></td>
                         <td>${new Date(fb.timestamp).toLocaleString()}</td>
                     `;
                     tbody.appendChild(tr);

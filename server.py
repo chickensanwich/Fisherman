@@ -6,6 +6,8 @@ from deep_translator import GoogleTranslator
 import requests
 import langdetect
 import os
+import json
+from datetime import datetime, timezone
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -20,7 +22,7 @@ app.add_middleware(
 )
 
 OLLAMA_URL = "http://localhost:11434/api/chat"
-MODEL_NAME = "gemma3:1b"
+MODEL_NAME = "gemma3:4b"
 
 
 NEO4J_URI = "bolt://localhost:7687"
@@ -40,6 +42,7 @@ class FeedbackRequest(BaseModel):
     reason: str = ""
     comments: str = ""
     message: str = ""
+    kg_context: str = ""
 
 
 # --- Language Detection ---
@@ -109,7 +112,7 @@ async def chat(request: ChatRequest):
             if is_bangla else
             "Sorry, I don't have information on that topic in my knowledge base."
         )
-        return {"reply": no_info_reply}
+        return {"reply": no_info_reply, "kg_context": ""}
 
     language_instruction = (
         "You MUST reply in Bangla script only. Do not use English in your response."
@@ -150,7 +153,7 @@ async def chat(request: ChatRequest):
             reply = translate(reply, source="en", target="bn")
 
         conversation_history.append({"role": "assistant", "content": reply})
-        return {"reply": reply}
+        return {"reply": reply, "kg_context": kg_context}
 
     except requests.exceptions.ConnectionError:
         raise HTTPException(status_code=503, detail="Ollama is not running.")
@@ -158,10 +161,35 @@ async def chat(request: ChatRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+FEEDBACK_FILE = "feedback.json"
+
 @app.post("/feedback")
 async def feedback(request: FeedbackRequest):
-    print(f"[FEEDBACK] type={request.type}, reason={request.reason}, message={request.message}")
+    entry = {
+        "type": request.type,
+        "reason": request.reason,
+        "comments": request.comments,
+        "message": request.message,
+        "kg_context": request.kg_context,
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    }
+    try:
+        with open(FEEDBACK_FILE, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        data = []
+    data.append(entry)
+    with open(FEEDBACK_FILE, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
     return {"status": "ok"}
+
+@app.get("/feedbacks")
+async def get_feedbacks():
+    try:
+        with open(FEEDBACK_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return []
 
 
 @app.on_event("shutdown")

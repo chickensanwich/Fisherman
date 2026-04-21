@@ -1,0 +1,18 @@
+[
+  {
+    "type": "negative",
+    "reason": "incorrect",
+    "comments": "Information given was incorrect",
+    "message": "আপনি টোপযুক্ত হুক দিয়ে দীর্ঘ লাইনে মাছ ধরা, বা একটি বড় মোটর চালিত জাহাজ এবং লাইসেন্স সহ গভীর সমুদ্রে ট্রলিং ব্যবহার করতে পারেন।",
+    "kg_context": "",
+    "timestamp": "2026-04-17T00:36:00.005744+00:00"
+  },
+  {
+    "type": "negative",
+    "reason": "incorrect",
+    "comments": "Testing",
+    "message": "আপনি টোপযুক্ত হুক দিয়ে দীর্ঘ লাইনে মাছ ধরা, বা একটি বড় মোটর চালিত জাহাজ এবং লাইসেন্স সহ গভীর সমুদ্রে ট্রলিং ব্যবহার করতে পারেন।",
+    "kg_context": "Relevant knowledge graph context:\n{'months': 'November to February', 'name': 'Winter', 'description': 'Northeast monsoon season; calmest seas; best fishing season; most species abundant'}\n{'months': 'March to May', 'name': 'Summer', 'description': 'Pre-monsoon season; hot weather; moderate fishing activity; hilsa ban in coastal rivers March-April'}\n{'months': 'June to September', 'name': 'Monsoon', 'description': 'Southeast monsoon; rough seas; 65-day national fishing ban enforced; peak hilsa breeding'}\n{'name': 'Hilsa', 'description': 'National fish of Bangladesh; most economically important species; migratory; breeds in freshwater rivers', 'scientific_name': 'Tenualosa ilisha', 'bangla_name': 'Ilish', 'type': 'Marine and riverine'} --[BREEDS_IN]--> {'months': 'June to September', 'name': 'Monsoon', 'description': 'Southeast monsoon; rough seas; 65-day national fishing ban enforced; peak hilsa breeding'}\n{'name': 'Hilsa', 'description': 'National fish of Bangladesh; most economically important species; migratory; breeds in freshwater rivers', 'scientific_name': 'Tenualosa ilisha', 'bangla_name': 'Ilish', 'type': 'Marine and riverine'} --[PEAK_CATCH_IN]--> {'months': 'October to November', 'name': 'Autumn', 'description': 'Post-monsoon season; 22-day hilsa ban in October; seas calming down'}\n{'name': 'Tuna', 'description': 'Yellowfin tuna; found in deep waters of Bay of Bengal; caught by large trawlers; export potential', 'scientific_name': 'Thunnus albacares', 'bangla_name': 'Tuna', 'type': 'Deep-sea marine'} --[AVAILABLE_IN]--> {'months': 'November to February', 'name': 'Winter', 'description': 'Northeast monsoon season; calmest seas; best fishing season; most species abundant'}\n{'name': 'Tuna', 'description': 'Yellowfin tuna; found in deep waters of Bay of Bengal; caught by large trawlers; export potential', 'scientific_name': 'Thunnus albacares', 'bangla_name': 'Tuna', 'type': 'Deep-sea marine'} --[FOUND_IN]--> {'name': 'Bay of Bengal', 'description': 'Primary marine fishing area for Bangladesh; home to hilsa, pomfret, shrimp, tuna; affected by cyclones and monsoon bans', 'type': 'Sea'}\n{'name': 'Bay of Bengal', 'description': 'Primary marine fishing area for Bangladesh; home to hilsa, pomfret, shrimp, tuna; affected by cyclones and monsoon bans', 'type': 'Sea'}\n{'name': 'Long Line', 'description': 'Baited hooks on a long line; used in rivers and sea; effective for large predatory fish like boal and tuna'}\n{'name': 'Deep Sea Trawling', 'description': 'Trawl nets dragged at depth in Bay of Bengal; targets shrimp, pomfret, tuna; requires large motorized vessel and license'} --[PRODUCES]--> {'name': 'Pomfret', 'description': 'High-value marine fish; caught in Bay of Bengal; popular in urban markets; abundance highest in winter', 'scientific_name': 'Pampus argenteus', 'bangla_name': 'Rupchanda', 'type': 'Marine'}",
+    "timestamp": "2026-04-17T00:40:45.807082+00:00"
+  }
+]
