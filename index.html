@@ -76,6 +76,11 @@
         </div>
     </div>
 
+    <!-- Mobile sidebar toggle (visible only on small screens via CSS) -->
+    <button id="sidebar-toggle" class="sidebar-toggle" title="Toggle sidebar">
+        <i class="fas fa-bars"></i>
+    </button>
+
     <div class="chat-container hidden" id="chat-container">
         <div class="sidebar">
             <div class="sidebar-header">
@@ -120,6 +125,9 @@
                 <form id="chat-form">
                     <div class="chat-input-box">
                         <textarea id="chat-input" placeholder="Type your message here..." rows="1"></textarea>
+                        <button type="button" id="voice-btn" class="voice-btn" title="Voice input">
+                            <i class="fas fa-microphone"></i>
+                        </button>
                         <button type="submit" class="send-btn">
                             <i class="fas fa-paper-plane"></i>
                         </button>
@@ -161,6 +169,25 @@
                     <button type="submit" class="btn-primary">Submit</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Voice input popup (sprint2 feature) -->
+    <div class="voice-popup hidden" id="voice-popup">
+        <div class="voice-content">
+            <h3>Listening...</h3>
+            <div class="voice-bars">
+                <div class="voice-bar"></div>
+                <div class="voice-bar"></div>
+                <div class="voice-bar"></div>
+                <div class="voice-bar"></div>
+                <div class="voice-bar"></div>
+                <div class="voice-bar"></div>
+                <div class="voice-bar"></div>
+            </div>
+            <div class="voice-buttons">
+                <button id="voice-done-btn" class="btn-primary">Done</button>
+            </div>
         </div>
     </div>
 
