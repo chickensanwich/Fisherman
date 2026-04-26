@@ -10,3 +10,6 @@ deep-translator
 langdetect
 httpx
 ollama
+requests
+faster-whisper
+python-dotenv

@@ -16,6 +16,9 @@ from deep_translator import GoogleTranslator
 import requests
 import langdetect
 from bson import ObjectId
+from fastapi import File, UploadFile
+import tempfile
+from faster_whisper import WhisperModel
 
 load_dotenv()
 
@@ -42,6 +45,10 @@ NEO4J_URI = "bolt://localhost:7687"
 NEO4J_USER = "neo4j"
 NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD", "nej4nej4")
 
+# ====================== WHISPER MODEL ======================
+print("Loading Whisper model...")
+whisper_model = WhisperModel("large-v3", device="cpu", compute_type="int8") 
+print("Whisper model loaded!")
 # ====================== DATABASES ======================
 client = AsyncIOMotorClient(MONGODB_URL)
 db = client["fishermen_chatbot"]
@@ -241,6 +248,31 @@ async def get_current_user_info(token: str = Depends(oauth2_scheme)):
         "name": user.get("name", "Fisherman"),
         "fisherman_id": user.get("fisherman_id")
     }
+    
+# ====================== WHISPER TRANSCRIPTION ======================
+@app.post("/transcribe")
+async def transcribe_audio(audio: UploadFile = File(...), token: str = Depends(oauth2_scheme)):
+    # Verify user token to secure the endpoint
+    await get_current_user(token)
+    
+    # Save the incoming WebM audio to a temporary file
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".webm") as tmp:
+        tmp.write(await audio.read())
+        tmp_path = tmp.name
+
+    try:
+        # Run Whisper transcription in a background thread to prevent blocking FastAPI
+        segments, info = await asyncio.to_thread(whisper_model.transcribe, tmp_path, beam_size=5)
+        transcript = " ".join([segment.text for segment in segments])
+        
+        return {"text": transcript.strip(), "language": info.language}
+    except Exception as e:
+        print(f"Transcription error: {e}")
+        raise HTTPException(status_code=500, detail="Transcription failed")
+    finally:
+        # Clean up the temporary audio file
+        if os.path.exists(tmp_path):
+            os.unlink(tmp_path)
 # ====================== CHAT HISTORY ======================
 @app.get("/chats")
 async def get_user_chats(token: str = Depends(oauth2_scheme)):
@@ -260,7 +292,7 @@ async def create_new_chat(token: str = Depends(oauth2_scheme)):
         "user_id": user_id,
         "title": "New Chat",
         "messages": [],
-        "pinned": False,          # ← NEW
+        "pinned": False,          #  NEW
         "created_at": datetime.utcnow(),
         "updated_at": datetime.utcnow()
     }

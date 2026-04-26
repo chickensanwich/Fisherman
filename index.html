@@ -172,21 +172,25 @@
         </div>
     </div>
 
-    <!-- Voice input popup (sprint2 feature) -->
     <div class="voice-popup hidden" id="voice-popup">
         <div class="voice-content">
-            <h3>Listening...</h3>
-            <div class="voice-bars">
-                <div class="voice-bar"></div>
-                <div class="voice-bar"></div>
-                <div class="voice-bar"></div>
-                <div class="voice-bar"></div>
-                <div class="voice-bar"></div>
-                <div class="voice-bar"></div>
-                <div class="voice-bar"></div>
+            <div class="voice-header" style="justify-content: flex-end;">
+                <button id="voice-close-btn" class="icon-btn" title="Cancel" onclick="closeVoicePopup()">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            <div class="voice-buttons">
-                <button id="voice-done-btn" class="btn-primary">Done</button>
+            
+            <div class="voice-body">
+                <p id="live-transcript" class="live-transcript">Speak now...</p>
+            </div>
+            
+            <div class="voice-footer">
+                <button id="voice-mic-active" class="pulsing-mic" onclick="stopListening()">
+                    <i class="fas fa-microphone"></i>
+                </button>
+                <button id="voice-send-btn" class="btn-primary send-btn hidden" onclick="sendVoiceMessage()">
+                    <i class="fas fa-paper-plane"></i> Send
+                </button>
             </div>
         </div>
     </div>

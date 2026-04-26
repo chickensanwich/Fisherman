@@ -90,77 +90,135 @@ async function initApp() {
     }
 }
 
-// ==================== VOICE INPUT (Sprint2) ====================
+// ==================== VOICE INPUT (WHISPER) ====================
+let liveTranscriptEl, voiceMicActive, voiceSendBtn;
+let mediaRecorder;
+let audioChunks = [];
+
 function initSpeechRecognition() {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-        recognition = null;
-        return;
+    liveTranscriptEl = document.getElementById('live-transcript');
+    voiceMicActive = document.getElementById('voice-mic-active');
+    voiceSendBtn = document.getElementById('voice-send-btn');
+
+    // Hide mic button if browser doesn't support recording
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        if (voiceBtn) voiceBtn.style.display = 'none';
+        console.error("Audio recording not supported in this browser.");
     }
-
-    recognition = new SpeechRecognition();
-    recognition.continuous = true;
-    recognition.interimResults = true;
-    recognition.maxAlternatives = 1;
-    recognition.lang = speechRecognitionLang;
-
-    recognition.onstart = () => {
-        isRecording = true;
-        finalTranscript = '';
-        if (voiceBtn) voiceBtn.classList.add('recording');
-    };
-
-    recognition.onresult = (event) => {
-        let interimTranscript = '';
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-            const transcript = event.results[i][0].transcript;
-            if (event.results[i].isFinal) {
-                finalTranscript += transcript + ' ';
-            } else {
-                interimTranscript += transcript;
-            }
-        }
-        if (chatInput) {
-            chatInput.value = (finalTranscript + interimTranscript).trim();
-            chatInput.style.height = 'auto';
-            chatInput.style.height = (chatInput.scrollHeight) + 'px';
-        }
-    };
-
-    recognition.onerror = (event) => {
-        console.error('Speech recognition error:', event.error);
-        isRecording = false;
-        if (voiceBtn) voiceBtn.classList.remove('recording');
-    };
-
-    recognition.onend = () => {
-        isRecording = false;
-        if (voiceBtn) voiceBtn.classList.remove('recording');
-    };
 }
 
-function openVoicePopup() {
-    if (!recognition) {
-        alert("Your browser does not support voice input.");
-        return;
-    }
+async function openVoicePopup() {
     if (voicePopup && overlay) {
-        recognition.lang = speechRecognitionLang;
-        finalTranscript = '';
-        recognition.start();
         voicePopup.classList.remove('hidden');
         overlay.classList.remove('hidden');
+        liveTranscriptEl.textContent = 'Initializing mic...';
+        voiceSendBtn.classList.add('hidden');
+        
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+            audioChunks = [];
+
+            mediaRecorder.ondataavailable = event => {
+                if (event.data.size > 0) audioChunks.push(event.data);
+            };
+
+            mediaRecorder.onstop = async () => {
+                // UI changes while waiting for Whisper
+                liveTranscriptEl.textContent = 'Transcribing... please wait';
+                liveTranscriptEl.style.opacity = '0.7';
+                voiceMicActive.classList.remove('listening');
+                
+                const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                await processAudioWithWhisper(audioBlob);
+                
+                // Turn off the mic hardware
+                stream.getTracks().forEach(track => track.stop());
+            };
+
+            mediaRecorder.start();
+            isRecording = true;
+            liveTranscriptEl.textContent = 'Listening...';
+            liveTranscriptEl.style.opacity = '0.5';
+            voiceMicActive.classList.add('listening');
+
+        } catch (err) {
+            console.error("Error accessing mic:", err);
+            liveTranscriptEl.textContent = 'Microphone access denied.';
+            voiceMicActive.classList.remove('listening');
+        }
+    }
+}
+
+function stopListening() {
+    if (isRecording && mediaRecorder && mediaRecorder.state === "recording") {
+        mediaRecorder.stop();
+        isRecording = false;
+    } else {
+        // If they click the mic after it transcribed, let them re-record
+        openVoicePopup();
+    }
+}
+
+async function processAudioWithWhisper(audioBlob) {
+    if (!currentToken) return;
+    
+    const formData = new FormData();
+    formData.append('audio', audioBlob, 'voice.webm');
+
+    try {
+        const res = await fetch(`${BACKEND_URL}/transcribe`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${currentToken}` },
+            body: formData
+        });
+
+        if (!res.ok) throw new Error('Transcription failed');
+        
+        const data = await res.json();
+        if (data.text) {
+            liveTranscriptEl.textContent = data.text;
+            liveTranscriptEl.style.opacity = '1';
+            voiceSendBtn.classList.remove('hidden');
+        } else {
+            liveTranscriptEl.textContent = 'Could not hear you clearly. Try recording again.';
+        }
+    } catch (err) {
+        console.error(err);
+        liveTranscriptEl.textContent = 'Server error during transcription.';
     }
 }
 
 function closeVoicePopup() {
     if (voicePopup && overlay) {
-        if (recognition && isRecording) recognition.stop();
+        if (isRecording && mediaRecorder && mediaRecorder.state === "recording") {
+            // Stop recording but prevent it from sending to backend
+            mediaRecorder.onstop = null; 
+            mediaRecorder.stop();
+            mediaRecorder.stream.getTracks().forEach(track => track.stop());
+            isRecording = false;
+        }
         voicePopup.classList.add('hidden');
         overlay.classList.add('hidden');
         if (chatInput) chatInput.focus();
     }
 }
+
+function sendVoiceMessage() {
+    const textToSend = liveTranscriptEl.textContent.trim();
+    if (!textToSend || textToSend === 'Listening...' || textToSend.includes('Transcribing')) return;
+
+    closeVoicePopup();
+    chatInput.value = textToSend;
+    
+    const submitEvent = new Event('submit', { cancelable: true, bubbles: true });
+    chatForm.dispatchEvent(submitEvent);
+}
+
+// Expose global functions
+window.stopListening = stopListening;
+window.sendVoiceMessage = sendVoiceMessage;
+window.closeVoicePopup = closeVoicePopup;
 
 // ==================== LOAD AND DISPLAY USER NAME ====================
 async function loadUserInfo() {
@@ -213,9 +271,13 @@ async function handleLogin(e) {
         localStorage.setItem('token', currentToken);
 
         showChatInterface();
-        appendSystemMessage("Welcome back! 👋");
         await loadUserChats();
-        await createNewChat();
+        
+        
+        startNewChatUI(); 
+        
+    
+        appendSystemMessage("Welcome back! 👋");
     } catch (err) {
         alert("Login failed: " + err.message);
     }
@@ -251,9 +313,13 @@ async function handleSignup(e) {
         localStorage.setItem('token', currentToken);
 
         showChatInterface();
-        appendSystemMessage(`Welcome aboard, ${name}! 🎣`);
         await loadUserChats();
-        await createNewChat();
+        
+        
+        startNewChatUI(); 
+        
+        
+        appendSystemMessage(`Welcome aboard, ${name}! 🎣`);
     } catch (err) {
         alert("Signup failed: " + err.message);
     }
