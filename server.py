@@ -7,6 +7,7 @@ import requests
 import langdetect
 import os
 import json
+import re
 import hashlib
 from datetime import datetime, timezone
 from pathlib import Path
@@ -63,6 +64,19 @@ def _hash_password(password: str) -> str:
     return hashlib.sha256(password.encode()).hexdigest()
 
 
+def _validate_identifier(name: str) -> str:
+    """Only allow alphanumeric/underscore Neo4j labels and relationship types."""
+    if not re.match(r'^[A-Za-z_][A-Za-z0-9_]*$', name):
+        raise HTTPException(status_code=400, detail=f"Invalid identifier '{name}': use letters, digits, underscores only.")
+    return name
+
+
+def _get_element_id(entity) -> str:
+    if hasattr(entity, 'element_id'):
+        return entity.element_id
+    return str(entity.id)
+
+
 class ChatRequest(BaseModel):
     message: str
 
@@ -71,6 +85,7 @@ class FeedbackRequest(BaseModel):
     reason: str = ""
     comments: str = ""
     message: str = ""
+    userQuestion: str = ""
 
 class SignupRequest(BaseModel):
     name: str
@@ -82,6 +97,20 @@ class SignupRequest(BaseModel):
 class LoginRequest(BaseModel):
     fishermanId: str
     password: str
+
+class CreateNodeRequest(BaseModel):
+    label: str
+    properties: dict = {}
+
+class UpdateNodeRequest(BaseModel):
+    node_id: str
+    properties: dict
+
+class CreateRelationshipRequest(BaseModel):
+    from_id: str
+    to_id: str
+    rel_type: str
+    properties: dict = {}
 
 
 # --- Language Detection ---
@@ -277,11 +306,119 @@ async def feedback(request: FeedbackRequest):
         "reason": request.reason,
         "comments": request.comments,
         "message": request.message,
+        "userQuestion": request.userQuestion,
         "timestamp": datetime.now(timezone.utc).isoformat(),
     })
     _save_feedbacks(feedbacks)
     print(f"[FEEDBACK] type={request.type}, reason={request.reason}, message={request.message}")
     return {"status": "ok"}
+
+
+@app.get("/admin/graph/search")
+async def search_graph_nodes(q: str = ""):
+    results = []
+    with driver.session() as session:
+        keywords = [w for w in q.lower().split() if len(w) > 2] if q.strip() else [""]
+        seen = set()
+        for keyword in keywords[:5]:
+            cypher = (
+                "MATCH (n) WHERE any(prop in keys(n) WHERE toLower(toString(n[prop])) CONTAINS $kw) "
+                "OPTIONAL MATCH (n)-[r]->(m) "
+                "RETURN n, collect({relId: elementId(r), type: type(r), targetId: elementId(m), targetProps: properties(m)}) as rels "
+                "LIMIT 20"
+            ) if keyword else (
+                "MATCH (n) OPTIONAL MATCH (n)-[r]->(m) "
+                "RETURN n, collect({relId: elementId(r), type: type(r), targetId: elementId(m), targetProps: properties(m)}) as rels "
+                "LIMIT 20"
+            )
+            rows = session.run(cypher, kw=keyword)
+            for record in rows:
+                node = record["n"]
+                nid = _get_element_id(node)
+                if nid in seen:
+                    continue
+                seen.add(nid)
+                rels = [
+                    r for r in record["rels"]
+                    if r.get("type") is not None
+                ]
+                results.append({
+                    "nodeId": nid,
+                    "labels": list(node.labels),
+                    "properties": dict(node),
+                    "relationships": [
+                        {
+                            "relId": r["relId"],
+                            "type": r["type"],
+                            "targetId": r["targetId"],
+                            "targetProps": dict(r["targetProps"]) if r["targetProps"] else {},
+                        }
+                        for r in rels
+                    ],
+                })
+    return results
+
+
+@app.post("/admin/graph/node")
+async def create_graph_node(request: CreateNodeRequest):
+    label = _validate_identifier(request.label)
+    with driver.session() as session:
+        result = session.run(
+            f"CREATE (n:{label} $props) RETURN elementId(n) as nodeId",
+            props=request.properties,
+        )
+        record = result.single()
+        return {"nodeId": record["nodeId"]}
+
+
+@app.put("/admin/graph/node")
+async def update_graph_node(request: UpdateNodeRequest):
+    with driver.session() as session:
+        result = session.run(
+            "MATCH (n) WHERE elementId(n) = $nid SET n += $props RETURN elementId(n) as nodeId",
+            nid=request.node_id,
+            props=request.properties,
+        )
+        if not result.single():
+            raise HTTPException(status_code=404, detail="Node not found.")
+    return {"status": "updated"}
+
+
+@app.delete("/admin/graph/node")
+async def delete_graph_node(node_id: str):
+    with driver.session() as session:
+        session.run(
+            "MATCH (n) WHERE elementId(n) = $nid DETACH DELETE n",
+            nid=node_id,
+        )
+    return {"status": "deleted"}
+
+
+@app.post("/admin/graph/relationship")
+async def create_graph_relationship(request: CreateRelationshipRequest):
+    rel_type = _validate_identifier(request.rel_type)
+    with driver.session() as session:
+        result = session.run(
+            f"MATCH (a), (b) WHERE elementId(a) = $from_id AND elementId(b) = $to_id "
+            f"CREATE (a)-[r:{rel_type} $props]->(b) RETURN elementId(r) as relId",
+            from_id=request.from_id,
+            to_id=request.to_id,
+            props=request.properties,
+        )
+        record = result.single()
+        if not record:
+            raise HTTPException(status_code=404, detail="One or both nodes not found.")
+        return {"relId": record["relId"]}
+
+
+@app.delete("/admin/graph/relationship")
+async def delete_graph_relationship(rel_id: str):
+    with driver.session() as session:
+        session.run(
+            "MATCH ()-[r]-() WHERE elementId(r) = $rid DELETE r",
+            rid=rel_id,
+        )
+    return {"status": "deleted"}
 
 
 @app.get("/feedbacks")

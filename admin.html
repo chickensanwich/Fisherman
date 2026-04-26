@@ -5,193 +5,392 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <style>
+        * { box-sizing: border-box; }
         body { font-family: Arial, sans-serif; padding: 20px; background: #f9f9f9; }
         h1, h2 { color: #333; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 40px; background: #fff; }
-        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 24px; background: #fff; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; vertical-align: top; }
         th { background-color: #f2f2f2; }
-        .badge {
-            display: inline-block;
-            padding: 2px 10px;
-            border-radius: 12px;
-            font-size: 0.85em;
-            font-weight: bold;
-        }
+        .badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 0.85em; font-weight: bold; }
         .badge-pending { background: #fff3cd; color: #856404; }
-        .btn {
-            padding: 5px 14px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.9em;
-            margin-right: 4px;
-        }
-        .btn-approve { background: #28a745; color: #fff; }
-        .btn-reject  { background: #dc3545; color: #fff; }
-        .btn-approve:hover { background: #218838; }
-        .btn-reject:hover  { background: #c82333; }
+        .btn { padding: 5px 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85em; margin-right: 4px; margin-bottom: 2px; }
+        .btn-approve  { background: #28a745; color: #fff; }
+        .btn-reject   { background: #dc3545; color: #fff; }
+        .btn-primary  { background: #0d6efd; color: #fff; }
+        .btn-secondary{ background: #6c757d; color: #fff; }
+        .btn-danger   { background: #dc3545; color: #fff; }
+        .btn-warning  { background: #fd7e14; color: #fff; }
+        .btn-info     { background: #0dcaf0; color: #000; }
+        .btn-approve:hover  { background: #218838; }
+        .btn-reject:hover   { background: #c82333; }
+        .btn-primary:hover  { background: #0b5ed7; }
+        .btn-danger:hover   { background: #bb2d3b; }
         .empty-row td { text-align: center; color: #888; font-style: italic; }
-        #pending-count {
-            display: inline-block;
-            background: #dc3545;
-            color: #fff;
-            border-radius: 50%;
-            padding: 1px 7px;
-            font-size: 0.8em;
-            margin-left: 6px;
-            vertical-align: middle;
+        #pending-count { display: inline-block; background: #dc3545; color: #fff; border-radius: 50%; padding: 1px 7px; font-size: 0.8em; margin-left: 6px; vertical-align: middle; }
+
+        /* KG editor */
+        .kg-toolbar { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+        .kg-toolbar input { flex: 1; min-width: 200px; padding: 7px 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.95em; }
+        .kg-forms { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+        .kg-form-box { background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 14px; flex: 1; min-width: 260px; }
+        .kg-form-box h3 { margin: 0 0 10px; font-size: 1em; color: #444; }
+        .kg-form-box label { display: block; font-size: 0.85em; color: #555; margin-bottom: 2px; margin-top: 8px; }
+        .kg-form-box input, .kg-form-box textarea {
+            width: 100%; padding: 6px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.9em; font-family: monospace;
         }
+        .kg-form-box textarea { height: 70px; resize: vertical; }
+        .kg-form-box .btn { margin-top: 10px; }
+        .node-card { background: #fff; border: 1px solid #ccc; border-radius: 6px; padding: 10px 12px; margin-bottom: 10px; }
+        .node-card-header { display: flex; align-items: flex-start; gap: 8px; flex-wrap: wrap; }
+        .node-labels { font-weight: bold; color: #0d6efd; font-size: 0.9em; }
+        .node-id { font-size: 0.75em; color: #888; font-family: monospace; word-break: break-all; }
+        .node-props { font-family: monospace; font-size: 0.85em; background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 4px; padding: 6px 8px; margin: 6px 0; white-space: pre-wrap; word-break: break-all; }
+        .node-rels { margin: 6px 0; }
+        .rel-item { font-size: 0.85em; color: #555; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+        .rel-type { font-weight: bold; color: #6f42c1; }
+        .rel-target { font-family: monospace; font-size: 0.8em; color: #888; }
+        .no-results { color: #888; font-style: italic; padding: 12px 0; }
+
+        /* Edit modal */
+        #edit-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 1000; align-items: center; justify-content: center; }
+        #edit-modal.open { display: flex; }
+        .modal-box { background: #fff; border-radius: 8px; padding: 24px; width: 480px; max-width: 95vw; }
+        .modal-box h3 { margin: 0 0 12px; }
+        .modal-box label { display: block; font-size: 0.85em; color: #555; margin-bottom: 4px; }
+        .modal-box textarea { width: 100%; height: 160px; font-family: monospace; font-size: 0.9em; padding: 8px; border: 1px solid #ccc; border-radius: 4px; resize: vertical; }
+        .modal-box .node-id { margin-bottom: 10px; }
+        .modal-actions { display: flex; gap: 8px; margin-top: 12px; justify-content: flex-end; }
     </style>
 </head>
 <body>
     <h1>Admin Dashboard</h1>
 
+    <!-- ── Pending Accounts ── -->
     <h2>Pending Account Approvals <span id="pending-count">0</span></h2>
     <table id="pending-table">
         <thead>
-            <tr>
-                <th>Fisherman ID</th>
-                <th>Name</th>
-                <th>Country</th>
-                <th>Location</th>
-                <th>Registered</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
+            <tr><th>Fisherman ID</th><th>Name</th><th>Country</th><th>Location</th><th>Registered</th><th>Status</th><th>Action</th></tr>
         </thead>
         <tbody></tbody>
     </table>
 
+    <!-- ── Knowledge Graph Editor ── -->
+    <h2>Knowledge Graph Editor</h2>
+
+    <div class="kg-toolbar">
+        <input id="kg-search-input" placeholder="Search nodes by keyword..." onkeydown="if(event.key==='Enter') searchGraph()">
+        <button class="btn btn-primary" onclick="searchGraph()">Search</button>
+        <button class="btn btn-secondary" onclick="searchGraph('')">Browse All</button>
+    </div>
+
+    <div id="kg-results"><p class="no-results">Enter a keyword to search the knowledge graph.</p></div>
+
+    <div class="kg-forms">
+        <div class="kg-form-box">
+            <h3>Add Node</h3>
+            <label>Label (e.g. Fish, Regulation)</label>
+            <input id="new-node-label" placeholder="Label">
+            <label>Properties (JSON)</label>
+            <textarea id="new-node-props">{}</textarea>
+            <button class="btn btn-primary" onclick="addNode()">Add Node</button>
+        </div>
+        <div class="kg-form-box">
+            <h3>Add Relationship</h3>
+            <label>From Node ID</label>
+            <input id="rel-from-id" placeholder="Source node elementId">
+            <label>To Node ID</label>
+            <input id="rel-to-id" placeholder="Target node elementId">
+            <label>Relationship Type (e.g. REQUIRES, RELATED_TO)</label>
+            <input id="rel-type" placeholder="Type">
+            <label>Properties (JSON, optional)</label>
+            <textarea id="rel-props">{}</textarea>
+            <button class="btn btn-primary" onclick="addRelationship()">Add Relationship</button>
+        </div>
+    </div>
+
+    <!-- ── Feedback Reports ── -->
     <h2>Feedback Reports</h2>
     <table id="feedback-table">
         <thead>
-            <tr>
-                <th>Type</th>
-                <th>Reason</th>
-                <th>Comments</th>
-                <th>Message</th>
-                <th>Timestamp</th>
-            </tr>
+            <tr><th>Type</th><th>User Question</th><th>Bot Response</th><th>Reason</th><th>Comments</th><th>Timestamp</th><th>KG</th></tr>
         </thead>
         <tbody></tbody>
     </table>
 
+    <!-- Edit Node Modal -->
+    <div id="edit-modal">
+        <div class="modal-box">
+            <h3>Edit Node Properties</h3>
+            <div class="node-id" id="edit-modal-id"></div>
+            <label>Properties (JSON)</label>
+            <textarea id="edit-modal-props"></textarea>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveNodeEdit()">Save</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const API = 'http://localhost:8000';
+        let editingNodeId = null;
 
+        // ── Helpers ──────────────────────────────────────────────
+        function escapeHtml(str) {
+            return String(str ?? '')
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        function parseJsonField(id, fallback = {}) {
+            try { return JSON.parse(document.getElementById(id).value || '{}'); }
+            catch { alert(`Invalid JSON in field.`); return null; }
+        }
+
+        // ── Pending Users ─────────────────────────────────────────
         async function loadPendingUsers() {
             try {
-                const response = await fetch(`${API}/admin/pending-users`);
-                if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
-                const users = await response.json();
+                const res = await fetch(`${API}/admin/pending-users`);
+                if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+                const users = await res.json();
                 const tbody = document.querySelector('#pending-table tbody');
-                const countBadge = document.getElementById('pending-count');
+                document.getElementById('pending-count').textContent = users.length;
                 tbody.innerHTML = '';
-                countBadge.textContent = users.length;
-
                 if (users.length === 0) {
                     tbody.innerHTML = '<tr class="empty-row"><td colspan="7">No pending accounts</td></tr>';
                     return;
                 }
-
-                users.forEach(user => {
+                users.forEach(u => {
                     const tr = document.createElement('tr');
-                    tr.id = `user-row-${user.fishermanId}`;
+                    tr.id = `user-row-${u.fishermanId}`;
                     tr.innerHTML = `
-                        <td>${escapeHtml(user.fishermanId)}</td>
-                        <td>${escapeHtml(user.name)}</td>
-                        <td>${escapeHtml(user.country)}</td>
-                        <td>${escapeHtml(user.location)}</td>
-                        <td>${new Date(user.created_at).toLocaleString()}</td>
+                        <td>${escapeHtml(u.fishermanId)}</td>
+                        <td>${escapeHtml(u.name)}</td>
+                        <td>${escapeHtml(u.country)}</td>
+                        <td>${escapeHtml(u.location)}</td>
+                        <td>${new Date(u.created_at).toLocaleString()}</td>
                         <td><span class="badge badge-pending">Pending</span></td>
                         <td>
-                            <button class="btn btn-approve" onclick="approveUser('${escapeHtml(user.fishermanId)}')">Approve</button>
-                            <button class="btn btn-reject"  onclick="rejectUser('${escapeHtml(user.fishermanId)}')">Reject</button>
-                        </td>
-                    `;
+                            <button class="btn btn-approve" onclick="approveUser('${escapeHtml(u.fishermanId)}')">Approve</button>
+                            <button class="btn btn-reject"  onclick="rejectUser('${escapeHtml(u.fishermanId)}')">Reject</button>
+                        </td>`;
                     tbody.appendChild(tr);
                 });
-            } catch (error) {
-                console.error('Error loading pending users:', error);
+            } catch (err) {
                 document.querySelector('#pending-table tbody').innerHTML =
-                    `<tr class="empty-row"><td colspan="7">Failed to load: ${error.message}</td></tr>`;
+                    `<tr class="empty-row"><td colspan="7">Failed to load: ${escapeHtml(err.message)}</td></tr>`;
             }
         }
 
-        async function approveUser(fishermanId) {
-            if (!confirm(`Approve account for ${fishermanId}?`)) return;
-            try {
-                const res = await fetch(`${API}/admin/approve/${encodeURIComponent(fishermanId)}`, { method: 'POST' });
-                if (!res.ok) throw new Error(await res.text());
-                removeUserRow(fishermanId);
-            } catch (err) {
-                alert(`Failed to approve: ${err.message}`);
-            }
+        async function approveUser(id) {
+            if (!confirm(`Approve account for ${id}?`)) return;
+            const res = await fetch(`${API}/admin/approve/${encodeURIComponent(id)}`, { method: 'POST' });
+            if (!res.ok) { alert('Failed to approve.'); return; }
+            removeUserRow(id);
         }
 
-        async function rejectUser(fishermanId) {
-            if (!confirm(`Reject account for ${fishermanId}?`)) return;
-            try {
-                const res = await fetch(`${API}/admin/reject/${encodeURIComponent(fishermanId)}`, { method: 'POST' });
-                if (!res.ok) throw new Error(await res.text());
-                removeUserRow(fishermanId);
-            } catch (err) {
-                alert(`Failed to reject: ${err.message}`);
-            }
+        async function rejectUser(id) {
+            if (!confirm(`Reject account for ${id}?`)) return;
+            const res = await fetch(`${API}/admin/reject/${encodeURIComponent(id)}`, { method: 'POST' });
+            if (!res.ok) { alert('Failed to reject.'); return; }
+            removeUserRow(id);
         }
 
-        function removeUserRow(fishermanId) {
-            const row = document.getElementById(`user-row-${fishermanId}`);
-            if (row) row.remove();
+        function removeUserRow(id) {
+            document.getElementById(`user-row-${id}`)?.remove();
             const tbody = document.querySelector('#pending-table tbody');
-            const countBadge = document.getElementById('pending-count');
             const remaining = tbody.querySelectorAll('tr:not(.empty-row)').length;
-            countBadge.textContent = remaining;
-            if (remaining === 0) {
+            document.getElementById('pending-count').textContent = remaining;
+            if (remaining === 0)
                 tbody.innerHTML = '<tr class="empty-row"><td colspan="7">No pending accounts</td></tr>';
+        }
+
+        // ── Knowledge Graph ───────────────────────────────────────
+        async function searchGraph(overrideQuery) {
+            const q = overrideQuery !== undefined
+                ? overrideQuery
+                : document.getElementById('kg-search-input').value.trim();
+            const container = document.getElementById('kg-results');
+            container.innerHTML = '<p class="no-results">Loading...</p>';
+            try {
+                const res = await fetch(`${API}/admin/graph/search?q=${encodeURIComponent(q)}`);
+                if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+                const nodes = await res.json();
+                renderNodes(nodes, container);
+            } catch (err) {
+                container.innerHTML = `<p class="no-results">Error: ${escapeHtml(err.message)}</p>`;
             }
         }
 
+        function renderNodes(nodes, container) {
+            if (nodes.length === 0) {
+                container.innerHTML = '<p class="no-results">No nodes found.</p>';
+                return;
+            }
+            container.innerHTML = '';
+            nodes.forEach(node => {
+                const card = document.createElement('div');
+                card.className = 'node-card';
+                card.id = `node-card-${CSS.escape(node.nodeId)}`;
+
+                const relsHtml = node.relationships.length
+                    ? node.relationships.map(r => `
+                        <div class="rel-item">
+                            <span class="rel-type">-[${escapeHtml(r.type)}]-&gt;</span>
+                            <span class="rel-target">${escapeHtml(r.targetId)}</span>
+                            <span style="color:#888;font-size:0.8em">${escapeHtml(JSON.stringify(r.targetProps))}</span>
+                            <button class="btn btn-danger" style="padding:2px 7px;font-size:0.78em"
+                                onclick="deleteRelationship('${escapeHtml(r.relId)}', '${CSS.escape(node.nodeId)}')">✕</button>
+                        </div>`).join('')
+                    : '<span style="color:#aaa;font-size:0.85em">No outgoing relationships</span>';
+
+                card.innerHTML = `
+                    <div class="node-card-header">
+                        <span class="node-labels">${escapeHtml(node.labels.join(', ') || '(no label)')}</span>
+                        <span class="node-id">${escapeHtml(node.nodeId)}</span>
+                        <button class="btn btn-warning" onclick="openEditModal('${escapeHtml(node.nodeId)}', ${escapeHtml(JSON.stringify(JSON.stringify(node.properties)))})">Edit</button>
+                        <button class="btn btn-danger"  onclick="deleteNode('${escapeHtml(node.nodeId)}')">Delete</button>
+                        <button class="btn btn-info"    onclick="prefillRelFrom('${escapeHtml(node.nodeId)}')">Use as Source</button>
+                    </div>
+                    <pre class="node-props">${escapeHtml(JSON.stringify(node.properties, null, 2))}</pre>
+                    <div class="node-rels">${relsHtml}</div>`;
+                container.appendChild(card);
+            });
+        }
+
+        function prefillRelFrom(nodeId) {
+            document.getElementById('rel-from-id').value = nodeId;
+            document.getElementById('rel-from-id').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        async function addNode() {
+            const label = document.getElementById('new-node-label').value.trim();
+            if (!label) { alert('Label is required.'); return; }
+            const props = parseJsonField('new-node-props');
+            if (props === null) return;
+            try {
+                const res = await fetch(`${API}/admin/graph/node`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ label, properties: props }),
+                });
+                const data = await res.json();
+                if (!res.ok) { alert(data.detail || 'Failed to add node.'); return; }
+                alert(`Node created (ID: ${data.nodeId})`);
+                document.getElementById('new-node-label').value = '';
+                document.getElementById('new-node-props').value = '{}';
+                searchGraph(document.getElementById('kg-search-input').value);
+            } catch (err) { alert(`Error: ${err.message}`); }
+        }
+
+        async function addRelationship() {
+            const from_id  = document.getElementById('rel-from-id').value.trim();
+            const to_id    = document.getElementById('rel-to-id').value.trim();
+            const rel_type = document.getElementById('rel-type').value.trim();
+            if (!from_id || !to_id || !rel_type) { alert('From ID, To ID, and Type are all required.'); return; }
+            const props = parseJsonField('rel-props');
+            if (props === null) return;
+            try {
+                const res = await fetch(`${API}/admin/graph/relationship`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ from_id, to_id, rel_type, properties: props }),
+                });
+                const data = await res.json();
+                if (!res.ok) { alert(data.detail || 'Failed to add relationship.'); return; }
+                alert('Relationship created.');
+                searchGraph(document.getElementById('kg-search-input').value);
+            } catch (err) { alert(`Error: ${err.message}`); }
+        }
+
+        async function deleteNode(nodeId) {
+            if (!confirm('Delete this node and all its relationships?')) return;
+            try {
+                const res = await fetch(`${API}/admin/graph/node?node_id=${encodeURIComponent(nodeId)}`, { method: 'DELETE' });
+                if (!res.ok) { alert('Failed to delete node.'); return; }
+                document.getElementById(`node-card-${CSS.escape(nodeId)}`)?.remove();
+            } catch (err) { alert(`Error: ${err.message}`); }
+        }
+
+        async function deleteRelationship(relId, nodeCardId) {
+            if (!confirm('Delete this relationship?')) return;
+            try {
+                const res = await fetch(`${API}/admin/graph/relationship?rel_id=${encodeURIComponent(relId)}`, { method: 'DELETE' });
+                if (!res.ok) { alert('Failed to delete relationship.'); return; }
+                searchGraph(document.getElementById('kg-search-input').value);
+            } catch (err) { alert(`Error: ${err.message}`); }
+        }
+
+        function openEditModal(nodeId, propsJson) {
+            editingNodeId = nodeId;
+            document.getElementById('edit-modal-id').textContent = nodeId;
+            document.getElementById('edit-modal-props').value =
+                JSON.stringify(JSON.parse(propsJson), null, 2);
+            document.getElementById('edit-modal').classList.add('open');
+        }
+
+        function closeEditModal() {
+            editingNodeId = null;
+            document.getElementById('edit-modal').classList.remove('open');
+        }
+
+        async function saveNodeEdit() {
+            const props = parseJsonField('edit-modal-props');
+            if (props === null) return;
+            try {
+                const res = await fetch(`${API}/admin/graph/node`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ node_id: editingNodeId, properties: props }),
+                });
+                const data = await res.json();
+                if (!res.ok) { alert(data.detail || 'Failed to update node.'); return; }
+                closeEditModal();
+                searchGraph(document.getElementById('kg-search-input').value);
+            } catch (err) { alert(`Error: ${err.message}`); }
+        }
+
+        // ── Feedback ──────────────────────────────────────────────
         async function loadFeedbacks() {
             try {
-                const response = await fetch(`${API}/feedbacks`);
-                if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
-                const feedbacks = await response.json();
+                const res = await fetch(`${API}/feedbacks`);
+                if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+                const feedbacks = await res.json();
                 const tbody = document.querySelector('#feedback-table tbody');
                 tbody.innerHTML = '';
                 if (feedbacks.length === 0) {
-                    tbody.innerHTML = '<tr class="empty-row"><td colspan="5">No feedback yet</td></tr>';
+                    tbody.innerHTML = '<tr class="empty-row"><td colspan="7">No feedback yet</td></tr>';
                     return;
                 }
-                feedbacks.forEach(fb => {
+                // newest first
+                [...feedbacks].reverse().forEach(fb => {
                     const tr = document.createElement('tr');
+                    const q = fb.userQuestion || '';
                     tr.innerHTML = `
                         <td>${escapeHtml(fb.type)}</td>
-                        <td>${escapeHtml(fb.reason || 'N/A')}</td>
-                        <td>${escapeHtml(fb.comments || 'N/A')}</td>
+                        <td>${escapeHtml(q || '—')}</td>
                         <td>${escapeHtml(fb.message)}</td>
+                        <td>${escapeHtml(fb.reason || '—')}</td>
+                        <td>${escapeHtml(fb.comments || '—')}</td>
                         <td>${new Date(fb.timestamp).toLocaleString()}</td>
-                    `;
+                        <td>${q ? `<button class="btn btn-info" onclick="searchFromFeedback('${escapeHtml(q)}')">Search KG</button>` : '—'}</td>`;
                     tbody.appendChild(tr);
                 });
-            } catch (error) {
-                console.error('Error loading feedbacks:', error);
+            } catch (err) {
                 document.querySelector('#feedback-table tbody').innerHTML =
-                    `<tr class="empty-row"><td colspan="5">Failed to load: ${error.message}</td></tr>`;
+                    `<tr class="empty-row"><td colspan="7">Failed to load: ${escapeHtml(err.message)}</td></tr>`;
             }
         }
 
-        function escapeHtml(str) {
-            return String(str)
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;');
+        function searchFromFeedback(question) {
+            document.getElementById('kg-search-input').value = question;
+            searchGraph(question);
+            document.getElementById('kg-search-input').scrollIntoView({ behavior: 'smooth' });
         }
 
+        // ── Init ──────────────────────────────────────────────────
         loadPendingUsers();
         loadFeedbacks();
     </script>
 </body>
 </html>
-

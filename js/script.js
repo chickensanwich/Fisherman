@@ -11,6 +11,7 @@ let isRecording = false;
 let finalTranscript = '';
 let speechRecognitionLang = 'bn-BD';
 let currentChatId = null;
+let lastUserMessage = '';
 
 const BACKEND_URL = "http://localhost:8000"
 
@@ -260,6 +261,7 @@ async function handleChatSubmit(e) {
     addMessage(message, 'user');
     chatInput.value = '';
     chatInput.style.height = 'auto';
+    lastUserMessage = message;
 
     await sendMessage(message);
 }
@@ -280,7 +282,7 @@ async function sendMessage(message) {
 
         const data = await response.json();
         removeTypingIndicator();
-        addMessage(data.reply, 'bot');
+        addMessage(data.reply, 'bot', lastUserMessage);
         saveChatToHistory(message, data.reply);
     } catch (err) {
         console.error("Chatbot fetch error:", err);
@@ -291,7 +293,7 @@ async function sendMessage(message) {
     }
 }
 
-function addMessage(content, sender) {
+function addMessage(content, sender, userQuestion = '') {
     const messageDiv = document.createElement('div');
     messageDiv.classList.add('message', `${sender}-message`);
 
@@ -307,6 +309,7 @@ function addMessage(content, sender) {
     messageDiv.appendChild(timestampSpan);
 
     if (sender === 'bot') {
+        messageDiv.dataset.userQuestion = userQuestion;
         const feedbackDiv = document.createElement('div');
         feedbackDiv.classList.add('message-feedback');
 
@@ -358,6 +361,7 @@ async function handleFeedback(messageDiv, isPositive) {
     thumbsDown.classList.remove('active', 'thumbs-down-animation');
 
     const reportedMessage = messageDiv.querySelector('.message-content').textContent;
+    const userQuestion = messageDiv.dataset.userQuestion || '';
 
     if (isPositive) {
         thumbsUp.classList.add('active', 'thumbs-up-animation');
@@ -365,17 +369,19 @@ async function handleFeedback(messageDiv, isPositive) {
 
         await sendFeedback({
             type: 'positive',
-            message: reportedMessage
+            message: reportedMessage,
+            userQuestion,
         });
     } else {
         thumbsDown.classList.add('active', 'thumbs-down-animation');
         thumbsDown.style.color = 'var(--danger-color)';
-        showFeedbackPopup(reportedMessage);
+        showFeedbackPopup(reportedMessage, userQuestion);
     }
 }
 
-function showFeedbackPopup(message) {
+function showFeedbackPopup(message, userQuestion = '') {
     feedbackPopup.dataset.reportedMessage = message;
+    feedbackPopup.dataset.userQuestion = userQuestion;
     feedbackPopup.classList.remove('hidden');
     overlay.classList.remove('hidden');
 }
@@ -464,7 +470,8 @@ async function handleFeedbackSubmit(e) {
         type: 'negative',
         reason: feedbackOption ? feedbackOption.value : 'not specified',
         comments: feedbackText,
-        message: reportedMessage
+        message: reportedMessage,
+        userQuestion: feedbackPopup.dataset.userQuestion || '',
     };
 
     await sendFeedback(feedbackData);
