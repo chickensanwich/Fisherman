@@ -6,6 +6,10 @@ from deep_translator import GoogleTranslator
 import requests
 import langdetect
 import os
+import json
+import hashlib
+from datetime import datetime, timezone
+from pathlib import Path
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -31,6 +35,33 @@ NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD", "nej4nej4")
 driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
 conversation_history = []
 
+USERS_FILE = Path("users.json")
+FEEDBACKS_FILE = Path("feedbacks.json")
+
+
+def _load_users() -> list:
+    if not USERS_FILE.exists():
+        return []
+    return json.loads(USERS_FILE.read_text(encoding="utf-8"))
+
+
+def _save_users(users: list) -> None:
+    USERS_FILE.write_text(json.dumps(users, indent=2), encoding="utf-8")
+
+
+def _load_feedbacks() -> list:
+    if not FEEDBACKS_FILE.exists():
+        return []
+    return json.loads(FEEDBACKS_FILE.read_text(encoding="utf-8"))
+
+
+def _save_feedbacks(feedbacks: list) -> None:
+    FEEDBACKS_FILE.write_text(json.dumps(feedbacks, indent=2), encoding="utf-8")
+
+
+def _hash_password(password: str) -> str:
+    return hashlib.sha256(password.encode()).hexdigest()
+
 
 class ChatRequest(BaseModel):
     message: str
@@ -40,6 +71,17 @@ class FeedbackRequest(BaseModel):
     reason: str = ""
     comments: str = ""
     message: str = ""
+
+class SignupRequest(BaseModel):
+    name: str
+    fishermanId: str
+    country: str
+    location: str
+    password: str
+
+class LoginRequest(BaseModel):
+    fishermanId: str
+    password: str
 
 
 # --- Language Detection ---
@@ -158,10 +200,93 @@ async def chat(request: ChatRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.post("/signup")
+async def signup(request: SignupRequest):
+    users = _load_users()
+    if any(u["fishermanId"] == request.fishermanId for u in users):
+        raise HTTPException(status_code=409, detail="Fisherman ID already registered.")
+    users.append({
+        "fishermanId": request.fishermanId,
+        "name": request.name,
+        "country": request.country,
+        "location": request.location,
+        "password_hash": _hash_password(request.password),
+        "status": "pending",
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    })
+    _save_users(users)
+    return {"status": "pending", "message": "Account submitted for approval. Please wait for admin review."}
+
+
+@app.post("/login")
+async def login(request: LoginRequest):
+    users = _load_users()
+    user = next((u for u in users if u["fishermanId"] == request.fishermanId), None)
+    if not user or user["password_hash"] != _hash_password(request.password):
+        raise HTTPException(status_code=401, detail="Invalid Fisherman ID or password.")
+    if user["status"] == "pending":
+        raise HTTPException(status_code=403, detail="Your account is pending admin approval.")
+    if user["status"] == "rejected":
+        raise HTTPException(status_code=403, detail="Your account has been rejected. Please contact support.")
+    return {
+        "status": "approved",
+        "name": user["name"],
+        "fishermanId": user["fishermanId"],
+        "country": user["country"],
+        "location": user["location"],
+    }
+
+
+@app.get("/admin/pending-users")
+async def get_pending_users():
+    users = _load_users()
+    pending = [
+        {k: v for k, v in u.items() if k != "password_hash"}
+        for u in users if u["status"] == "pending"
+    ]
+    return pending
+
+
+@app.post("/admin/approve/{fisherman_id}")
+async def approve_user(fisherman_id: str):
+    users = _load_users()
+    user = next((u for u in users if u["fishermanId"] == fisherman_id), None)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found.")
+    user["status"] = "approved"
+    _save_users(users)
+    return {"status": "approved", "fishermanId": fisherman_id}
+
+
+@app.post("/admin/reject/{fisherman_id}")
+async def reject_user(fisherman_id: str):
+    users = _load_users()
+    user = next((u for u in users if u["fishermanId"] == fisherman_id), None)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found.")
+    user["status"] = "rejected"
+    _save_users(users)
+    return {"status": "rejected", "fishermanId": fisherman_id}
+
+
 @app.post("/feedback")
 async def feedback(request: FeedbackRequest):
+    feedbacks = _load_feedbacks()
+    feedbacks.append({
+        "type": request.type,
+        "reason": request.reason,
+        "comments": request.comments,
+        "message": request.message,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    })
+    _save_feedbacks(feedbacks)
     print(f"[FEEDBACK] type={request.type}, reason={request.reason}, message={request.message}")
     return {"status": "ok"}
+
+
+@app.get("/feedbacks")
+async def get_feedbacks():
+    return _load_feedbacks()
 
 
 @app.on_event("shutdown")

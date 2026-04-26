@@ -3,16 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Feedback Dashboard</title>
+    <title>Admin Dashboard</title>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f9f9f9; }
+        h1, h2 { color: #333; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 40px; background: #fff; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
         th { background-color: #f2f2f2; }
+        .badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+        .badge-pending { background: #fff3cd; color: #856404; }
+        .btn {
+            padding: 5px 14px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-right: 4px;
+        }
+        .btn-approve { background: #28a745; color: #fff; }
+        .btn-reject  { background: #dc3545; color: #fff; }
+        .btn-approve:hover { background: #218838; }
+        .btn-reject:hover  { background: #c82333; }
+        .empty-row td { text-align: center; color: #888; font-style: italic; }
+        #pending-count {
+            display: inline-block;
+            background: #dc3545;
+            color: #fff;
+            border-radius: 50%;
+            padding: 1px 7px;
+            font-size: 0.8em;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
     </style>
 </head>
 <body>
-    <h1>Feedback Reports</h1>
+    <h1>Admin Dashboard</h1>
+
+    <h2>Pending Account Approvals <span id="pending-count">0</span></h2>
+    <table id="pending-table">
+        <thead>
+            <tr>
+                <th>Fisherman ID</th>
+                <th>Name</th>
+                <th>Country</th>
+                <th>Location</th>
+                <th>Registered</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <h2>Feedback Reports</h2>
     <table id="feedback-table">
         <thead>
             <tr>
@@ -25,40 +75,123 @@
         </thead>
         <tbody></tbody>
     </table>
-    
+
     <script>
-        function formatGraph(graph) {
-            if (!graph || !Array.isArray(graph)) return 'N/A';
-            return graph.map(edge => `${edge.from || 'Unknown'} - ${edge.relation || 'REL'} -> ${edge.to || 'Unknown'}`).join('<br>');
+        const API = 'http://localhost:8000';
+
+        async function loadPendingUsers() {
+            try {
+                const response = await fetch(`${API}/admin/pending-users`);
+                if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
+                const users = await response.json();
+                const tbody = document.querySelector('#pending-table tbody');
+                const countBadge = document.getElementById('pending-count');
+                tbody.innerHTML = '';
+                countBadge.textContent = users.length;
+
+                if (users.length === 0) {
+                    tbody.innerHTML = '<tr class="empty-row"><td colspan="7">No pending accounts</td></tr>';
+                    return;
+                }
+
+                users.forEach(user => {
+                    const tr = document.createElement('tr');
+                    tr.id = `user-row-${user.fishermanId}`;
+                    tr.innerHTML = `
+                        <td>${escapeHtml(user.fishermanId)}</td>
+                        <td>${escapeHtml(user.name)}</td>
+                        <td>${escapeHtml(user.country)}</td>
+                        <td>${escapeHtml(user.location)}</td>
+                        <td>${new Date(user.created_at).toLocaleString()}</td>
+                        <td><span class="badge badge-pending">Pending</span></td>
+                        <td>
+                            <button class="btn btn-approve" onclick="approveUser('${escapeHtml(user.fishermanId)}')">Approve</button>
+                            <button class="btn btn-reject"  onclick="rejectUser('${escapeHtml(user.fishermanId)}')">Reject</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (error) {
+                console.error('Error loading pending users:', error);
+                document.querySelector('#pending-table tbody').innerHTML =
+                    `<tr class="empty-row"><td colspan="7">Failed to load: ${error.message}</td></tr>`;
+            }
+        }
+
+        async function approveUser(fishermanId) {
+            if (!confirm(`Approve account for ${fishermanId}?`)) return;
+            try {
+                const res = await fetch(`${API}/admin/approve/${encodeURIComponent(fishermanId)}`, { method: 'POST' });
+                if (!res.ok) throw new Error(await res.text());
+                removeUserRow(fishermanId);
+            } catch (err) {
+                alert(`Failed to approve: ${err.message}`);
+            }
+        }
+
+        async function rejectUser(fishermanId) {
+            if (!confirm(`Reject account for ${fishermanId}?`)) return;
+            try {
+                const res = await fetch(`${API}/admin/reject/${encodeURIComponent(fishermanId)}`, { method: 'POST' });
+                if (!res.ok) throw new Error(await res.text());
+                removeUserRow(fishermanId);
+            } catch (err) {
+                alert(`Failed to reject: ${err.message}`);
+            }
+        }
+
+        function removeUserRow(fishermanId) {
+            const row = document.getElementById(`user-row-${fishermanId}`);
+            if (row) row.remove();
+            const tbody = document.querySelector('#pending-table tbody');
+            const countBadge = document.getElementById('pending-count');
+            const remaining = tbody.querySelectorAll('tr:not(.empty-row)').length;
+            countBadge.textContent = remaining;
+            if (remaining === 0) {
+                tbody.innerHTML = '<tr class="empty-row"><td colspan="7">No pending accounts</td></tr>';
+            }
         }
 
         async function loadFeedbacks() {
             try {
-                const response = await fetch('http://localhost:8000/feedbacks')
-                if (!response.ok) throw new Error(`Failed to load feedbacks: ${response.status} ${response.statusText}`);
+                const response = await fetch(`${API}/feedbacks`);
+                if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
                 const feedbacks = await response.json();
                 const tbody = document.querySelector('#feedback-table tbody');
                 tbody.innerHTML = '';
+                if (feedbacks.length === 0) {
+                    tbody.innerHTML = '<tr class="empty-row"><td colspan="5">No feedback yet</td></tr>';
+                    return;
+                }
                 feedbacks.forEach(fb => {
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td>${fb.type}</td>
-                        <td>${fb.reason || 'N/A'}</td>
-                        <td>${fb.comments || 'N/A'}</td>
-                        <td>${fb.message}</td>
+                        <td>${escapeHtml(fb.type)}</td>
+                        <td>${escapeHtml(fb.reason || 'N/A')}</td>
+                        <td>${escapeHtml(fb.comments || 'N/A')}</td>
+                        <td>${escapeHtml(fb.message)}</td>
                         <td>${new Date(fb.timestamp).toLocaleString()}</td>
                     `;
                     tbody.appendChild(tr);
                 });
             } catch (error) {
                 console.error('Error loading feedbacks:', error);
-                alert(`Failed to load feedbacks: ${error.message}`);
+                document.querySelector('#feedback-table tbody').innerHTML =
+                    `<tr class="empty-row"><td colspan="5">Failed to load: ${error.message}</td></tr>`;
             }
         }
 
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        loadPendingUsers();
         loadFeedbacks();
     </script>
 </body>
-
 </html>
 

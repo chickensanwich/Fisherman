@@ -1,0 +1,11 @@
+[
+  {
+    "fishermanId": "123",
+    "name": "Bangla",
+    "country": "Bangladesh",
+    "location": "Chitagon",
+    "password_hash": "ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f",
+    "status": "approved",
+    "created_at": "2026-04-26T00:32:59.283874+00:00"
+  }
+]

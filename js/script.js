@@ -125,30 +125,49 @@ function initSpeechRecognition() {
 }
 
 // Authentication Functions
-function handleLogin(e) {
+async function handleLogin(e) {
     e.preventDefault();
 
-    const name = document.getElementById('login-name').value.trim();
     const fishermanId = document.getElementById('login-fisherman-id').value.trim();
     const password = document.getElementById('login-password').value.trim();
 
-    if (!name || !fishermanId || !password) {
+    if (!fishermanId || !password) {
         alert("Please fill out all fields.");
         return;
     }
 
-    const user = {
-        name,
-        fishermanId,
-        location: 'Unknown'
-    };
+    try {
+        const response = await fetch(`${BACKEND_URL}/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ fishermanId, password }),
+        });
 
-    localStorage.setItem('currentUser', JSON.stringify(user));
-    showChatInterface(user);
-    appendSystemMessage(`Welcome back, ${name}! 👋`);
+        if (response.status === 403) {
+            const data = await response.json();
+            alert(data.detail);
+            return;
+        }
+        if (response.status === 401) {
+            alert("Invalid Fisherman ID or password.");
+            return;
+        }
+        if (!response.ok) {
+            alert("Login failed. Please try again.");
+            return;
+        }
+
+        const user = await response.json();
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        showChatInterface(user);
+        appendSystemMessage(`Welcome back, ${user.name}!`);
+    } catch (err) {
+        console.error("Login error:", err);
+        alert("Could not reach the server. Please ensure it is running.");
+    }
 }
 
-function handleSignup(e) {
+async function handleSignup(e) {
     e.preventDefault();
 
     const name = document.getElementById('signup-name').value.trim();
@@ -168,16 +187,29 @@ function handleSignup(e) {
         return;
     }
 
-    const user = {
-        name,
-        fishermanId,
-        country,
-        location
-    };
+    try {
+        const response = await fetch(`${BACKEND_URL}/signup`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, fishermanId, country, location, password }),
+        });
 
-    localStorage.setItem('currentUser', JSON.stringify(user));
-    showChatInterface(user);
-    appendSystemMessage(`Welcome aboard, ${name}! 🎣`);
+        if (response.status === 409) {
+            alert("That Fisherman ID is already registered. Please log in or use a different ID.");
+            return;
+        }
+        if (!response.ok) {
+            alert("Sign up failed. Please try again.");
+            return;
+        }
+
+        alert("Account submitted! Your registration is pending admin approval. You will be able to log in once approved.");
+        showLogin();
+        document.getElementById('signup-form').reset();
+    } catch (err) {
+        console.error("Signup error:", err);
+        alert("Could not reach the server. Please ensure it is running.");
+    }
 }
 
 function logout() {
