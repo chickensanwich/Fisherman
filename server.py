@@ -9,16 +9,14 @@ from datetime import datetime, timedelta
 import os
 from dotenv import load_dotenv
 import asyncio
-from fastapi import Path
+from fastapi import Path, File, UploadFile
 # RAG + LLM imports
 from neo4j import GraphDatabase
 from deep_translator import GoogleTranslator
 import requests
 import langdetect
 from bson import ObjectId
-from fastapi import File, UploadFile
-import tempfile
-from faster_whisper import WhisperModel
+from google.cloud import speech as gcp_speech
 
 load_dotenv()
 
@@ -45,16 +43,15 @@ NEO4J_URI = "bolt://localhost:7687"
 NEO4J_USER = "neo4j"
 NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD", "nej4nej4")
 
-# ====================== WHISPER MODEL ======================
-print("Loading Whisper model...")
-whisper_model = WhisperModel("large-v3", device="cpu", compute_type="int8") 
-print("Whisper model loaded!")
+# ====================== GOOGLE CLOUD SPEECH-TO-TEXT ======================
+speech_client = gcp_speech.SpeechClient()
+
 # ====================== DATABASES ======================
 client = AsyncIOMotorClient(MONGODB_URL)
 db = client["fishermen_chatbot"]
 
-users_collection = db["users"]
-chats_collection = db["chats"]
+users_collection     = db["users"]
+chats_collection     = db["chats"]
 feedbacks_collection = db["feedbacks"]
 
 neo4j_driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
@@ -65,7 +62,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 # ====================== MODELS ======================
 class ChatRequest(BaseModel):
     message: str
-    chat_id: str                          # required, no default
+    chat_id: str
 
 class UserBase(BaseModel):
     name: str
@@ -84,11 +81,13 @@ class FeedbackRequest(BaseModel):
     reason: str = ""
     comments: str = ""
     message: str = ""
+
 class TitleUpdate(BaseModel):
     title: str
+
 class PinUpdate(BaseModel):
-    pinned: bool    
-    
+    pinned: bool
+
 # ====================== HELPERS ======================
 def get_password_hash(password: str) -> str:
     salt = bcrypt.gensalt()
@@ -152,8 +151,8 @@ def query_knowledge_graph(english_message: str) -> str:
                 keyword=keyword
             )
             for record in result:
-                node = dict(record["n"])
-                rel = record.get("rel_type")
+                node    = dict(record["n"])
+                rel     = record.get("rel_type")
                 related = dict(record["m"]) if record["m"] else None
                 if rel and related:
                     context_parts.append(f"{node} --[{rel}]--> {related}")
@@ -161,16 +160,16 @@ def query_knowledge_graph(english_message: str) -> str:
                     context_parts.append(str(node))
 
     return "Relevant knowledge graph context:\n" + "\n".join(context_parts) if context_parts else ""
+
 # ====================== AUTO-GENERATE CHAT TITLE ======================
 async def generate_chat_title(user_message: str, bot_reply: str) -> str:
-    """Generate a short, suitable title using Ollama (only called on first message)"""
     try:
         prompt = f"""Generate a short, clear, and suitable title (maximum 6 words) for this chat.
-        Context: Bangladeshi fishermen chatbot.
-        User first message: {user_message}
-        Assistant reply: {bot_reply[:300]}
+Context: Bangladeshi fishermen chatbot.
+User first message: {user_message}
+Assistant reply: {bot_reply[:300]}
 
-        Title (only return the title, no explanation):"""
+Title (only return the title, no explanation):"""
 
         response = requests.post(OLLAMA_URL, json={
             "model": MODEL_NAME,
@@ -181,7 +180,6 @@ async def generate_chat_title(user_message: str, bot_reply: str) -> str:
         response.raise_for_status()
         data = response.json()
 
-        # Robust parsing
         if "message" in data and "content" in data["message"]:
             title = data["message"]["content"].strip()
         elif "response" in data:
@@ -189,7 +187,6 @@ async def generate_chat_title(user_message: str, bot_reply: str) -> str:
         else:
             title = ""
 
-        # Clean and limit title
         title = title.replace('"', '').replace("'", "").strip()
         if len(title) > 60:
             title = title[:57] + "..."
@@ -199,9 +196,9 @@ async def generate_chat_title(user_message: str, bot_reply: str) -> str:
     except Exception as e:
         print(f"Title generation failed: {e}")
 
-    # Fallback: use first part of user message
     fallback = user_message.strip()[:50]
     return fallback + "..." if len(fallback) == 50 else fallback
+
 # ====================== AUTH ENDPOINTS ======================
 @app.post("/register", response_model=Token)
 async def register(user: UserCreate):
@@ -216,11 +213,8 @@ async def register(user: UserCreate):
     user_dict["created_at"] = datetime.utcnow()
 
     result = await users_collection.insert_one(user_dict)
-    user_id = str(result.inserted_id)
-
-    token = create_access_token({"sub": user_id})
+    token  = create_access_token({"sub": str(result.inserted_id)})
     return {"access_token": token}
-
 
 @app.post("/login", response_model=Token)
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
@@ -231,7 +225,6 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
             detail="Incorrect fisherman ID or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-
     token = create_access_token({"sub": str(user["_id"])})
     return {"access_token": token}
 
@@ -239,48 +232,66 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
 @app.get("/user")
 async def get_current_user_info(token: str = Depends(oauth2_scheme)):
     user_id = await get_current_user(token)
-    
     user = await users_collection.find_one({"_id": ObjectId(user_id)})
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
+    return {"name": user.get("name", "Fisherman"), "fisherman_id": user.get("fisherman_id")}
 
-    return {
-        "name": user.get("name", "Fisherman"),
-        "fisherman_id": user.get("fisherman_id")
-    }
-    
-# ====================== WHISPER TRANSCRIPTION ======================
+# ====================== GOOGLE CLOUD SPEECH-TO-TEXT TRANSCRIPTION ======================
 @app.post("/transcribe")
 async def transcribe_audio(audio: UploadFile = File(...), token: str = Depends(oauth2_scheme)):
-    # Verify user token to secure the endpoint
     await get_current_user(token)
-    
-    # Save the incoming WebM audio to a temporary file
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".webm") as tmp:
-        tmp.write(await audio.read())
-        tmp_path = tmp.name
+
+    audio_content = await audio.read()
+
+    # Detect encoding from MIME type sent by the browser
+    content_type = (audio.content_type or "audio/webm").lower()
+    if "ogg" in content_type:
+        encoding = gcp_speech.RecognitionConfig.AudioEncoding.OGG_OPUS
+    else:
+        encoding = gcp_speech.RecognitionConfig.AudioEncoding.WEBM_OPUS
 
     try:
-        # Run Whisper transcription in a background thread to prevent blocking FastAPI
-        segments, info = await asyncio.to_thread(whisper_model.transcribe, tmp_path, beam_size=5)
-        transcript = " ".join([segment.text for segment in segments])
-        
-        return {"text": transcript.strip(), "language": info.language}
+        recognition_audio = gcp_speech.RecognitionAudio(content=audio_content)
+        config = gcp_speech.RecognitionConfig(
+            encoding=encoding,
+            language_code="bn-BD",
+            alternative_language_codes=["en-US"],
+            enable_automatic_punctuation=True,
+            model="latest_long",
+        )
+
+        response = await asyncio.to_thread(
+            speech_client.recognize,
+            config=config,
+            audio=recognition_audio,
+        )
+
+        if not response.results:
+            return {"text": "", "language": "en"}
+
+        transcript = " ".join(
+            result.alternatives[0].transcript
+            for result in response.results
+        )
+
+        detected_lang_bcp47 = response.results[0].language_code
+        lang = "bn" if detected_lang_bcp47.startswith("bn") else "en"
+
+        return {"text": transcript.strip(), "language": lang}
+
     except Exception as e:
-        print(f"Transcription error: {e}")
-        raise HTTPException(status_code=500, detail="Transcription failed")
-    finally:
-        # Clean up the temporary audio file
-        if os.path.exists(tmp_path):
-            os.unlink(tmp_path)
+        print(f"Google Cloud STT error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ====================== CHAT HISTORY ======================
 @app.get("/chats")
 async def get_user_chats(token: str = Depends(oauth2_scheme)):
     user_id = await get_current_user(token)
     chats = await chats_collection.find(
         {"user_id": user_id}
-    ).sort([("pinned", -1), ("updated_at", -1)]).to_list(length=50)   # pinned first
-    
+    ).sort([("pinned", -1), ("updated_at", -1)]).to_list(length=50)
+
     for chat in chats:
         chat["_id"] = str(chat["_id"])
     return chats
@@ -292,47 +303,39 @@ async def create_new_chat(token: str = Depends(oauth2_scheme)):
         "user_id": user_id,
         "title": "New Chat",
         "messages": [],
-        "pinned": False,          #  NEW
+        "pinned": False,
         "created_at": datetime.utcnow(),
         "updated_at": datetime.utcnow()
     }
     result = await chats_collection.insert_one(chat_doc)
     return {"chat_id": str(result.inserted_id), "title": "New Chat"}
 
-# ====================== DELETE CHAT ENDPOINT ======================
+# ====================== DELETE CHAT ======================
 @app.delete("/chats/{chat_id}")
 async def delete_chat(
     chat_id: str = Path(..., description="Chat ID to delete"),
     token: str = Depends(oauth2_scheme)
 ):
-    user_id = await get_current_user(token)          # this is a string
-    
+    user_id = await get_current_user(token)
     try:
         chat_id_obj = ObjectId(chat_id)
     except Exception:
         raise HTTPException(status_code=400, detail="Invalid chat_id format")
 
-    # First find the chat (without user filter) to give better error messages
     chat = await chats_collection.find_one({"_id": chat_id_obj})
     if not chat:
         raise HTTPException(status_code=404, detail="Chat not found")
 
-    # Check ownership - handles both string and ObjectId stored in DB
-    stored_user_id = chat.get("user_id")
-    if str(stored_user_id) != str(user_id):
-        raise HTTPException(
-            status_code=403, 
-            detail="You do not have permission to delete this chat"
-        )
+    if str(chat.get("user_id")) != str(user_id):
+        raise HTTPException(status_code=403, detail="You do not have permission to delete this chat")
 
-    # Now safely delete
     result = await chats_collection.delete_one({"_id": chat_id_obj})
-    
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Failed to delete chat")
 
     return {"status": "deleted", "message": "Chat successfully deleted"}
-# ====================== GET SINGLE CHAT (for sharing) ======================
+
+# ====================== GET SINGLE CHAT ======================
 @app.get("/chats/{chat_id}")
 async def get_chat_by_id(chat_id: str, token: str = Depends(oauth2_scheme)):
     user_id = await get_current_user(token)
@@ -347,6 +350,7 @@ async def get_chat_by_id(chat_id: str, token: str = Depends(oauth2_scheme)):
 
     chat["_id"] = str(chat["_id"])
     return chat
+
 # ====================== RENAME CHAT TITLE ======================
 @app.put("/chats/{chat_id}/title")
 async def update_chat_title(chat_id: str, body: TitleUpdate, token: str = Depends(oauth2_scheme)):
@@ -360,11 +364,11 @@ async def update_chat_title(chat_id: str, body: TitleUpdate, token: str = Depend
         {"_id": chat_id_obj, "user_id": user_id},
         {"$set": {"title": body.title.strip() or "Untitled Chat"}}
     )
-
     if result.modified_count == 0:
-        raise HTTPException(status_code=404, detail="Chat not found or you do not have permission to rename it")
+        raise HTTPException(status_code=404, detail="Chat not found or no permission to rename")
 
     return {"status": "success", "title": body.title}
+
 # ====================== TOGGLE PIN CHAT ======================
 @app.put("/chats/{chat_id}/pin")
 async def toggle_pin_chat(chat_id: str, body: PinUpdate, token: str = Depends(oauth2_scheme)):
@@ -378,11 +382,11 @@ async def toggle_pin_chat(chat_id: str, body: PinUpdate, token: str = Depends(oa
         {"_id": chat_id_obj, "user_id": user_id},
         {"$set": {"pinned": body.pinned}}
     )
-
     if result.modified_count == 0:
-        raise HTTPException(status_code=404, detail="Chat not found or you do not have permission")
+        raise HTTPException(status_code=404, detail="Chat not found or no permission")
 
     return {"status": "success", "pinned": body.pinned}
+
 # ====================== CHAT MESSAGE SAVING ======================
 async def save_chat_message(user_id: str, chat_id: str, user_message: str, bot_reply: str):
     try:
@@ -396,14 +400,13 @@ async def save_chat_message(user_id: str, chat_id: str, user_message: str, bot_r
 
     new_messages = [
         {"sender": "user", "content": user_message, "timestamp": datetime.utcnow()},
-        {"sender": "bot", "content": bot_reply, "timestamp": datetime.utcnow()}
+        {"sender": "bot",  "content": bot_reply,    "timestamp": datetime.utcnow()}
     ]
-
     await chats_collection.update_one(
         {"_id": chat_id_obj},
         {
             "$push": {"messages": {"$each": new_messages}},
-            "$set": {"updated_at": datetime.utcnow()}
+            "$set":  {"updated_at": datetime.utcnow()}
         }
     )
 
@@ -413,10 +416,10 @@ async def chat_endpoint(request: ChatRequest, token: str = Depends(oauth2_scheme
     user_id = await get_current_user(token)
 
     user_message = request.message.strip()
-    chat_id = request.chat_id
+    chat_id      = request.chat_id
 
-    detected_lang = detect_language(user_message)
-    is_bangla = detected_lang == "bn"
+    detected_lang  = detect_language(user_message)
+    is_bangla      = detected_lang == "bn"
     english_message = translate(user_message, "bn", "en") if is_bangla else user_message
 
     kg_context = await asyncio.to_thread(query_knowledge_graph, english_message)
@@ -433,7 +436,7 @@ async def chat_endpoint(request: ChatRequest, token: str = Depends(oauth2_scheme
             "model": MODEL_NAME,
             "messages": [
                 {"role": "system", "content": f"You are a helpful assistant for Bangladeshi fishermen. Use only the provided context. {language_instruction}"},
-                {"role": "user", "content": f"{kg_context}\n\nUser question: {english_message}"}
+                {"role": "user",   "content": f"{kg_context}\n\nUser question: {english_message}"}
             ],
             "stream": False
         }, timeout=60)
@@ -451,12 +454,10 @@ async def chat_endpoint(request: ChatRequest, token: str = Depends(oauth2_scheme
         if is_bangla:
             reply = translate(reply, "en", "bn")
 
-        # Save the message first
         await save_chat_message(user_id, chat_id, user_message, reply)
 
-        # Auto-generate suitable title ONLY if this is the first message pair
         chat_obj = await chats_collection.find_one({"_id": ObjectId(chat_id)})
-        if chat_obj and len(chat_obj.get("messages", [])) == 2:   # exactly one user + one bot message
+        if chat_obj and len(chat_obj.get("messages", [])) == 2:
             new_title = await generate_chat_title(user_message, reply)
             await chats_collection.update_one(
                 {"_id": ObjectId(chat_id)},
@@ -472,21 +473,18 @@ async def chat_endpoint(request: ChatRequest, token: str = Depends(oauth2_scheme
         return {"reply": error_reply}
 
 # ====================== FEEDBACK ======================
-# ====================== SAVE FEEDBACK (Positive + Negative) ======================
 @app.post("/feedback")
 async def save_feedback(feedback: FeedbackRequest, token: str = Depends(oauth2_scheme)):
     user_id = await get_current_user(token)
-    
+
     feedback_dict = feedback.model_dump()
-    feedback_dict["user_id"] = user_id
+    feedback_dict["user_id"]   = user_id
     feedback_dict["timestamp"] = datetime.utcnow()
 
-    # Ensure type is valid
     if feedback_dict["type"] not in ["positive", "negative"]:
-        feedback_dict["type"] = "negative"   # fallback
+        feedback_dict["type"] = "negative"
 
     await feedbacks_collection.insert_one(feedback_dict)
-    
     return {"status": "ok", "type": feedback_dict["type"]}
 
 @app.on_event("shutdown")

@@ -11,5 +11,5 @@ langdetect
 httpx
 ollama
 requests
-faster-whisper
+google-cloud-speech
 python-dotenv

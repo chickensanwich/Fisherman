@@ -1,6 +1,6 @@
 // ==================== CONFIG ====================
 const BACKEND_URL = "http://localhost:8000";
-let currentToken = null;
+let currentToken  = null;
 let currentChatId = null;
 
 // DOM Elements
@@ -8,38 +8,37 @@ let loginForm, signupForm, chatForm, feedbackForm;
 let loginContainer, signupContainer, chatContainer, feedbackPopup, overlay;
 let chatMessages, chatInput, chatHistory, newChatBtn, searchChats, userNameDisplay;
 
-// Sprint2: Voice input & mobile sidebar
+// Voice & sidebar
 let sidebarToggle, sidebar;
 let voicePopup, voiceBtn, voiceDoneBtn;
-let recognition = null;
-let isRecording = false;
+let activeSpeakBtn = null;
+let recognition    = null;
+let isRecording    = false;
 let finalTranscript = '';
 const speechRecognitionLang = 'en-US';
 
 // ==================== INIT ====================
 document.addEventListener('DOMContentLoaded', () => {
-    loginForm = document.getElementById('login-form');
-    signupForm = document.getElementById('signup-form');
-    chatForm = document.getElementById('chat-form');
-    feedbackForm = document.getElementById('feedback-form');
-
-    loginContainer = document.getElementById('login-container');
+    loginForm       = document.getElementById('login-form');
+    signupForm      = document.getElementById('signup-form');
+    chatForm        = document.getElementById('chat-form');
+    feedbackForm    = document.getElementById('feedback-form');
+    loginContainer  = document.getElementById('login-container');
     signupContainer = document.getElementById('signup-container');
-    chatContainer = document.getElementById('chat-container');
-    feedbackPopup = document.getElementById('feedback-popup');
-    overlay = document.getElementById('overlay');
-    voicePopup = document.getElementById('voice-popup');
-
-    chatMessages = document.getElementById('chat-messages');
-    chatInput = document.getElementById('chat-input');
-    chatHistory = document.getElementById('chat-history');
-    newChatBtn = document.getElementById('new-chat-btn');
-    searchChats = document.getElementById('search-chats');
+    chatContainer   = document.getElementById('chat-container');
+    feedbackPopup   = document.getElementById('feedback-popup');
+    overlay         = document.getElementById('overlay');
+    voicePopup      = document.getElementById('voice-popup');
+    chatMessages    = document.getElementById('chat-messages');
+    chatInput       = document.getElementById('chat-input');
+    chatHistory     = document.getElementById('chat-history');
+    newChatBtn      = document.getElementById('new-chat-btn');
+    searchChats     = document.getElementById('search-chats');
     userNameDisplay = document.getElementById('user-name-display');
-    sidebarToggle = document.getElementById('sidebar-toggle');
-    sidebar = document.querySelector('.sidebar');
-    voiceBtn = document.getElementById('voice-btn');
-    voiceDoneBtn = document.getElementById('voice-done-btn');
+    sidebarToggle   = document.getElementById('sidebar-toggle');
+    sidebar         = document.querySelector('.sidebar');
+    voiceBtn        = document.getElementById('voice-btn');
+    voiceDoneBtn    = document.getElementById('voice-done-btn');
 
     loginForm.addEventListener('submit', handleLogin);
     signupForm.addEventListener('submit', handleSignup);
@@ -54,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    if (voiceBtn) voiceBtn.addEventListener('click', openVoicePopup);
+    if (voiceBtn)     voiceBtn.addEventListener('click', openVoicePopup);
     if (voiceDoneBtn) voiceDoneBtn.addEventListener('click', closeVoicePopup);
 
     chatInput.addEventListener('input', () => {
@@ -62,7 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
         chatInput.style.height = (chatInput.scrollHeight) + 'px';
     });
 
-    // Dark mode
     const darkToggle = document.getElementById('dark-toggle');
     if (darkToggle) {
         const isDark = localStorage.getItem('darkMode') === 'true';
@@ -90,17 +88,70 @@ async function initApp() {
     }
 }
 
-// ==================== VOICE INPUT (WHISPER) ====================
+// ==================== READ ALOUD (BROWSER WEB SPEECH API) ====================
+// Only this function changed from the original — everything else is untouched.
+async function speakMessage(text, btn) {
+    // Toggle off if currently speaking this message
+    if (window.speechSynthesis.speaking && activeSpeakBtn === btn) {
+        window.speechSynthesis.cancel();
+        // onend handler below resets the button
+        return;
+    }
+
+    // Cancel any other ongoing speech and reset its button
+    if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+    }
+
+    // Detect Bengali characters (Unicode block U+0980–U+09FF)
+    const isBengali = /[\u0980-\u09FF]/.test(text);
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang  = isBengali ? 'bn-BD' : 'en-US';
+    utterance.rate  = 0.9;
+    utterance.pitch = 1;
+
+    const trySpeak = () => {
+        const voices = window.speechSynthesis.getVoices();
+        const match  = voices.find(v => v.lang.startsWith(isBengali ? 'bn' : 'en'));
+        if (match) utterance.voice = match;
+
+        btn.classList.add('speaking');
+        btn.title     = 'Stop reading';
+        btn.innerHTML = '<i class="fas fa-stop-circle"></i>';
+        activeSpeakBtn = btn;
+
+        utterance.onend = utterance.onerror = () => {
+            btn.classList.remove('speaking');
+            btn.title     = 'Read aloud';
+            btn.innerHTML = '<i class="fas fa-volume-up"></i>';
+            if (activeSpeakBtn === btn) activeSpeakBtn = null;
+        };
+
+        window.speechSynthesis.speak(utterance);
+    };
+
+    // Chrome loads voices asynchronously on first call
+    if (window.speechSynthesis.getVoices().length === 0) {
+        window.speechSynthesis.onvoiceschanged = () => {
+            window.speechSynthesis.onvoiceschanged = null;
+            trySpeak();
+        };
+    } else {
+        trySpeak();
+    }
+}
+
+// ==================== VOICE INPUT (GOOGLE CLOUD STT via /transcribe) ====================
 let liveTranscriptEl, voiceMicActive, voiceSendBtn;
 let mediaRecorder;
 let audioChunks = [];
 
 function initSpeechRecognition() {
     liveTranscriptEl = document.getElementById('live-transcript');
-    voiceMicActive = document.getElementById('voice-mic-active');
-    voiceSendBtn = document.getElementById('voice-send-btn');
+    voiceMicActive   = document.getElementById('voice-mic-active');
+    voiceSendBtn     = document.getElementById('voice-send-btn');
 
-    // Hide mic button if browser doesn't support recording
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         if (voiceBtn) voiceBtn.style.display = 'none';
         console.error("Audio recording not supported in this browser.");
@@ -113,32 +164,28 @@ async function openVoicePopup() {
         overlay.classList.remove('hidden');
         liveTranscriptEl.textContent = 'Initializing mic...';
         voiceSendBtn.classList.add('hidden');
-        
+
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             mediaRecorder = new MediaRecorder(stream);
-            audioChunks = [];
+            audioChunks   = [];
 
             mediaRecorder.ondataavailable = event => {
                 if (event.data.size > 0) audioChunks.push(event.data);
             };
 
             mediaRecorder.onstop = async () => {
-                // UI changes while waiting for Whisper
-                liveTranscriptEl.textContent = 'Transcribing... please wait';
+                liveTranscriptEl.textContent   = 'Transcribing... please wait';
                 liveTranscriptEl.style.opacity = '0.7';
                 voiceMicActive.classList.remove('listening');
-                
                 const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
                 await processAudioWithWhisper(audioBlob);
-                
-                // Turn off the mic hardware
                 stream.getTracks().forEach(track => track.stop());
             };
 
             mediaRecorder.start();
             isRecording = true;
-            liveTranscriptEl.textContent = 'Listening...';
+            liveTranscriptEl.textContent   = 'Listening...';
             liveTranscriptEl.style.opacity = '0.5';
             voiceMicActive.classList.add('listening');
 
@@ -155,14 +202,12 @@ function stopListening() {
         mediaRecorder.stop();
         isRecording = false;
     } else {
-        // If they click the mic after it transcribed, let them re-record
         openVoicePopup();
     }
 }
 
 async function processAudioWithWhisper(audioBlob) {
     if (!currentToken) return;
-    
     const formData = new FormData();
     formData.append('audio', audioBlob, 'voice.webm');
 
@@ -172,12 +217,10 @@ async function processAudioWithWhisper(audioBlob) {
             headers: { 'Authorization': `Bearer ${currentToken}` },
             body: formData
         });
-
         if (!res.ok) throw new Error('Transcription failed');
-        
         const data = await res.json();
         if (data.text) {
-            liveTranscriptEl.textContent = data.text;
+            liveTranscriptEl.textContent   = data.text;
             liveTranscriptEl.style.opacity = '1';
             voiceSendBtn.classList.remove('hidden');
         } else {
@@ -192,8 +235,7 @@ async function processAudioWithWhisper(audioBlob) {
 function closeVoicePopup() {
     if (voicePopup && overlay) {
         if (isRecording && mediaRecorder && mediaRecorder.state === "recording") {
-            // Stop recording but prevent it from sending to backend
-            mediaRecorder.onstop = null; 
+            mediaRecorder.onstop = null;
             mediaRecorder.stop();
             mediaRecorder.stream.getTracks().forEach(track => track.stop());
             isRecording = false;
@@ -207,18 +249,15 @@ function closeVoicePopup() {
 function sendVoiceMessage() {
     const textToSend = liveTranscriptEl.textContent.trim();
     if (!textToSend || textToSend === 'Listening...' || textToSend.includes('Transcribing')) return;
-
     closeVoicePopup();
     chatInput.value = textToSend;
-    
     const submitEvent = new Event('submit', { cancelable: true, bubbles: true });
     chatForm.dispatchEvent(submitEvent);
 }
 
-// Expose global functions
-window.stopListening = stopListening;
+window.stopListening    = stopListening;
 window.sendVoiceMessage = sendVoiceMessage;
-window.closeVoicePopup = closeVoicePopup;
+window.closeVoicePopup  = closeVoicePopup;
 
 // ==================== LOAD AND DISPLAY USER NAME ====================
 async function loadUserInfo() {
@@ -229,7 +268,7 @@ async function loadUserInfo() {
             headers: { 'Authorization': `Bearer ${currentToken}` }
         });
         if (res.ok) {
-            const user = await res.json();
+            const user     = await res.json();
             const userNameEl = document.getElementById('user-name-display');
             if (userNameEl) userNameEl.textContent = user.name || "Fisherman";
         }
@@ -243,12 +282,8 @@ async function loadUserInfo() {
 async function handleLogin(e) {
     e.preventDefault();
     const fishermanId = document.getElementById('login-fisherman-id').value.trim();
-    const password = document.getElementById('login-password').value.trim();
-
-    if (!fishermanId || !password) {
-        alert("Please enter Fisherman ID and Password");
-        return;
-    }
+    const password    = document.getElementById('login-password').value.trim();
+    if (!fishermanId || !password) { alert("Please enter Fisherman ID and Password"); return; }
 
     try {
         const formData = new URLSearchParams();
@@ -260,23 +295,16 @@ async function handleLogin(e) {
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: formData
         });
-
         if (!res.ok) {
             const errorData = await res.json().catch(() => ({}));
             throw new Error(errorData.detail || "Invalid credentials");
         }
-
         const data = await res.json();
         currentToken = data.access_token;
         localStorage.setItem('token', currentToken);
-
         showChatInterface();
         await loadUserChats();
-        
-        
-        startNewChatUI(); 
-        
-    
+        startNewChatUI();
         appendSystemMessage("Welcome back! 👋");
     } catch (err) {
         alert("Login failed: " + err.message);
@@ -285,16 +313,13 @@ async function handleLogin(e) {
 
 async function handleSignup(e) {
     e.preventDefault();
-    const name = document.getElementById('signup-name').value.trim();
-    const fishermanId = document.getElementById('signup-fisherman-id').value.trim();
-    const location = document.getElementById('signup-location').value.trim();
-    const password = document.getElementById('signup-password').value.trim();
+    const name            = document.getElementById('signup-name').value.trim();
+    const fishermanId     = document.getElementById('signup-fisherman-id').value.trim();
+    const location        = document.getElementById('signup-location').value.trim();
+    const password        = document.getElementById('signup-password').value.trim();
     const confirmPassword = document.getElementById('signup-confirm-password').value.trim();
 
-    if (password !== confirmPassword) {
-        alert('Passwords do not match!');
-        return;
-    }
+    if (password !== confirmPassword) { alert('Passwords do not match!'); return; }
 
     try {
         const res = await fetch(`${BACKEND_URL}/register`, {
@@ -302,23 +327,16 @@ async function handleSignup(e) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name, fisherman_id: fishermanId, location, password })
         });
-
         if (!res.ok) {
             const errorData = await res.json().catch(() => ({}));
             throw new Error(errorData.detail || "Registration failed");
         }
-
         const data = await res.json();
         currentToken = data.access_token;
         localStorage.setItem('token', currentToken);
-
         showChatInterface();
         await loadUserChats();
-        
-        
-        startNewChatUI(); 
-        
-        
+        startNewChatUI();
         appendSystemMessage(`Welcome aboard, ${name}! 🎣`);
     } catch (err) {
         alert("Signup failed: " + err.message);
@@ -327,7 +345,7 @@ async function handleSignup(e) {
 
 function logout() {
     localStorage.removeItem('token');
-    currentToken = null;
+    currentToken  = null;
     currentChatId = null;
     showLogin();
 }
@@ -354,22 +372,15 @@ function showChatInterface() {
 // ==================== CHAT HISTORY & CREATION ====================
 async function loadUserChats() {
     if (!currentToken) return;
-
     try {
         const res = await fetch(`${BACKEND_URL}/chats`, {
             method: 'GET',
             headers: { 'Authorization': `Bearer ${currentToken}` }
         });
-
         if (!res.ok) {
-            if (res.status === 401) {
-                alert("Session expired. Please login again.");
-                logout();
-                return;
-            }
+            if (res.status === 401) { alert("Session expired. Please login again."); logout(); return; }
             throw new Error(`HTTP ${res.status}`);
         }
-
         const chats = await res.json();
         renderChatHistory(chats);
     } catch (e) {
@@ -384,86 +395,107 @@ function renderChatHistory(chats) {
         item.classList.add('chat-item');
         if (chat._id === currentChatId) item.classList.add('active');
 
-        const date = new Date(chat.updated_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        const date    = new Date(chat.updated_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
         const pinIcon = chat.pinned ? '📌 ' : '';
 
         item.innerHTML = `
-            <i class="fas fa-comment"></i>
-            <div class="chat-item-title" style="flex:1; cursor:pointer;">
-                ${pinIcon}${chat.title || 'New Chat'}
-            </div>
-            <small style="opacity:0.7;">${date}</small>
-            <button class="menu-dots" title="More options">⋮</button>
-        `;
+        <i class="fas fa-comment"></i>
+        <div class="chat-item-title">${pinIcon}${chat.title || 'New Chat'}</div>
+        <button class="menu-dots" onclick="event.stopPropagation(); showChatMenu(this.parentElement, '${chat._id}', ${chat.pinned || false})">⋮</button>`;
 
-        const dots = item.querySelector('.menu-dots');
-
-        dots.addEventListener('click', (e) => {
-            e.stopImmediatePropagation();
-            showChatMenu(item, chat._id, chat.pinned || false);
-        });
-
-        item.addEventListener('click', (e) => {
-            if (!e.target.closest('.menu-dots') && !e.target.closest('.chat-dropdown')) {
-                loadSpecificChat(chat._id, chat.messages || []);
-                // Close mobile sidebar after selection
-                if (window.innerWidth <= 768 && sidebar) {
-                    sidebar.classList.remove('expanded');
-                }
-            }
-        });
+item.addEventListener('click', () => loadChat(chat._id));
 
         chatHistory.appendChild(item);
     });
 }
 
-async function loadSpecificChat(chatId, messages) {
+async function loadChat(chatId) {
+    if (!currentToken) return;
     currentChatId = chatId;
-    chatMessages.innerHTML = '';
 
-    if (messages && messages.length > 0) {
-        messages.forEach(msg => addMessage(msg.content, msg.sender));
-    } else {
-        const welcomeDiv = document.createElement('div');
-        welcomeDiv.classList.add('welcome-message');
-        welcomeDiv.innerHTML = '<h1>Welcome to FisherMen Chatbot</h1><p>How can I assist you today?</p>';
-        chatMessages.appendChild(welcomeDiv);
+    document.querySelectorAll('.chat-item').forEach(item => item.classList.remove('active'));
+    document.querySelectorAll('.chat-item').forEach(item => {
+        const titleEl = item.querySelector('.chat-item-title');
+        if (titleEl && titleEl.getAttribute('onclick') && titleEl.getAttribute('onclick').includes(chatId)) {
+            item.classList.add('active');
+        }
+    });
+
+    try {
+        const res = await fetch(`${BACKEND_URL}/chats/${chatId}`, {
+            headers: { 'Authorization': `Bearer ${currentToken}` }
+        });
+        if (!res.ok) throw new Error('Failed to load chat');
+
+        const chat = await res.json();
+        chatMessages.innerHTML = '';
+
+        if (!chat.messages || chat.messages.length === 0) {
+            const welcomeDiv = document.createElement('div');
+            welcomeDiv.classList.add('welcome-message');
+            welcomeDiv.innerHTML = `
+<h1>How can I assist you today?</h1>
+<p>Send your first message to start the conversation...</p>`;
+            chatMessages.appendChild(welcomeDiv);
+        } else {
+            chat.messages.forEach(msg => addMessage(msg.content, msg.sender));
+        }
+    } catch (e) {
+        console.error("Failed to load chat:", e);
     }
-    await loadUserChats();
+}
+
+async function createNewChat() {
+    if (!currentToken) return;
+    try {
+        const res = await fetch(`${BACKEND_URL}/chats`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${currentToken}` }
+        });
+        if (!res.ok) throw new Error('Failed to create chat');
+        const data    = await res.json();
+        currentChatId = data.chat_id;
+        await loadUserChats();
+    } catch (e) {
+        console.error("Failed to create chat:", e);
+    }
+}
+
+function startNewChatUI() {
+    currentChatId          = null;
+    chatMessages.innerHTML = '';
+    const welcomeDiv       = document.createElement('div');
+    welcomeDiv.classList.add('welcome-message');
+    welcomeDiv.innerHTML   = `
+<h1>How can I assist you today?</h1>
+<p>Send your first message to create the chat...</p>`;
+    chatMessages.appendChild(welcomeDiv);
+    document.querySelectorAll('.chat-item').forEach(item => item.classList.remove('active'));
 }
 
 // ==================== DELETE CHAT ====================
 async function deleteChat(chatId) {
     if (!currentToken) return;
-
     try {
         const res = await fetch(`${BACKEND_URL}/chats/${chatId}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${currentToken}` }
         });
-
         if (!res.ok) {
-            if (res.status === 404) {
-                alert("Chat not found or you do not have permission to delete it.");
-                return;
-            }
-            if (res.status === 401) {
-                alert("Session expired. Please login again.");
-                logout();
-                return;
-            }
+            if (res.status === 404) { alert("Chat not found or you do not have permission to delete it."); return; }
+            if (res.status === 401) { alert("Session expired. Please login again."); logout(); return; }
             throw new Error(`HTTP ${res.status}`);
         }
-
         if (currentChatId === chatId) {
-            currentChatId = null;
+            currentChatId          = null;
             chatMessages.innerHTML = '';
-            const welcomeDiv = document.createElement('div');
+            const welcomeDiv       = document.createElement('div');
             welcomeDiv.classList.add('welcome-message');
-            welcomeDiv.innerHTML = '<h1>Welcome to FisherMen Chatbot</h1><p>How can I assist you today?</p>';
+            welcomeDiv.innerHTML   = `
+<h1>How can I assist you today?</h1>
+<p>Send your first message to create the chat...</p>`;
             chatMessages.appendChild(welcomeDiv);
         }
-
         await loadUserChats();
     } catch (e) {
         console.error("Failed to delete chat:", e);
@@ -474,67 +506,34 @@ async function deleteChat(chatId) {
 // ==================== 3-DOTS DROPDOWN MENU ====================
 function showChatMenu(chatItem, chatId, isPinned) {
     const existingMenu = chatItem.querySelector('.chat-dropdown');
-
-    if (existingMenu) {
-        cleanupMenu();
-        return;
-    }
-
+    if (existingMenu) { cleanupMenu(); return; }
     cleanupMenu();
 
-    const menu = document.createElement('div');
+    const menu     = document.createElement('div');
     menu.className = 'chat-dropdown show';
-
     menu.innerHTML = `
-        <button class="menu-rename"><i class="fas fa-edit"></i> Rename</button>
-        <button class="menu-pin"><i class="fas fa-thumbtack"></i> ${isPinned ? 'Unpin' : 'Pin'} chat</button>
+        <button class="menu-rename"><i class="fas fa-pencil-alt"></i> Rename</button>
+        <button class="menu-pin"><i class="fas fa-thumbtack"></i> ${isPinned ? 'Unpin' : 'Pin'}</button>
         <button class="menu-share"><i class="fas fa-share-alt"></i> Share</button>
-        <button class="menu-delete" style="color:var(--danger-color)"><i class="fas fa-trash-alt"></i> Delete</button>
-    `;
+        <button class="menu-delete"><i class="fas fa-trash"></i> Delete</button>`;
 
     chatItem.appendChild(menu);
+    chatItem.classList.add('menu-open');   
+    document.querySelectorAll('.chat-item').forEach(item => { if (item !== chatItem) item.style.pointerEvents = 'none'; });
 
-    document.querySelectorAll('.chat-item').forEach(item => {
-        if (item !== chatItem) item.style.pointerEvents = 'none';
-    });
+    menu.querySelector('.menu-rename').addEventListener('click', (e) => { e.stopImmediatePropagation(); cleanupMenu(); renameChat(chatId); });
+    menu.querySelector('.menu-pin').addEventListener('click',    (e) => { e.stopImmediatePropagation(); cleanupMenu(); togglePin(chatId, !isPinned); });
+    menu.querySelector('.menu-share').addEventListener('click',  (e) => { e.stopImmediatePropagation(); cleanupMenu(); shareChat(chatId); });
+    menu.querySelector('.menu-delete').addEventListener('click', (e) => { e.stopImmediatePropagation(); cleanupMenu(); if (confirm('Delete this chat permanently?')) deleteChat(chatId); });
 
-    menu.querySelector('.menu-rename').addEventListener('click', (e) => {
-        e.stopImmediatePropagation();
-        cleanupMenu();
-        renameChat(chatId);
-    });
-
-    menu.querySelector('.menu-pin').addEventListener('click', (e) => {
-        e.stopImmediatePropagation();
-        cleanupMenu();
-        togglePin(chatId, !isPinned);
-    });
-
-    menu.querySelector('.menu-share').addEventListener('click', (e) => {
-        e.stopImmediatePropagation();
-        cleanupMenu();
-        shareChat(chatId);
-    });
-
-    menu.querySelector('.menu-delete').addEventListener('click', (e) => {
-        e.stopImmediatePropagation();
-        cleanupMenu();
-        if (confirm('Delete this chat permanently?')) deleteChat(chatId);
-    });
-
-    const closeHandler = (e) => {
-        if (!chatItem.contains(e.target)) cleanupMenu();
-    };
+    const closeHandler = (e) => { if (!chatItem.contains(e.target)) cleanupMenu(); };
     setTimeout(() => document.addEventListener('click', closeHandler), 10);
 }
 
 function cleanupMenu() {
-    document.querySelectorAll('.chat-dropdown').forEach(menu => {
-        if (menu.parentNode) menu.remove();
-    });
-    document.querySelectorAll('.chat-item').forEach(item => {
-        item.style.pointerEvents = 'auto';
-    });
+    document.querySelectorAll('.chat-dropdown').forEach(menu => { if (menu.parentNode) menu.remove(); });
+    document.querySelectorAll('.chat-item').forEach(item => { item.style.pointerEvents = 'auto'; });
+    document.querySelectorAll('.chat-item').forEach(item => { item.classList.remove('menu-open'); });
     document.removeEventListener('click', cleanupMenu);
 }
 
@@ -543,60 +542,34 @@ async function togglePin(chatId, newPinnedState) {
     try {
         const res = await fetch(`${BACKEND_URL}/chats/${chatId}/pin`, {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${currentToken}`
-            },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentToken}` },
             body: JSON.stringify({ pinned: newPinnedState })
         });
-
-        if (res.ok) {
-            await loadUserChats();
-        } else {
-            alert("Failed to pin/unpin chat.");
-        }
-    } catch (e) {
-        console.error(e);
-        alert("Could not update pin status.");
-    }
+        if (res.ok) { await loadUserChats(); } else { alert("Failed to pin/unpin chat."); }
+    } catch (e) { console.error(e); alert("Could not update pin status."); }
 }
 
 // ==================== RENAME CHAT ====================
 async function renameChat(chatId) {
     const newTitle = prompt("Enter new title for this chat:", "");
     if (!newTitle || newTitle.trim() === "") return;
-
     try {
         const res = await fetch(`${BACKEND_URL}/chats/${chatId}/title`, {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${currentToken}`
-            },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentToken}` },
             body: JSON.stringify({ title: newTitle.trim() })
         });
-
-        if (res.ok) {
-            await loadUserChats();
-        } else {
-            alert("Failed to rename chat.");
-        }
-    } catch (e) {
-        console.error(e);
-        alert("Could not rename the chat.");
-    }
+        if (res.ok) { await loadUserChats(); } else { alert("Failed to rename chat."); }
+    } catch (e) { console.error(e); alert("Could not rename the chat."); }
 }
-
-// ==================== SHARE CHAT ====================
+// share chat
 async function shareChat(chatId) {
     try {
         const res = await fetch(`${BACKEND_URL}/chats/${chatId}`, {
             method: 'GET',
             headers: { 'Authorization': `Bearer ${currentToken}` }
         });
-
         if (!res.ok) throw new Error("Failed to load chat");
-
         const chat = await res.json();
 
         let shareText = ` ${chat.title || 'FisherMen Chatbot Conversation'}\n\n`;
@@ -609,133 +582,66 @@ async function shareChat(chatId) {
         shareText += `\n Shared from FisherMen Chatbot`;
 
         const encodedText = encodeURIComponent(shareText);
-
         const modal = document.createElement('div');
         modal.className = 'share-modal';
         modal.innerHTML = `
-            <h3>Share this chat</h3>
+            <h3>Share Chat</h3>
             <div class="share-options">
-                <button class="share-btn whatsapp-btn" title="Share on WhatsApp">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+                <a href="https://wa.me/?text=${encodedText}" target="_blank" class="share-btn">
+                    <img src="https://cdn.simpleicons.org/whatsapp/25D366" alt="WhatsApp" width="56" height="56">
                     <span>WhatsApp</span>
-                </button>
-                <button class="share-btn facebook-btn" title="Share on Facebook">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook">
+                </a>
+                <a href="https://www.facebook.com/sharer/sharer.php?quote=${encodedText}&u=https://fishermen-chatbot.com" target="_blank" class="share-btn">
+                    <img src="https://cdn.simpleicons.org/facebook/1877F2" alt="Facebook" width="56" height="56">
                     <span>Facebook</span>
-                </button>
-                <button class="share-btn messenger-btn" title="Share on Messenger">
-                    <img src="https://img.icons8.com/color/48/facebook-messenger--v1.png" alt="Messenger">
+                </a>
+                <a href="https://m.me/?link=https://fishermen-chatbot.com" target="_blank" class="share-btn">
+                    <img src="https://cdn.simpleicons.org/messenger/00B2FF" alt="Messenger" width="56" height="56">
                     <span>Messenger</span>
-                </button>
+                </a>
             </div>
             <div class="copy-option">
-                <button id="copy-btn">📋 Copy to clipboard</button>
+                <button id="share-copy-btn"><i class="fas fa-copy"></i> Copy text</button>
             </div>
-            <button onclick="this.closest('.share-modal').remove()" style="margin-top:20px; width:100%; padding:10px; background:none; border:1px solid var(--border-color); border-radius:8px; cursor:pointer;">
-                Cancel
-            </button>
-        `;
+            <div style="text-align:center; margin-top:12px;">
+                <button class="btn-secondary" style="font-size:13px; padding:6px 16px;" id="share-close-btn">Close</button>
+            </div>`;
 
         document.body.appendChild(modal);
+        overlay.classList.remove('hidden');
 
-        modal.querySelector('.whatsapp-btn').addEventListener('click', () => {
-            window.open(`https://wa.me/?text=${encodedText}`, '_blank');
-            modal.remove();
+        // Copy to clipboard functionality
+        modal.querySelector('#share-copy-btn').addEventListener('click', () => {
+            navigator.clipboard.writeText(shareText)
+                .then(() => alert('Copied to clipboard!'))
+                .catch(() => alert('Copy failed. Please select and copy manually.'));
         });
-        modal.querySelector('.facebook-btn').addEventListener('click', () => {
-            window.open(`https://www.facebook.com/sharer/sharer.php?quote=${encodedText}`, '_blank');
+
+        modal.querySelector('#share-close-btn').addEventListener('click', () => {
             modal.remove();
-        });
-        modal.querySelector('.messenger-btn').addEventListener('click', () => {
-            window.open(`https://www.messenger.com/t/?text=${encodedText}`, '_blank');
-            modal.remove();
-        });
-        modal.querySelector('#copy-btn').addEventListener('click', async () => {
-            try {
-                await navigator.clipboard.writeText(shareText);
-                const btn = modal.querySelector('#copy-btn');
-                const originalText = btn.textContent;
-                btn.textContent = '✅ Copied!';
-                setTimeout(() => { btn.textContent = originalText; }, 2000);
-            } catch (err) {
-                alert("Failed to copy to clipboard");
-            }
+            overlay.classList.add('hidden');
         });
 
     } catch (e) {
-        console.error(e);
-        alert("Could not share the chat. Please try again.");
+        console.error("Share failed:", e);
+        alert("Could not share the chat.");
     }
-}
-
-// ==================== CREATE / START NEW CHAT ====================
-async function createNewChat() {
-    if (!currentToken) return;
-
-    try {
-        const res = await fetch(`${BACKEND_URL}/chats`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${currentToken}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (!res.ok) {
-            if (res.status === 401) {
-                alert("Session expired. Please login again.");
-                logout();
-                return;
-            }
-            throw new Error(`HTTP ${res.status}`);
-        }
-
-        const data = await res.json();
-        currentChatId = data.chat_id;
-        await loadUserChats();
-    } catch (e) {
-        console.error("Could not create new chat:", e);
-        alert("Could not create new chat. Please try again.");
-    }
-}
-
-function startNewChatUI() {
-    currentChatId = null;
-    chatMessages.innerHTML = '';
-
-    const welcomeDiv = document.createElement('div');
-    welcomeDiv.classList.add('welcome-message');
-    welcomeDiv.innerHTML = `
-        <h1>Welcome to FisherMen Chatbot</h1>
-        <p>How can I assist you today?</p>
-        <p style="margin-top:20px; font-size:15px; color:var(--text-secondary);">
-            Send your first message to create the chat
-        </p>
-    `;
-    chatMessages.appendChild(welcomeDiv);
-
-    document.querySelectorAll('.chat-item').forEach(item => item.classList.remove('active'));
 }
 
 // ==================== CHAT SEND ====================
 async function handleChatSubmit(e) {
     e.preventDefault();
     let message = chatInput.value.trim();
-
     if (!message || !currentToken) return;
 
     if (!currentChatId) {
         await createNewChat();
-        if (!currentChatId) {
-            alert("Failed to create a new chat. Please try again.");
-            return;
-        }
+        if (!currentChatId) { alert("Failed to create a new chat. Please try again."); return; }
     }
 
     addMessage(message, 'user');
-    chatInput.value = '';
+    chatInput.value        = '';
     chatInput.style.height = 'auto';
-
     await sendMessageToBackend(message);
 }
 
@@ -747,23 +653,15 @@ async function sendMessageToBackend(message) {
     }
 
     showTypingIndicator();
-
     try {
         const res = await fetch(`${BACKEND_URL}/chat`, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${currentToken}`
-            },
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${currentToken}` },
             body: JSON.stringify({ message, chat_id: currentChatId })
         });
 
         if (!res.ok) {
-            if (res.status === 401) {
-                alert("Session expired. Please login again.");
-                logout();
-                return;
-            }
+            if (res.status === 401) { alert("Session expired. Please login again."); logout(); return; }
             const errorData = await res.json().catch(() => ({}));
             console.error("Chat API error:", res.status, errorData);
             throw new Error(`Server error: ${res.status}`);
@@ -809,8 +707,16 @@ function addMessage(content, sender) {
         thumbsDownBtn.innerHTML = '<i class="fas fa-thumbs-down"></i>';
         thumbsDownBtn.addEventListener('click', () => handleFeedback(messageDiv, false));
 
+        // READ ALOUD BUTTON — uses browser Web Speech API via speakMessage()
+        const readAloudBtn = document.createElement('button');
+        readAloudBtn.classList.add('feedback-btn', 'read-aloud-btn');
+        readAloudBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+        readAloudBtn.title     = 'Read aloud';
+        readAloudBtn.addEventListener('click', () => speakMessage(content, readAloudBtn));
+
         feedbackDiv.appendChild(thumbsUpBtn);
         feedbackDiv.appendChild(thumbsDownBtn);
+        feedbackDiv.appendChild(readAloudBtn);
         messageDiv.appendChild(feedbackDiv);
     }
 
@@ -821,7 +727,7 @@ function addMessage(content, sender) {
 function showTypingIndicator() {
     const typingDiv = document.createElement('div');
     typingDiv.classList.add('message', 'bot-message', 'typing-indicator');
-    typingDiv.innerHTML = `<div class="message-content"><span></span><span></span><span></span></div>`;
+    typingDiv.innerHTML = `<span></span><span></span><span></span>`;
     chatMessages.appendChild(typingDiv);
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
@@ -834,15 +740,15 @@ function removeTypingIndicator() {
 function appendSystemMessage(text) {
     const sysMsg = document.createElement("div");
     sysMsg.classList.add("message", "bot-message");
-    sysMsg.innerHTML = `<div class="message-content" style="background:#e8f5e9;color:#2e7d32;">${text}</div>`;
+    sysMsg.innerHTML = `<div class="message-content">${text}</div>`;
     chatMessages.appendChild(sysMsg);
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
 // ==================== FEEDBACK ====================
 async function handleFeedback(messageDiv, isPositive) {
-    const thumbsUp = messageDiv.querySelector('.thumbs-up');
-    const thumbsDown = messageDiv.querySelector('.thumbs-down');
+    const thumbsUp        = messageDiv.querySelector('.thumbs-up');
+    const thumbsDown      = messageDiv.querySelector('.thumbs-down');
     const reportedMessage = messageDiv.querySelector('.message-content').textContent;
 
     thumbsUp.classList.remove('active');
@@ -862,10 +768,7 @@ async function sendFeedbackToBackend(feedbackData) {
     try {
         const res = await fetch(`${BACKEND_URL}/feedback`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${currentToken}`
-            },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentToken}` },
             body: JSON.stringify(feedbackData)
         });
         if (res.ok) {
@@ -886,12 +789,10 @@ function showFeedbackPopup(message) {
 
 async function handleFeedbackSubmit(e) {
     e.preventDefault();
-    const reason = document.querySelector('input[name="feedback"]:checked')?.value || "other";
-    const comments = document.getElementById('feedback-text').value.trim();
+    const reason          = document.querySelector('input[name="feedback"]:checked')?.value || "other";
+    const comments        = document.getElementById('feedback-text').value.trim();
     const reportedMessage = feedbackPopup.dataset.reportedMessage;
-
     await sendFeedbackToBackend({ type: "negative", reason, comments, message: reportedMessage });
-
     closeFeedbackPopup();
     alert('Thank you for your feedback!');
 }
@@ -905,7 +806,7 @@ function closeFeedbackPopup() {
 // ==================== UTILITIES ====================
 function togglePasswordVisibility(inputId) {
     const input = document.getElementById(inputId);
-    const icon = input.nextElementSibling.querySelector('i');
+    const icon  = input.nextElementSibling.querySelector('i');
     if (input.type === 'password') {
         input.type = 'text';
         icon.classList.remove('fa-eye');
@@ -920,22 +821,22 @@ function togglePasswordVisibility(inputId) {
 // Export chat
 document.getElementById('export-chat')?.addEventListener('click', () => {
     const messages = Array.from(chatMessages.querySelectorAll('.message')).map(m => ({
-        sender: m.classList.contains('user-message') ? 'user' : 'bot',
+        sender:  m.classList.contains('user-message') ? 'user' : 'bot',
         content: m.querySelector('.message-content').textContent,
-        time: m.querySelector('.timestamp')?.textContent || ''
+        time:    m.querySelector('.timestamp')?.textContent || ''
     }));
     const dataStr = JSON.stringify(messages, null, 2);
-    const blob = new Blob([dataStr], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `fishermen-chat-${new Date().toISOString().slice(0, 10)}.json`;
+    const blob    = new Blob([dataStr], { type: 'application/json' });
+    const url     = URL.createObjectURL(blob);
+    const a       = document.createElement('a');
+    a.href        = url;
+    a.download    = `fishermen-chat-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
 });
 
 function searchChatHistory() {
-    const term = searchChats.value.toLowerCase();
+    const term  = searchChats.value.toLowerCase();
     const items = chatHistory.querySelectorAll('.chat-item');
     items.forEach(item => {
         const title = item.querySelector('.chat-item-title').textContent.toLowerCase();
@@ -945,7 +846,7 @@ function searchChatHistory() {
 
 // Expose global functions for inline onclick handlers
 window.togglePasswordVisibility = togglePasswordVisibility;
-window.showSignup = showSignup;
-window.showLogin = showLogin;
-window.logout = logout;
+window.showSignup         = showSignup;
+window.showLogin          = showLogin;
+window.logout             = logout;
 window.closeFeedbackPopup = closeFeedbackPopup;
