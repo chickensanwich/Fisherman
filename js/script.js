@@ -208,6 +208,10 @@ function stopListening() {
 
 async function processAudioWithWhisper(audioBlob) {
     if (!currentToken) return;
+
+    // Start animated progress bar
+    startTranscribeProgress();
+
     const formData = new FormData();
     formData.append('audio', audioBlob, 'voice.webm');
 
@@ -219,8 +223,11 @@ async function processAudioWithWhisper(audioBlob) {
         });
         if (!res.ok) throw new Error('Transcription failed');
         const data = await res.json();
+
+        finishTranscribeProgress(); // snap to 100% and fade out
+
         if (data.text) {
-            liveTranscriptEl.textContent   = data.text;
+            liveTranscriptEl.textContent = data.text;
             liveTranscriptEl.style.opacity = '1';
             voiceSendBtn.classList.remove('hidden');
         } else {
@@ -228,8 +235,63 @@ async function processAudioWithWhisper(audioBlob) {
         }
     } catch (err) {
         console.error(err);
+        finishTranscribeProgress();
         liveTranscriptEl.textContent = 'Server error during transcription.';
     }
+}
+
+let progressInterval = null;
+
+function startTranscribeProgress() {
+    liveTranscriptEl.textContent = 'Transcribing...';
+    liveTranscriptEl.style.opacity = '0.7';
+
+    
+    let bar = document.getElementById('transcribe-progress');
+    if (!bar) {
+        bar = document.createElement('div');
+        bar.id = 'transcribe-progress';
+        bar.innerHTML = `
+            <div id="transcribe-progress-fill"></div>
+            <span id="transcribe-progress-label">Transcribing...</span>`;
+        liveTranscriptEl.insertAdjacentElement('afterend', bar);
+    }
+
+    const fill = document.getElementById('transcribe-progress-fill');
+    const label = document.getElementById('transcribe-progress-label');
+    fill.style.width = '0%';
+    bar.style.display = 'block';
+
+    const steps = [
+        { pct: 15, label: 'Uploading audio...', delay: 300 },
+        { pct: 40, label: 'Processing speech...', delay: 1200 },
+        { pct: 65, label: 'Recognising words...', delay: 2200 },
+        { pct: 85, label: 'Almost done...', delay: 3500 },
+        { pct: 90, label: 'Finalising...', delay: 5000 },
+    ];
+
+    steps.forEach(({ pct, label: text, delay }) => {
+        setTimeout(() => {
+            if (document.getElementById('transcribe-progress-fill')) {
+                fill.style.width = pct + '%';
+                label.textContent = text;
+            }
+        }, delay);
+    });
+}
+
+function finishTranscribeProgress() {
+    const fill = document.getElementById('transcribe-progress-fill');
+    const bar = document.getElementById('transcribe-progress');
+    const label = document.getElementById('transcribe-progress-label');
+    if (!fill) return;
+
+    fill.style.width = '100%';
+    if (label) label.textContent = 'Done!';
+
+    setTimeout(() => {
+        if (bar) bar.style.display = 'none';
+    }, 600);
 }
 
 function closeVoicePopup() {

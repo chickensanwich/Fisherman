@@ -1075,7 +1075,7 @@ select:focus {
     accent-color: var(--primary-color);
 }
 /* ==================== STYLE VOICE INPUT ==================== */
-.gemini-voice-content {
+.voice-content {
     background-color: var(--background-color);
     border-radius: 24px;
     padding: 30px;
@@ -1145,6 +1145,7 @@ select:focus {
 .voice-body {
     flex: 1;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     padding: 20px 0;
@@ -1222,4 +1223,28 @@ select:focus {
 }
 .share-btn {
     text-decoration: none;
+}
+#transcribe-progress {
+    width: 100%;
+    max-width: 320px;
+    margin: 16px auto 0 auto;
+    display: none;
+    text-align: center;
+}
+
+#transcribe-progress-fill {
+    height: 6px;
+    width: 0%;
+    background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+    border-radius: var(--border-radius);
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#transcribe-progress-label {
+    display: block;
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: 8px;
+    text-align: center;
+    letter-spacing: 0.02em;
 }
