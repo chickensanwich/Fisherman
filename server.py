@@ -1,21 +1,21 @@
-from fastapi import FastAPI, HTTPException, Depends, status
+from fastapi import FastAPI, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from pydantic import BaseModel
 from motor.motor_asyncio import AsyncIOMotorClient
-import bcrypt
-from jose import JWTError, jwt
-from datetime import datetime, timedelta
-import os
-from dotenv import load_dotenv
-import asyncio
-from fastapi import Path, File, UploadFile
-# RAG + LLM imports
 from neo4j import GraphDatabase
 from deep_translator import GoogleTranslator
 import requests
 import langdetect
+import os
+import json
+import re
+import hashlib
+from datetime import datetime, timezone
+from pathlib import Path
+from dotenv import load_dotenv
 from bson import ObjectId
+import asyncio
+from fastapi import File, UploadFile
 from google.cloud import speech as gcp_speech
 
 load_dotenv()
@@ -32,55 +32,99 @@ app.add_middleware(
 
 # ====================== CONFIG ======================
 MONGODB_URL = "mongodb://localhost:27017"
-SECRET_KEY = "super-secret-key-change-this-in-production"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 1440
+OLLAMA_URL  = "http://localhost:11434/api/chat"
+MODEL_NAME  = "gemma3:1b"
 
-OLLAMA_URL = "http://localhost:11434/api/chat"
-MODEL_NAME = "gemma3:1b"
-
-NEO4J_URI = "bolt://localhost:7687"
-NEO4J_USER = "neo4j"
+NEO4J_URI      = "bolt://localhost:7687"
+NEO4J_USER     = "neo4j"
 NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD", "nej4nej4")
 
 # ====================== GOOGLE CLOUD SPEECH-TO-TEXT ======================
 speech_client = gcp_speech.SpeechClient()
 
 # ====================== DATABASES ======================
-client = AsyncIOMotorClient(MONGODB_URL)
-db = client["fishermen_chatbot"]
-
-users_collection     = db["users"]
-chats_collection     = db["chats"]
-feedbacks_collection = db["feedbacks"]
+mongo_client     = AsyncIOMotorClient(MONGODB_URL)
+db               = mongo_client["fishermen_chatbot"]
+chats_collection = db["chats"]
 
 neo4j_driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
 
-# Security
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+# ====================== JSON FILE STORAGE ======================
+USERS_FILE     = Path("users.json")
+FEEDBACKS_FILE = Path("feedbacks.json")
+
+
+def _load_users() -> list:
+    if not USERS_FILE.exists():
+        return []
+    return json.loads(USERS_FILE.read_text(encoding="utf-8"))
+
+
+def _save_users(users: list) -> None:
+    USERS_FILE.write_text(json.dumps(users, indent=2), encoding="utf-8")
+
+
+def _load_feedbacks() -> list:
+    if not FEEDBACKS_FILE.exists():
+        return []
+    return json.loads(FEEDBACKS_FILE.read_text(encoding="utf-8"))
+
+
+def _save_feedbacks(feedbacks: list) -> None:
+    FEEDBACKS_FILE.write_text(json.dumps(feedbacks, indent=2), encoding="utf-8")
+
+
+def _hash_password(password: str) -> str:
+    return hashlib.sha256(password.encode()).hexdigest()
+
+
+def _validate_identifier(name: str) -> str:
+    if not re.match(r'^[A-Za-z_][A-Za-z0-9_]*$', name):
+        raise HTTPException(status_code=400, detail=f"Invalid identifier '{name}': use letters, digits, underscores only.")
+    return name
+
+
+def _get_element_id(entity) -> str:
+    if hasattr(entity, 'element_id'):
+        return entity.element_id
+    return str(entity.id)
+
+
+# ====================== AUTH DEPENDENCY ======================
+async def require_approved_user(x_fisherman_id: str = Header(...)) -> str:
+    users = _load_users()
+    user  = next((u for u in users if u["fishermanId"] == x_fisherman_id), None)
+    if not user:
+        raise HTTPException(status_code=401, detail="Unknown Fisherman ID.")
+    if user["status"] == "pending":
+        raise HTTPException(status_code=403, detail="Account pending admin approval.")
+    if user["status"] == "rejected":
+        raise HTTPException(status_code=403, detail="Account rejected. Contact support.")
+    return x_fisherman_id
+
 
 # ====================== MODELS ======================
 class ChatRequest(BaseModel):
     message: str
     chat_id: str
 
-class UserBase(BaseModel):
+class SignupRequest(BaseModel):
     name: str
-    fisherman_id: str
-    location: str = ""
-
-class UserCreate(UserBase):
+    fishermanId: str
+    country: str
+    location: str
     password: str
 
-class Token(BaseModel):
-    access_token: str
-    token_type: str = "bearer"
+class LoginRequest(BaseModel):
+    fishermanId: str
+    password: str
 
 class FeedbackRequest(BaseModel):
     type: str
     reason: str = ""
     comments: str = ""
     message: str = ""
+    userQuestion: str = ""
 
 class TitleUpdate(BaseModel):
     title: str
@@ -88,35 +132,20 @@ class TitleUpdate(BaseModel):
 class PinUpdate(BaseModel):
     pinned: bool
 
-# ====================== HELPERS ======================
-def get_password_hash(password: str) -> str:
-    salt = bcrypt.gensalt()
-    hashed = bcrypt.hashpw(password.encode('utf-8'), salt)
-    return hashed.decode('utf-8')
+class CreateNodeRequest(BaseModel):
+    label: str
+    properties: dict = {}
 
-def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
+class UpdateNodeRequest(BaseModel):
+    node_id: str
+    properties: dict
 
-def create_access_token(data: dict, expires_delta: timedelta | None = None):
-    to_encode = data.copy()
-    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
-    to_encode.update({"exp": expire})
-    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+class CreateRelationshipRequest(BaseModel):
+    from_id: str
+    to_id: str
+    rel_type: str
+    properties: dict = {}
 
-async def get_current_user(token: str = Depends(oauth2_scheme)):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        user_id: str = payload.get("sub")
-        if user_id is None:
-            raise credentials_exception
-        return user_id
-    except JWTError:
-        raise credentials_exception
 
 # ====================== LANGUAGE & KNOWLEDGE GRAPH ======================
 def detect_language(text: str) -> str:
@@ -124,18 +153,20 @@ def detect_language(text: str) -> str:
         return "en"
     try:
         return langdetect.detect(text.strip())
-    except:
+    except Exception:
         return "en"
+
 
 def translate(text: str, source: str, target: str) -> str:
     try:
         return GoogleTranslator(source=source, target=target).translate(text)
     except Exception as e:
-        print(f"Translation failed: {e}")
+        print(f"[TRANSLATION ERROR] {e}")
         return text
 
+
 def query_knowledge_graph(english_message: str) -> str:
-    keywords = [word for word in english_message.lower().split() if len(word) > 3]
+    keywords     = [word for word in english_message.lower().split() if len(word) > 3]
     context_parts = []
 
     with neo4j_driver.session() as session:
@@ -161,6 +192,7 @@ def query_knowledge_graph(english_message: str) -> str:
 
     return "Relevant knowledge graph context:\n" + "\n".join(context_parts) if context_parts else ""
 
+
 # ====================== AUTO-GENERATE CHAT TITLE ======================
 async def generate_chat_title(user_message: str, bot_reply: str) -> str:
     try:
@@ -176,80 +208,112 @@ Title (only return the title, no explanation):"""
             "messages": [{"role": "user", "content": prompt}],
             "stream": False
         }, timeout=12)
-
         response.raise_for_status()
-        data = response.json()
-
+        data  = response.json()
+        title = ""
         if "message" in data and "content" in data["message"]:
             title = data["message"]["content"].strip()
         elif "response" in data:
             title = data["response"].strip()
-        else:
-            title = ""
 
         title = title.replace('"', '').replace("'", "").strip()
         if len(title) > 60:
             title = title[:57] + "..."
         if title:
             return title
-
     except Exception as e:
         print(f"Title generation failed: {e}")
 
     fallback = user_message.strip()[:50]
     return fallback + "..." if len(fallback) == 50 else fallback
 
+
 # ====================== AUTH ENDPOINTS ======================
-@app.post("/register", response_model=Token)
-async def register(user: UserCreate):
-    existing = await users_collection.find_one({"fisherman_id": user.fisherman_id})
-    if existing:
-        raise HTTPException(status_code=400, detail="Fisherman ID already registered")
+@app.post("/signup")
+async def signup(request: SignupRequest):
+    users = _load_users()
+    if any(u["fishermanId"] == request.fishermanId for u in users):
+        raise HTTPException(status_code=409, detail="Fisherman ID already registered.")
+    users.append({
+        "fishermanId":    request.fishermanId,
+        "name":           request.name,
+        "country":        request.country,
+        "location":       request.location,
+        "password_hash":  _hash_password(request.password),
+        "status":         "pending",
+        "created_at":     datetime.now(timezone.utc).isoformat(),
+    })
+    _save_users(users)
+    return {"status": "pending", "message": "Account submitted for approval. Please wait for admin review."}
 
-    hashed_password = get_password_hash(user.password)
-    user_dict = user.model_dump()
-    user_dict["hashed_password"] = hashed_password
-    user_dict.pop("password")
-    user_dict["created_at"] = datetime.utcnow()
 
-    result = await users_collection.insert_one(user_dict)
-    token  = create_access_token({"sub": str(result.inserted_id)})
-    return {"access_token": token}
+@app.post("/login")
+async def login(request: LoginRequest):
+    users = _load_users()
+    user  = next((u for u in users if u["fishermanId"] == request.fishermanId), None)
+    if not user or user["password_hash"] != _hash_password(request.password):
+        raise HTTPException(status_code=401, detail="Invalid Fisherman ID or password.")
+    if user["status"] == "pending":
+        raise HTTPException(status_code=403, detail="Your account is pending admin approval.")
+    if user["status"] == "rejected":
+        raise HTTPException(status_code=403, detail="Your account has been rejected. Please contact support.")
+    return {
+        "status":      "approved",
+        "name":        user["name"],
+        "fishermanId": user["fishermanId"],
+        "country":     user["country"],
+        "location":    user["location"],
+    }
 
-@app.post("/login", response_model=Token)
-async def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = await users_collection.find_one({"fisherman_id": form_data.username})
-    if not user or not verify_password(form_data.password, user.get("hashed_password", "")):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect fisherman ID or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    token = create_access_token({"sub": str(user["_id"])})
-    return {"access_token": token}
 
-# ====================== GET CURRENT USER INFO ======================
-@app.get("/user")
-async def get_current_user_info(token: str = Depends(oauth2_scheme)):
-    user_id = await get_current_user(token)
-    user = await users_collection.find_one({"_id": ObjectId(user_id)})
+# ====================== ADMIN USER MANAGEMENT ======================
+@app.get("/admin/pending-users")
+async def get_pending_users():
+    users   = _load_users()
+    pending = [
+        {k: v for k, v in u.items() if k != "password_hash"}
+        for u in users if u["status"] == "pending"
+    ]
+    return pending
+
+
+@app.post("/admin/approve/{fisherman_id}")
+async def approve_user(fisherman_id: str):
+    users = _load_users()
+    user  = next((u for u in users if u["fishermanId"] == fisherman_id), None)
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    return {"name": user.get("name", "Fisherman"), "fisherman_id": user.get("fisherman_id")}
+        raise HTTPException(status_code=404, detail="User not found.")
+    user["status"] = "approved"
+    _save_users(users)
+    return {"status": "approved", "fishermanId": fisherman_id}
 
-# ====================== GOOGLE CLOUD SPEECH-TO-TEXT TRANSCRIPTION ======================
+
+@app.post("/admin/reject/{fisherman_id}")
+async def reject_user(fisherman_id: str):
+    users = _load_users()
+    user  = next((u for u in users if u["fishermanId"] == fisherman_id), None)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found.")
+    user["status"] = "rejected"
+    _save_users(users)
+    return {"status": "rejected", "fishermanId": fisherman_id}
+
+
+# ====================== GOOGLE CLOUD SPEECH-TO-TEXT ======================
 @app.post("/transcribe")
-async def transcribe_audio(audio: UploadFile = File(...), token: str = Depends(oauth2_scheme)):
-    await get_current_user(token)
+async def transcribe_audio(
+    audio: UploadFile = File(...),
+    x_fisherman_id: str = Header(...)
+):
+    await require_approved_user(x_fisherman_id)
 
     audio_content = await audio.read()
-
-    # Detect encoding from MIME type sent by the browser
-    content_type = (audio.content_type or "audio/webm").lower()
-    if "ogg" in content_type:
-        encoding = gcp_speech.RecognitionConfig.AudioEncoding.OGG_OPUS
-    else:
-        encoding = gcp_speech.RecognitionConfig.AudioEncoding.WEBM_OPUS
+    content_type  = (audio.content_type or "audio/webm").lower()
+    encoding = (
+        gcp_speech.RecognitionConfig.AudioEncoding.OGG_OPUS
+        if "ogg" in content_type
+        else gcp_speech.RecognitionConfig.AudioEncoding.WEBM_OPUS
+    )
 
     try:
         recognition_audio = gcp_speech.RecognitionAudio(content=audio_content)
@@ -260,7 +324,6 @@ async def transcribe_audio(audio: UploadFile = File(...), token: str = Depends(o
             enable_automatic_punctuation=True,
             model="latest_long",
         )
-
         response = await asyncio.to_thread(
             speech_client.recognize,
             config=config,
@@ -274,49 +337,45 @@ async def transcribe_audio(audio: UploadFile = File(...), token: str = Depends(o
             result.alternatives[0].transcript
             for result in response.results
         )
-
         detected_lang_bcp47 = response.results[0].language_code
         lang = "bn" if detected_lang_bcp47.startswith("bn") else "en"
-
         return {"text": transcript.strip(), "language": lang}
 
     except Exception as e:
         print(f"Google Cloud STT error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+
 # ====================== CHAT HISTORY ======================
 @app.get("/chats")
-async def get_user_chats(token: str = Depends(oauth2_scheme)):
-    user_id = await get_current_user(token)
+async def get_user_chats(x_fisherman_id: str = Header(...)):
+    await require_approved_user(x_fisherman_id)
     chats = await chats_collection.find(
-        {"user_id": user_id}
+        {"user_id": x_fisherman_id}
     ).sort([("pinned", -1), ("updated_at", -1)]).to_list(length=50)
-
     for chat in chats:
         chat["_id"] = str(chat["_id"])
     return chats
 
+
 @app.post("/chats")
-async def create_new_chat(token: str = Depends(oauth2_scheme)):
-    user_id = await get_current_user(token)
+async def create_new_chat(x_fisherman_id: str = Header(...)):
+    await require_approved_user(x_fisherman_id)
     chat_doc = {
-        "user_id": user_id,
-        "title": "New Chat",
-        "messages": [],
-        "pinned": False,
+        "user_id":    x_fisherman_id,
+        "title":      "New Chat",
+        "messages":   [],
+        "pinned":     False,
         "created_at": datetime.utcnow(),
-        "updated_at": datetime.utcnow()
+        "updated_at": datetime.utcnow(),
     }
     result = await chats_collection.insert_one(chat_doc)
     return {"chat_id": str(result.inserted_id), "title": "New Chat"}
 
-# ====================== DELETE CHAT ======================
+
 @app.delete("/chats/{chat_id}")
-async def delete_chat(
-    chat_id: str = Path(..., description="Chat ID to delete"),
-    token: str = Depends(oauth2_scheme)
-):
-    user_id = await get_current_user(token)
+async def delete_chat(chat_id: str, x_fisherman_id: str = Header(...)):
+    await require_approved_user(x_fisherman_id)
     try:
         chat_id_obj = ObjectId(chat_id)
     except Exception:
@@ -325,122 +384,133 @@ async def delete_chat(
     chat = await chats_collection.find_one({"_id": chat_id_obj})
     if not chat:
         raise HTTPException(status_code=404, detail="Chat not found")
-
-    if str(chat.get("user_id")) != str(user_id):
+    if chat.get("user_id") != x_fisherman_id:
         raise HTTPException(status_code=403, detail="You do not have permission to delete this chat")
 
     result = await chats_collection.delete_one({"_id": chat_id_obj})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Failed to delete chat")
-
     return {"status": "deleted", "message": "Chat successfully deleted"}
 
-# ====================== GET SINGLE CHAT ======================
+
 @app.get("/chats/{chat_id}")
-async def get_chat_by_id(chat_id: str, token: str = Depends(oauth2_scheme)):
-    user_id = await get_current_user(token)
+async def get_chat_by_id(chat_id: str, x_fisherman_id: str = Header(...)):
+    await require_approved_user(x_fisherman_id)
     try:
         chat_id_obj = ObjectId(chat_id)
     except Exception:
         raise HTTPException(status_code=400, detail="Invalid chat_id format")
 
-    chat = await chats_collection.find_one({"_id": chat_id_obj, "user_id": user_id})
+    chat = await chats_collection.find_one({"_id": chat_id_obj, "user_id": x_fisherman_id})
     if not chat:
-        raise HTTPException(status_code=404, detail="Chat not found or you do not have permission")
-
+        raise HTTPException(status_code=404, detail="Chat not found or no permission")
     chat["_id"] = str(chat["_id"])
     return chat
 
-# ====================== RENAME CHAT TITLE ======================
+
 @app.put("/chats/{chat_id}/title")
-async def update_chat_title(chat_id: str, body: TitleUpdate, token: str = Depends(oauth2_scheme)):
-    user_id = await get_current_user(token)
+async def update_chat_title(chat_id: str, body: TitleUpdate, x_fisherman_id: str = Header(...)):
+    await require_approved_user(x_fisherman_id)
     try:
         chat_id_obj = ObjectId(chat_id)
     except Exception:
         raise HTTPException(status_code=400, detail="Invalid chat_id format")
 
     result = await chats_collection.update_one(
-        {"_id": chat_id_obj, "user_id": user_id},
+        {"_id": chat_id_obj, "user_id": x_fisherman_id},
         {"$set": {"title": body.title.strip() or "Untitled Chat"}}
     )
     if result.modified_count == 0:
-        raise HTTPException(status_code=404, detail="Chat not found or no permission to rename")
-
+        raise HTTPException(status_code=404, detail="Chat not found or no permission")
     return {"status": "success", "title": body.title}
 
-# ====================== TOGGLE PIN CHAT ======================
+
 @app.put("/chats/{chat_id}/pin")
-async def toggle_pin_chat(chat_id: str, body: PinUpdate, token: str = Depends(oauth2_scheme)):
-    user_id = await get_current_user(token)
+async def toggle_pin_chat(chat_id: str, body: PinUpdate, x_fisherman_id: str = Header(...)):
+    await require_approved_user(x_fisherman_id)
     try:
         chat_id_obj = ObjectId(chat_id)
     except Exception:
         raise HTTPException(status_code=400, detail="Invalid chat_id format")
 
     result = await chats_collection.update_one(
-        {"_id": chat_id_obj, "user_id": user_id},
+        {"_id": chat_id_obj, "user_id": x_fisherman_id},
         {"$set": {"pinned": body.pinned}}
     )
     if result.modified_count == 0:
         raise HTTPException(status_code=404, detail="Chat not found or no permission")
-
     return {"status": "success", "pinned": body.pinned}
 
+
 # ====================== CHAT MESSAGE SAVING ======================
-async def save_chat_message(user_id: str, chat_id: str, user_message: str, bot_reply: str):
+async def save_chat_message(fisherman_id: str, chat_id: str, user_message: str, bot_reply: str):
     try:
         chat_id_obj = ObjectId(chat_id)
     except Exception:
         raise HTTPException(status_code=400, detail="Invalid chat_id format")
 
-    chat_obj = await chats_collection.find_one({"_id": chat_id_obj, "user_id": user_id})
+    chat_obj = await chats_collection.find_one({"_id": chat_id_obj, "user_id": fisherman_id})
     if not chat_obj:
         raise HTTPException(status_code=404, detail="Chat not found")
 
     new_messages = [
         {"sender": "user", "content": user_message, "timestamp": datetime.utcnow()},
-        {"sender": "bot",  "content": bot_reply,    "timestamp": datetime.utcnow()}
+        {"sender": "bot",  "content": bot_reply,    "timestamp": datetime.utcnow()},
     ]
     await chats_collection.update_one(
         {"_id": chat_id_obj},
         {
             "$push": {"messages": {"$each": new_messages}},
-            "$set":  {"updated_at": datetime.utcnow()}
+            "$set":  {"updated_at": datetime.utcnow()},
         }
     )
 
+
 # ====================== MAIN CHAT ENDPOINT ======================
 @app.post("/chat")
-async def chat_endpoint(request: ChatRequest, token: str = Depends(oauth2_scheme)):
-    user_id = await get_current_user(token)
+async def chat_endpoint(request: ChatRequest, x_fisherman_id: str = Header(...)):
+    fisherman_id  = await require_approved_user(x_fisherman_id)
+    user_message  = request.message.strip()
+    chat_id       = request.chat_id
 
-    user_message = request.message.strip()
-    chat_id      = request.chat_id
-
-    detected_lang  = detect_language(user_message)
-    is_bangla      = detected_lang == "bn"
+    detected_lang   = detect_language(user_message)
+    is_bangla       = detected_lang == "bn"
     english_message = translate(user_message, "bn", "en") if is_bangla else user_message
 
     kg_context = await asyncio.to_thread(query_knowledge_graph, english_message)
 
     if not kg_context:
-        no_info_reply = "দুঃখিত, এই বিষয়ে আমার কাছে কোনো তথ্য নেই।" if is_bangla else "Sorry, I don't have information on that topic."
-        await save_chat_message(user_id, chat_id, user_message, no_info_reply)
+        no_info_reply = (
+            "দুঃখিত, এই বিষয়ে আমার কাছে কোনো তথ্য নেই।"
+            if is_bangla else
+            "Sorry, I don't have information on that topic in my knowledge base."
+        )
+        await save_chat_message(fisherman_id, chat_id, user_message, no_info_reply)
         return {"reply": no_info_reply}
 
-    language_instruction = "You MUST reply in Bangla script only." if is_bangla else "Reply in English."
+    language_instruction = (
+        "You MUST reply in Bangla script only. Do not use English in your response."
+        if is_bangla else
+        "Reply in English."
+    )
 
     try:
         response = requests.post(OLLAMA_URL, json={
             "model": MODEL_NAME,
             "messages": [
-                {"role": "system", "content": f"You are a helpful assistant for Bangladeshi fishermen. Use only the provided context. {language_instruction}"},
-                {"role": "user",   "content": f"{kg_context}\n\nUser question: {english_message}"}
+                {
+                    "role": "system",
+                    "content": (
+                        f"You are an assistant for Bangladeshi fishermen. "
+                        f"You MUST answer ONLY using the knowledge graph context provided in the user message. "
+                        f"Do NOT use any outside knowledge. If the context does not contain enough information, say you don't know. "
+                        f"{language_instruction}"
+                    )
+                },
+                {"role": "user", "content": f"{kg_context}\n\nUser question: {english_message}"}
             ],
             "stream": False
         }, timeout=60)
-
         response.raise_for_status()
         data = response.json()
 
@@ -454,7 +524,7 @@ async def chat_endpoint(request: ChatRequest, token: str = Depends(oauth2_scheme
         if is_bangla:
             reply = translate(reply, "en", "bn")
 
-        await save_chat_message(user_id, chat_id, user_message, reply)
+        await save_chat_message(fisherman_id, chat_id, user_message, reply)
 
         chat_obj = await chats_collection.find_one({"_id": ObjectId(chat_id)})
         if chat_obj and len(chat_obj.get("messages", [])) == 2:
@@ -466,26 +536,141 @@ async def chat_endpoint(request: ChatRequest, token: str = Depends(oauth2_scheme
 
         return {"reply": reply}
 
+    except requests.exceptions.ConnectionError:
+        raise HTTPException(status_code=503, detail="Ollama is not running.")
     except Exception as e:
-        print(f"Chat error: {e}")
         error_reply = "দুঃখিত, সার্ভারে সমস্যা হয়েছে।" if is_bangla else "Sorry, something went wrong."
-        await save_chat_message(user_id, chat_id, user_message, error_reply)
+        await save_chat_message(fisherman_id, chat_id, user_message, error_reply)
         return {"reply": error_reply}
+
 
 # ====================== FEEDBACK ======================
 @app.post("/feedback")
-async def save_feedback(feedback: FeedbackRequest, token: str = Depends(oauth2_scheme)):
-    user_id = await get_current_user(token)
+async def feedback(request: FeedbackRequest, x_fisherman_id: str = Header(...)):
+    await require_approved_user(x_fisherman_id)
+    feedbacks = _load_feedbacks()
+    feedbacks.append({
+        "type":          request.type,
+        "reason":        request.reason,
+        "comments":      request.comments,
+        "message":       request.message,
+        "userQuestion":  request.userQuestion,
+        "fishermanId":   x_fisherman_id,
+        "timestamp":     datetime.now(timezone.utc).isoformat(),
+    })
+    _save_feedbacks(feedbacks)
+    return {"status": "ok"}
 
-    feedback_dict = feedback.model_dump()
-    feedback_dict["user_id"]   = user_id
-    feedback_dict["timestamp"] = datetime.utcnow()
 
-    if feedback_dict["type"] not in ["positive", "negative"]:
-        feedback_dict["type"] = "negative"
+@app.get("/feedbacks")
+async def get_feedbacks():
+    return _load_feedbacks()
 
-    await feedbacks_collection.insert_one(feedback_dict)
-    return {"status": "ok", "type": feedback_dict["type"]}
+
+# ====================== KNOWLEDGE GRAPH ADMIN ======================
+@app.get("/admin/graph/search")
+async def search_graph_nodes(q: str = ""):
+    results = []
+    with neo4j_driver.session() as session:
+        keywords = [w for w in q.lower().split() if len(w) > 2] if q.strip() else [""]
+        seen = set()
+        for keyword in keywords[:5]:
+            cypher = (
+                "MATCH (n) WHERE any(prop in keys(n) WHERE toLower(toString(n[prop])) CONTAINS $kw) "
+                "OPTIONAL MATCH (n)-[r]->(m) "
+                "RETURN n, collect({relId: elementId(r), type: type(r), targetId: elementId(m), targetProps: properties(m)}) as rels "
+                "LIMIT 20"
+            ) if keyword else (
+                "MATCH (n) OPTIONAL MATCH (n)-[r]->(m) "
+                "RETURN n, collect({relId: elementId(r), type: type(r), targetId: elementId(m), targetProps: properties(m)}) as rels "
+                "LIMIT 20"
+            )
+            rows = session.run(cypher, kw=keyword)
+            for record in rows:
+                node = record["n"]
+                nid  = _get_element_id(node)
+                if nid in seen:
+                    continue
+                seen.add(nid)
+                rels = [r for r in record["rels"] if r.get("type") is not None]
+                results.append({
+                    "nodeId":        nid,
+                    "labels":        list(node.labels),
+                    "properties":    dict(node),
+                    "relationships": [
+                        {
+                            "relId":       r["relId"],
+                            "type":        r["type"],
+                            "targetId":    r["targetId"],
+                            "targetProps": dict(r["targetProps"]) if r["targetProps"] else {},
+                        }
+                        for r in rels
+                    ],
+                })
+    return results
+
+
+@app.post("/admin/graph/node")
+async def create_graph_node(request: CreateNodeRequest):
+    label = _validate_identifier(request.label)
+    with neo4j_driver.session() as session:
+        result = session.run(
+            f"CREATE (n:{label} $props) RETURN elementId(n) as nodeId",
+            props=request.properties,
+        )
+        record = result.single()
+        return {"nodeId": record["nodeId"]}
+
+
+@app.put("/admin/graph/node")
+async def update_graph_node(request: UpdateNodeRequest):
+    with neo4j_driver.session() as session:
+        result = session.run(
+            "MATCH (n) WHERE elementId(n) = $nid SET n += $props RETURN elementId(n) as nodeId",
+            nid=request.node_id,
+            props=request.properties,
+        )
+        if not result.single():
+            raise HTTPException(status_code=404, detail="Node not found.")
+    return {"status": "updated"}
+
+
+@app.delete("/admin/graph/node")
+async def delete_graph_node(node_id: str):
+    with neo4j_driver.session() as session:
+        session.run(
+            "MATCH (n) WHERE elementId(n) = $nid DETACH DELETE n",
+            nid=node_id,
+        )
+    return {"status": "deleted"}
+
+
+@app.post("/admin/graph/relationship")
+async def create_graph_relationship(request: CreateRelationshipRequest):
+    rel_type = _validate_identifier(request.rel_type)
+    with neo4j_driver.session() as session:
+        result = session.run(
+            f"MATCH (a), (b) WHERE elementId(a) = $from_id AND elementId(b) = $to_id "
+            f"CREATE (a)-[r:{rel_type} $props]->(b) RETURN elementId(r) as relId",
+            from_id=request.from_id,
+            to_id=request.to_id,
+            props=request.properties,
+        )
+        record = result.single()
+        if not record:
+            raise HTTPException(status_code=404, detail="One or both nodes not found.")
+        return {"relId": record["relId"]}
+
+
+@app.delete("/admin/graph/relationship")
+async def delete_graph_relationship(rel_id: str):
+    with neo4j_driver.session() as session:
+        session.run(
+            "MATCH ()-[r]-() WHERE elementId(r) = $rid DELETE r",
+            rid=rel_id,
+        )
+    return {"status": "deleted"}
+
 
 @app.on_event("shutdown")
 async def shutdown():

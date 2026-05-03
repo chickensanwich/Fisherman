@@ -1,7 +1,7 @@
 // ==================== CONFIG ====================
-const BACKEND_URL = "http://localhost:8000";
-let currentToken  = null;
-let currentChatId = null;
+const BACKEND_URL      = "http://localhost:8000";
+let currentFishermanId = null;
+let currentChatId      = null;
 
 // DOM Elements
 let loginForm, signupForm, chatForm, feedbackForm;
@@ -10,12 +10,11 @@ let chatMessages, chatInput, chatHistory, newChatBtn, searchChats, userNameDispl
 
 // Voice & sidebar
 let sidebarToggle, sidebar;
-let voicePopup, voiceBtn, voiceDoneBtn;
+let voicePopup, voiceBtn;
 let activeSpeakBtn = null;
-let recognition    = null;
 let isRecording    = false;
-let finalTranscript = '';
-const speechRecognitionLang = 'en-US';
+let mediaRecorder;
+let audioChunks    = [];
 
 // ==================== INIT ====================
 document.addEventListener('DOMContentLoaded', () => {
@@ -38,7 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
     sidebarToggle   = document.getElementById('sidebar-toggle');
     sidebar         = document.querySelector('.sidebar');
     voiceBtn        = document.getElementById('voice-btn');
-    voiceDoneBtn    = document.getElementById('voice-done-btn');
 
     loginForm.addEventListener('submit', handleLogin);
     signupForm.addEventListener('submit', handleSignup);
@@ -53,12 +51,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    if (voiceBtn)     voiceBtn.addEventListener('click', openVoicePopup);
-    if (voiceDoneBtn) voiceDoneBtn.addEventListener('click', closeVoicePopup);
+    if (voiceBtn) voiceBtn.addEventListener('click', openVoicePopup);
 
     chatInput.addEventListener('input', () => {
         chatInput.style.height = 'auto';
-        chatInput.style.height = (chatInput.scrollHeight) + 'px';
+        chatInput.style.height = chatInput.scrollHeight + 'px';
     });
 
     const darkToggle = document.getElementById('dark-toggle');
@@ -76,40 +73,38 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function initApp() {
-    const token = localStorage.getItem('token');
-    if (token) {
-        currentToken = token;
+    const user = JSON.parse(localStorage.getItem('currentUser') || 'null');
+    if (user && user.fishermanId) {
+        currentFishermanId = user.fishermanId;
         showChatInterface();
+        if (userNameDisplay) userNameDisplay.textContent = user.name || "Fisherfolk";
         await loadUserChats();
-        await loadUserInfo();
         currentChatId = null;
     } else {
         showLogin();
     }
 }
 
+// ==================== AUTH HEADER HELPER ====================
+function authHeaders(extra = {}) {
+    return { 'X-Fisherman-ID': currentFishermanId, ...extra };
+}
+
 // ==================== READ ALOUD (BROWSER WEB SPEECH API) ====================
-// Only this function changed from the original — everything else is untouched.
 async function speakMessage(text, btn) {
-    // Toggle off if currently speaking this message
     if (window.speechSynthesis.speaking && activeSpeakBtn === btn) {
         window.speechSynthesis.cancel();
-        // onend handler below resets the button
         return;
     }
-
-    // Cancel any other ongoing speech and reset its button
     if (window.speechSynthesis.speaking) {
         window.speechSynthesis.cancel();
     }
 
-    // Detect Bengali characters (Unicode block U+0980–U+09FF)
-    const isBengali = /[\u0980-\u09FF]/.test(text);
-
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang  = isBengali ? 'bn-BD' : 'en-US';
-    utterance.rate  = 0.9;
-    utterance.pitch = 1;
+    const isBengali  = /[ঀ-৿]/.test(text);
+    const utterance  = new SpeechSynthesisUtterance(text);
+    utterance.lang   = isBengali ? 'bn-BD' : 'en-US';
+    utterance.rate   = 0.9;
+    utterance.pitch  = 1;
 
     const trySpeak = () => {
         const voices = window.speechSynthesis.getVoices();
@@ -127,11 +122,9 @@ async function speakMessage(text, btn) {
             btn.innerHTML = '<i class="fas fa-volume-up"></i>';
             if (activeSpeakBtn === btn) activeSpeakBtn = null;
         };
-
         window.speechSynthesis.speak(utterance);
     };
 
-    // Chrome loads voices asynchronously on first call
     if (window.speechSynthesis.getVoices().length === 0) {
         window.speechSynthesis.onvoiceschanged = () => {
             window.speechSynthesis.onvoiceschanged = null;
@@ -144,8 +137,6 @@ async function speakMessage(text, btn) {
 
 // ==================== VOICE INPUT (GOOGLE CLOUD STT via /transcribe) ====================
 let liveTranscriptEl, voiceMicActive, voiceSendBtn;
-let mediaRecorder;
-let audioChunks = [];
 
 function initSpeechRecognition() {
     liveTranscriptEl = document.getElementById('live-transcript');
@@ -159,41 +150,40 @@ function initSpeechRecognition() {
 }
 
 async function openVoicePopup() {
-    if (voicePopup && overlay) {
-        voicePopup.classList.remove('hidden');
-        overlay.classList.remove('hidden');
-        liveTranscriptEl.textContent = 'Initializing mic...';
-        voiceSendBtn.classList.add('hidden');
+    if (!voicePopup || !overlay) return;
+    voicePopup.classList.remove('hidden');
+    overlay.classList.remove('hidden');
+    liveTranscriptEl.textContent = 'Initializing mic...';
+    voiceSendBtn.classList.add('hidden');
 
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            mediaRecorder = new MediaRecorder(stream);
-            audioChunks   = [];
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks   = [];
 
-            mediaRecorder.ondataavailable = event => {
-                if (event.data.size > 0) audioChunks.push(event.data);
-            };
+        mediaRecorder.ondataavailable = event => {
+            if (event.data.size > 0) audioChunks.push(event.data);
+        };
 
-            mediaRecorder.onstop = async () => {
-                liveTranscriptEl.textContent   = 'Transcribing... please wait';
-                liveTranscriptEl.style.opacity = '0.7';
-                voiceMicActive.classList.remove('listening');
-                const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                await processAudioWithWhisper(audioBlob);
-                stream.getTracks().forEach(track => track.stop());
-            };
-
-            mediaRecorder.start();
-            isRecording = true;
-            liveTranscriptEl.textContent   = 'Listening...';
-            liveTranscriptEl.style.opacity = '0.5';
-            voiceMicActive.classList.add('listening');
-
-        } catch (err) {
-            console.error("Error accessing mic:", err);
-            liveTranscriptEl.textContent = 'Microphone access denied.';
+        mediaRecorder.onstop = async () => {
+            liveTranscriptEl.textContent   = 'Transcribing... please wait';
+            liveTranscriptEl.style.opacity = '0.7';
             voiceMicActive.classList.remove('listening');
-        }
+            const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+            await processAudioWithGoogleSTT(audioBlob);
+            stream.getTracks().forEach(track => track.stop());
+        };
+
+        mediaRecorder.start();
+        isRecording = true;
+        liveTranscriptEl.textContent   = 'Listening...';
+        liveTranscriptEl.style.opacity = '0.5';
+        voiceMicActive.classList.add('listening');
+
+    } catch (err) {
+        console.error("Error accessing mic:", err);
+        liveTranscriptEl.textContent = 'Microphone access denied.';
+        voiceMicActive.classList.remove('listening');
     }
 }
 
@@ -206,10 +196,9 @@ function stopListening() {
     }
 }
 
-async function processAudioWithWhisper(audioBlob) {
-    if (!currentToken) return;
+async function processAudioWithGoogleSTT(audioBlob) {
+    if (!currentFishermanId) return;
 
-    // Start animated progress bar
     startTranscribeProgress();
 
     const formData = new FormData();
@@ -217,17 +206,17 @@ async function processAudioWithWhisper(audioBlob) {
 
     try {
         const res = await fetch(`${BACKEND_URL}/transcribe`, {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${currentToken}` },
-            body: formData
+            method:  'POST',
+            headers: authHeaders(),
+            body:    formData
         });
         if (!res.ok) throw new Error('Transcription failed');
         const data = await res.json();
 
-        finishTranscribeProgress(); // snap to 100% and fade out
+        finishTranscribeProgress();
 
         if (data.text) {
-            liveTranscriptEl.textContent = data.text;
+            liveTranscriptEl.textContent   = data.text;
             liveTranscriptEl.style.opacity = '1';
             voiceSendBtn.classList.remove('hidden');
         } else {
@@ -240,72 +229,63 @@ async function processAudioWithWhisper(audioBlob) {
     }
 }
 
-let progressInterval = null;
-
 function startTranscribeProgress() {
-    liveTranscriptEl.textContent = 'Transcribing...';
+    liveTranscriptEl.textContent   = 'Transcribing...';
     liveTranscriptEl.style.opacity = '0.7';
 
-    
     let bar = document.getElementById('transcribe-progress');
     if (!bar) {
         bar = document.createElement('div');
-        bar.id = 'transcribe-progress';
+        bar.id        = 'transcribe-progress';
         bar.innerHTML = `
             <div id="transcribe-progress-fill"></div>
             <span id="transcribe-progress-label">Transcribing...</span>`;
         liveTranscriptEl.insertAdjacentElement('afterend', bar);
     }
 
-    const fill = document.getElementById('transcribe-progress-fill');
+    const fill  = document.getElementById('transcribe-progress-fill');
     const label = document.getElementById('transcribe-progress-label');
-    fill.style.width = '0%';
+    fill.style.width  = '0%';
     bar.style.display = 'block';
 
     const steps = [
-        { pct: 15, label: 'Uploading audio...', delay: 300 },
-        { pct: 40, label: 'Processing speech...', delay: 1200 },
-        { pct: 65, label: 'Recognising words...', delay: 2200 },
-        { pct: 85, label: 'Almost done...', delay: 3500 },
-        { pct: 90, label: 'Finalising...', delay: 5000 },
+        { pct: 15, label: 'Uploading audio...',    delay: 300  },
+        { pct: 40, label: 'Processing speech...',  delay: 1200 },
+        { pct: 65, label: 'Recognising words...',  delay: 2200 },
+        { pct: 85, label: 'Almost done...',        delay: 3500 },
+        { pct: 90, label: 'Finalising...',         delay: 5000 },
     ];
-
     steps.forEach(({ pct, label: text, delay }) => {
         setTimeout(() => {
             if (document.getElementById('transcribe-progress-fill')) {
-                fill.style.width = pct + '%';
-                label.textContent = text;
+                fill.style.width    = pct + '%';
+                label.textContent   = text;
             }
         }, delay);
     });
 }
 
 function finishTranscribeProgress() {
-    const fill = document.getElementById('transcribe-progress-fill');
-    const bar = document.getElementById('transcribe-progress');
+    const fill  = document.getElementById('transcribe-progress-fill');
+    const bar   = document.getElementById('transcribe-progress');
     const label = document.getElementById('transcribe-progress-label');
     if (!fill) return;
-
     fill.style.width = '100%';
     if (label) label.textContent = 'Done!';
-
-    setTimeout(() => {
-        if (bar) bar.style.display = 'none';
-    }, 600);
+    setTimeout(() => { if (bar) bar.style.display = 'none'; }, 600);
 }
 
 function closeVoicePopup() {
-    if (voicePopup && overlay) {
-        if (isRecording && mediaRecorder && mediaRecorder.state === "recording") {
-            mediaRecorder.onstop = null;
-            mediaRecorder.stop();
-            mediaRecorder.stream.getTracks().forEach(track => track.stop());
-            isRecording = false;
-        }
-        voicePopup.classList.add('hidden');
-        overlay.classList.add('hidden');
-        if (chatInput) chatInput.focus();
+    if (!voicePopup || !overlay) return;
+    if (isRecording && mediaRecorder && mediaRecorder.state === "recording") {
+        mediaRecorder.onstop = null;
+        mediaRecorder.stop();
+        mediaRecorder.stream.getTracks().forEach(track => track.stop());
+        isRecording = false;
     }
+    voicePopup.classList.add('hidden');
+    overlay.classList.add('hidden');
+    if (chatInput) chatInput.focus();
 }
 
 function sendVoiceMessage() {
@@ -313,61 +293,38 @@ function sendVoiceMessage() {
     if (!textToSend || textToSend === 'Listening...' || textToSend.includes('Transcribing')) return;
     closeVoicePopup();
     chatInput.value = textToSend;
-    const submitEvent = new Event('submit', { cancelable: true, bubbles: true });
-    chatForm.dispatchEvent(submitEvent);
+    chatForm.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
 }
 
 window.stopListening    = stopListening;
 window.sendVoiceMessage = sendVoiceMessage;
 window.closeVoicePopup  = closeVoicePopup;
 
-// ==================== LOAD AND DISPLAY USER NAME ====================
-async function loadUserInfo() {
-    if (!currentToken) return;
-    try {
-        const res = await fetch(`${BACKEND_URL}/user`, {
-            method: 'GET',
-            headers: { 'Authorization': `Bearer ${currentToken}` }
-        });
-        if (res.ok) {
-            const user     = await res.json();
-            const userNameEl = document.getElementById('user-name-display');
-            if (userNameEl) userNameEl.textContent = user.name || "Fisherman";
-        }
-    } catch (e) {
-        console.error("Failed to load user info:", e);
-        document.getElementById('user-name-display').textContent = "Fisherman";
-    }
-}
-
 // ==================== AUTH ====================
 async function handleLogin(e) {
     e.preventDefault();
     const fishermanId = document.getElementById('login-fisherman-id').value.trim();
     const password    = document.getElementById('login-password').value.trim();
-    if (!fishermanId || !password) { alert("Please enter Fisherman ID and Password"); return; }
+    if (!fishermanId || !password) { alert("Please enter Fisherfolk ID and Password"); return; }
 
     try {
-        const formData = new URLSearchParams();
-        formData.append('username', fishermanId);
-        formData.append('password', password);
-
         const res = await fetch(`${BACKEND_URL}/login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: formData
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify({ fishermanId, password })
         });
         if (!res.ok) {
-            const errorData = await res.json().catch(() => ({}));
-            throw new Error(errorData.detail || "Invalid credentials");
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.detail || "Invalid credentials");
         }
-        const data = await res.json();
-        currentToken = data.access_token;
-        localStorage.setItem('token', currentToken);
+        const user = await res.json();
+        currentFishermanId = user.fishermanId;
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        if (userNameDisplay) userNameDisplay.textContent = user.name || "Fisherfolk";
         showChatInterface();
         await loadUserChats();
         startNewChatUI();
-        appendSystemMessage("Welcome back! 👋");
+        appendSystemMessage("Welcome back!");
     } catch (err) {
         alert("Login failed: " + err.message);
     }
@@ -377,38 +334,40 @@ async function handleSignup(e) {
     e.preventDefault();
     const name            = document.getElementById('signup-name').value.trim();
     const fishermanId     = document.getElementById('signup-fisherman-id').value.trim();
+    const country         = document.getElementById('signup-country').value;
     const location        = document.getElementById('signup-location').value.trim();
     const password        = document.getElementById('signup-password').value.trim();
     const confirmPassword = document.getElementById('signup-confirm-password').value.trim();
 
-    if (password !== confirmPassword) { alert('Passwords do not match!'); return; }
+    if (!country) { alert("Please select a country"); return; }
+    if (password.length < 8) { alert("Password must be at least 8 characters long"); return; }
+    if (password !== confirmPassword) { alert("Passwords do not match!"); return; }
+
+    const idRegex = /^[a-zA-Z0-9]+$/;
+    if (!idRegex.test(fishermanId)) { alert("Fisherfolk ID must contain only letters and numbers"); return; }
 
     try {
-        const res = await fetch(`${BACKEND_URL}/register`, {
-            method: 'POST',
+        const res = await fetch(`${BACKEND_URL}/signup`, {
+            method:  'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, fisherman_id: fishermanId, location, password })
+            body:    JSON.stringify({ name, fishermanId, country, location, password })
         });
         if (!res.ok) {
-            const errorData = await res.json().catch(() => ({}));
-            throw new Error(errorData.detail || "Registration failed");
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.detail || "Registration failed");
         }
-        const data = await res.json();
-        currentToken = data.access_token;
-        localStorage.setItem('token', currentToken);
-        showChatInterface();
-        await loadUserChats();
-        startNewChatUI();
-        appendSystemMessage(`Welcome aboard, ${name}! 🎣`);
+        alert("Account submitted! Please wait for admin approval before logging in.");
+        showLogin();
+        signupForm.reset();
     } catch (err) {
         alert("Signup failed: " + err.message);
     }
 }
 
 function logout() {
-    localStorage.removeItem('token');
-    currentToken  = null;
-    currentChatId = null;
+    localStorage.removeItem('currentUser');
+    currentFishermanId = null;
+    currentChatId      = null;
     showLogin();
 }
 
@@ -433,14 +392,13 @@ function showChatInterface() {
 
 // ==================== CHAT HISTORY & CREATION ====================
 async function loadUserChats() {
-    if (!currentToken) return;
+    if (!currentFishermanId) return;
     try {
         const res = await fetch(`${BACKEND_URL}/chats`, {
-            method: 'GET',
-            headers: { 'Authorization': `Bearer ${currentToken}` }
+            headers: authHeaders()
         });
         if (!res.ok) {
-            if (res.status === 401) { alert("Session expired. Please login again."); logout(); return; }
+            if (res.status === 401 || res.status === 403) { logout(); return; }
             throw new Error(`HTTP ${res.status}`);
         }
         const chats = await res.json();
@@ -457,35 +415,26 @@ function renderChatHistory(chats) {
         item.classList.add('chat-item');
         if (chat._id === currentChatId) item.classList.add('active');
 
-        const date    = new Date(chat.updated_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
         const pinIcon = chat.pinned ? '📌 ' : '';
-
         item.innerHTML = `
         <i class="fas fa-comment"></i>
         <div class="chat-item-title">${pinIcon}${chat.title || 'New Chat'}</div>
         <button class="menu-dots" onclick="event.stopPropagation(); showChatMenu(this.parentElement, '${chat._id}', ${chat.pinned || false})">⋮</button>`;
 
-item.addEventListener('click', () => loadChat(chat._id));
-
+        item.addEventListener('click', () => loadChat(chat._id));
         chatHistory.appendChild(item);
     });
 }
 
 async function loadChat(chatId) {
-    if (!currentToken) return;
+    if (!currentFishermanId) return;
     currentChatId = chatId;
 
     document.querySelectorAll('.chat-item').forEach(item => item.classList.remove('active'));
-    document.querySelectorAll('.chat-item').forEach(item => {
-        const titleEl = item.querySelector('.chat-item-title');
-        if (titleEl && titleEl.getAttribute('onclick') && titleEl.getAttribute('onclick').includes(chatId)) {
-            item.classList.add('active');
-        }
-    });
 
     try {
         const res = await fetch(`${BACKEND_URL}/chats/${chatId}`, {
-            headers: { 'Authorization': `Bearer ${currentToken}` }
+            headers: authHeaders()
         });
         if (!res.ok) throw new Error('Failed to load chat');
 
@@ -502,17 +451,24 @@ async function loadChat(chatId) {
         } else {
             chat.messages.forEach(msg => addMessage(msg.content, msg.sender));
         }
+
+        document.querySelectorAll('.chat-item').forEach(item => {
+            const btn = item.querySelector('.menu-dots');
+            if (btn && btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(chatId)) {
+                item.classList.add('active');
+            }
+        });
     } catch (e) {
         console.error("Failed to load chat:", e);
     }
 }
 
 async function createNewChat() {
-    if (!currentToken) return;
+    if (!currentFishermanId) return;
     try {
         const res = await fetch(`${BACKEND_URL}/chats`, {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${currentToken}` }
+            method:  'POST',
+            headers: authHeaders()
         });
         if (!res.ok) throw new Error('Failed to create chat');
         const data    = await res.json();
@@ -537,15 +493,15 @@ function startNewChatUI() {
 
 // ==================== DELETE CHAT ====================
 async function deleteChat(chatId) {
-    if (!currentToken) return;
+    if (!currentFishermanId) return;
     try {
         const res = await fetch(`${BACKEND_URL}/chats/${chatId}`, {
-            method: 'DELETE',
-            headers: { 'Authorization': `Bearer ${currentToken}` }
+            method:  'DELETE',
+            headers: authHeaders()
         });
         if (!res.ok) {
-            if (res.status === 404) { alert("Chat not found or you do not have permission to delete it."); return; }
-            if (res.status === 401) { alert("Session expired. Please login again."); logout(); return; }
+            if (res.status === 404) { alert("Chat not found."); return; }
+            if (res.status === 401 || res.status === 403) { logout(); return; }
             throw new Error(`HTTP ${res.status}`);
         }
         if (currentChatId === chatId) {
@@ -580,7 +536,7 @@ function showChatMenu(chatItem, chatId, isPinned) {
         <button class="menu-delete"><i class="fas fa-trash"></i> Delete</button>`;
 
     chatItem.appendChild(menu);
-    chatItem.classList.add('menu-open');   
+    chatItem.classList.add('menu-open');
     document.querySelectorAll('.chat-item').forEach(item => { if (item !== chatItem) item.style.pointerEvents = 'none'; });
 
     menu.querySelector('.menu-rename').addEventListener('click', (e) => { e.stopImmediatePropagation(); cleanupMenu(); renameChat(chatId); });
@@ -594,8 +550,7 @@ function showChatMenu(chatItem, chatId, isPinned) {
 
 function cleanupMenu() {
     document.querySelectorAll('.chat-dropdown').forEach(menu => { if (menu.parentNode) menu.remove(); });
-    document.querySelectorAll('.chat-item').forEach(item => { item.style.pointerEvents = 'auto'; });
-    document.querySelectorAll('.chat-item').forEach(item => { item.classList.remove('menu-open'); });
+    document.querySelectorAll('.chat-item').forEach(item => { item.style.pointerEvents = 'auto'; item.classList.remove('menu-open'); });
     document.removeEventListener('click', cleanupMenu);
 }
 
@@ -603,9 +558,9 @@ function cleanupMenu() {
 async function togglePin(chatId, newPinnedState) {
     try {
         const res = await fetch(`${BACKEND_URL}/chats/${chatId}/pin`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentToken}` },
-            body: JSON.stringify({ pinned: newPinnedState })
+            method:  'PUT',
+            headers: authHeaders({ 'Content-Type': 'application/json' }),
+            body:    JSON.stringify({ pinned: newPinnedState })
         });
         if (res.ok) { await loadUserChats(); } else { alert("Failed to pin/unpin chat."); }
     } catch (e) { console.error(e); alert("Could not update pin status."); }
@@ -617,36 +572,36 @@ async function renameChat(chatId) {
     if (!newTitle || newTitle.trim() === "") return;
     try {
         const res = await fetch(`${BACKEND_URL}/chats/${chatId}/title`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentToken}` },
-            body: JSON.stringify({ title: newTitle.trim() })
+            method:  'PUT',
+            headers: authHeaders({ 'Content-Type': 'application/json' }),
+            body:    JSON.stringify({ title: newTitle.trim() })
         });
         if (res.ok) { await loadUserChats(); } else { alert("Failed to rename chat."); }
     } catch (e) { console.error(e); alert("Could not rename the chat."); }
 }
-// share chat
+
+// ==================== SHARE CHAT ====================
 async function shareChat(chatId) {
     try {
         const res = await fetch(`${BACKEND_URL}/chats/${chatId}`, {
-            method: 'GET',
-            headers: { 'Authorization': `Bearer ${currentToken}` }
+            headers: authHeaders()
         });
         if (!res.ok) throw new Error("Failed to load chat");
         const chat = await res.json();
 
-        let shareText = ` ${chat.title || 'FisherMen Chatbot Conversation'}\n\n`;
+        let shareText = ` ${chat.title || 'Fisherfolk Chatbot Conversation'}\n\n`;
         if (chat.messages && chat.messages.length > 0) {
             chat.messages.forEach(msg => {
-                const sender = msg.sender === 'user' ? 'You' : 'FisherMen Bot';
-                shareText += `${sender}: ${msg.content}\n\n`;
+                const sender = msg.sender === 'user' ? 'You' : 'Fisherfolk Bot';
+                shareText   += `${sender}: ${msg.content}\n\n`;
             });
         }
-        shareText += `\n Shared from FisherMen Chatbot`;
+        shareText += `\n Shared from Fisherfolk Chatbot`;
 
         const encodedText = encodeURIComponent(shareText);
-        const modal = document.createElement('div');
-        modal.className = 'share-modal';
-        modal.innerHTML = `
+        const modal       = document.createElement('div');
+        modal.className   = 'share-modal';
+        modal.innerHTML   = `
             <h3>Share Chat</h3>
             <div class="share-options">
                 <a href="https://wa.me/?text=${encodedText}" target="_blank" class="share-btn">
@@ -672,18 +627,15 @@ async function shareChat(chatId) {
         document.body.appendChild(modal);
         overlay.classList.remove('hidden');
 
-        // Copy to clipboard functionality
         modal.querySelector('#share-copy-btn').addEventListener('click', () => {
             navigator.clipboard.writeText(shareText)
                 .then(() => alert('Copied to clipboard!'))
                 .catch(() => alert('Copy failed. Please select and copy manually.'));
         });
-
         modal.querySelector('#share-close-btn').addEventListener('click', () => {
             modal.remove();
             overlay.classList.add('hidden');
         });
-
     } catch (e) {
         console.error("Share failed:", e);
         alert("Could not share the chat.");
@@ -693,8 +645,8 @@ async function shareChat(chatId) {
 // ==================== CHAT SEND ====================
 async function handleChatSubmit(e) {
     e.preventDefault();
-    let message = chatInput.value.trim();
-    if (!message || !currentToken) return;
+    const message = chatInput.value.trim();
+    if (!message || !currentFishermanId) return;
 
     if (!currentChatId) {
         await createNewChat();
@@ -708,25 +660,24 @@ async function handleChatSubmit(e) {
 }
 
 async function sendMessageToBackend(message) {
-    if (!currentToken || !currentChatId) {
+    if (!currentFishermanId || !currentChatId) {
         removeTypingIndicator();
-        addMessage("⚠️ Please login and create a new chat first.", 'bot');
+        addMessage("Please login and create a new chat first.", 'bot');
         return;
     }
 
     showTypingIndicator();
     try {
         const res = await fetch(`${BACKEND_URL}/chat`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${currentToken}` },
-            body: JSON.stringify({ message, chat_id: currentChatId })
+            method:  "POST",
+            headers: authHeaders({ "Content-Type": "application/json" }),
+            body:    JSON.stringify({ message, chat_id: currentChatId })
         });
 
         if (!res.ok) {
-            if (res.status === 401) { alert("Session expired. Please login again."); logout(); return; }
-            const errorData = await res.json().catch(() => ({}));
-            console.error("Chat API error:", res.status, errorData);
-            throw new Error(`Server error: ${res.status}`);
+            if (res.status === 401 || res.status === 403) { logout(); return; }
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(`Server error: ${res.status} — ${errData.detail || ''}`);
         }
 
         const data = await res.json();
@@ -736,7 +687,7 @@ async function sendMessageToBackend(message) {
     } catch (err) {
         removeTypingIndicator();
         console.error("Chat request failed:", err);
-        addMessage("⚠️ Couldn't reach the chatbot server. Please ensure the backend is running properly.", 'bot');
+        addMessage("Couldn't reach the chatbot server. Please ensure the backend is running.", 'bot');
     }
 }
 
@@ -769,7 +720,6 @@ function addMessage(content, sender) {
         thumbsDownBtn.innerHTML = '<i class="fas fa-thumbs-down"></i>';
         thumbsDownBtn.addEventListener('click', () => handleFeedback(messageDiv, false));
 
-        // READ ALOUD BUTTON — uses browser Web Speech API via speakMessage()
         const readAloudBtn = document.createElement('button');
         readAloudBtn.classList.add('feedback-btn', 'read-aloud-btn');
         readAloudBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
@@ -826,18 +776,14 @@ async function handleFeedback(messageDiv, isPositive) {
 }
 
 async function sendFeedbackToBackend(feedbackData) {
-    if (!currentToken) return;
+    if (!currentFishermanId) return;
     try {
         const res = await fetch(`${BACKEND_URL}/feedback`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentToken}` },
-            body: JSON.stringify(feedbackData)
+            method:  'POST',
+            headers: authHeaders({ 'Content-Type': 'application/json' }),
+            body:    JSON.stringify(feedbackData)
         });
-        if (res.ok) {
-            console.log('Feedback saved successfully');
-        } else {
-            console.error("Failed to save feedback");
-        }
+        if (!res.ok) console.error("Failed to save feedback");
     } catch (err) {
         console.error("Feedback submission error:", err);
     }
@@ -871,12 +817,10 @@ function togglePasswordVisibility(inputId) {
     const icon  = input.nextElementSibling.querySelector('i');
     if (input.type === 'password') {
         input.type = 'text';
-        icon.classList.remove('fa-eye');
-        icon.classList.add('fa-eye-slash');
+        icon.classList.replace('fa-eye', 'fa-eye-slash');
     } else {
         input.type = 'password';
-        icon.classList.remove('fa-eye-slash');
-        icon.classList.add('fa-eye');
+        icon.classList.replace('fa-eye-slash', 'fa-eye');
     }
 }
 
@@ -892,7 +836,7 @@ document.getElementById('export-chat')?.addEventListener('click', () => {
     const url     = URL.createObjectURL(blob);
     const a       = document.createElement('a');
     a.href        = url;
-    a.download    = `fishermen-chat-${new Date().toISOString().slice(0, 10)}.json`;
+    a.download    = `fisherfolk-chat-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
 });
@@ -906,9 +850,9 @@ function searchChatHistory() {
     });
 }
 
-// Expose global functions for inline onclick handlers
+// Expose global functions used by inline onclick handlers
 window.togglePasswordVisibility = togglePasswordVisibility;
-window.showSignup         = showSignup;
-window.showLogin          = showLogin;
-window.logout             = logout;
-window.closeFeedbackPopup = closeFeedbackPopup;
+window.showSignup               = showSignup;
+window.showLogin                = showLogin;
+window.logout                   = logout;
+window.closeFeedbackPopup       = closeFeedbackPopup;

@@ -2,8 +2,6 @@ fastapi
 uvicorn[standard]
 motor
 pydantic
-bcrypt
-python-jose[cryptography]
 python-multipart
 neo4j
 deep-translator

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FisherMen Chatbot</title>
+    <title>Fisherfolk Chatbot</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -14,14 +14,14 @@
     <div class="container" id="login-container">
         <div class="form-container">
             <div class="logo">
-                <img src="assets/fishermen-logo.svg" alt="FisherMen Chatbot Logo">
-                <h1>FisherMen Chatbot</h1>
+                <img src="assets/fishermen-logo.svg" alt="Fisherfolk Chatbot Logo">
+                <h1>Fisherfolk Chatbot</h1>
             </div>
             <h2>Login</h2>
             <form id="login-form">
                 <div class="form-group">
-                    <label for="login-fisherman-id">Fisherman ID</label>
-                    <input type="text" id="login-fisherman-id" placeholder="Enter your Fisherman ID" required>
+                    <label for="login-fisherman-id">Fisherfolk ID</label>
+                    <input type="text" id="login-fisherman-id" placeholder="Enter your Fisherfolk ID" required>
                 </div>
                 <div class="form-group">
                     <label for="login-password">Password</label>
@@ -39,8 +39,8 @@
     <div class="container hidden" id="signup-container">
         <div class="form-container">
             <div class="logo">
-                <img src="assets/fishermen-logo.svg" alt="FisherMen Chatbot Logo">
-                <h1>FisherMen Chatbot</h1>
+                <img src="assets/fishermen-logo.svg" alt="Fisherfolk Chatbot Logo">
+                <h1>Fisherfolk Chatbot</h1>
             </div>
             <h2>Sign Up</h2>
             <form id="signup-form">
@@ -49,8 +49,20 @@
                     <input type="text" id="signup-name" placeholder="Enter your name" required>
                 </div>
                 <div class="form-group">
-                    <label for="signup-fisherman-id">Fisherman ID</label>
-                    <input type="text" id="signup-fisherman-id" placeholder="Enter your Fisherman ID" required>
+                    <label for="signup-fisherman-id">Fisherfolk ID</label>
+                    <input type="text" id="signup-fisherman-id" placeholder="Enter your Fisherfolk ID" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-country">Country</label>
+                    <select id="signup-country" required>
+                        <option value="">Select Country</option>
+                        <option value="Australia">Australia</option>
+                        <option value="Malaysia">Malaysia</option>
+                        <option value="India">India</option>
+                        <option value="Bangladesh">Bangladesh</option>
+                        <option value="USA">USA</option>
+                        <option value="UK">UK</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="signup-location">Location</label>
@@ -58,14 +70,14 @@
                 </div>
                 <div class="form-group">
                     <label for="signup-password">Password</label>
-                    <input type="password" id="signup-password" placeholder="Enter your password" required>
+                    <input type="password" id="signup-password" placeholder="Enter your password" minlength="8" required>
                     <span class="toggle-password" onclick="togglePasswordVisibility('signup-password')">
                         <i class="fas fa-eye"></i>
                     </span>
                 </div>
                 <div class="form-group">
                     <label for="signup-confirm-password">Confirm Password</label>
-                    <input type="password" id="signup-confirm-password" placeholder="Confirm your password" required>
+                    <input type="password" id="signup-confirm-password" placeholder="Confirm your password" minlength="8" required>
                     <span class="toggle-password" onclick="togglePasswordVisibility('signup-confirm-password')">
                         <i class="fas fa-eye"></i>
                     </span>
@@ -85,8 +97,8 @@
         <div class="sidebar">
             <div class="sidebar-header">
                 <div class="logo">
-                    <img src="assets/fishermen-logo.svg" alt="FisherMen Chatbot Logo">
-                    <h2>FisherMen Chatbot</h2>
+                    <img src="assets/fishermen-logo.svg" alt="Fisherfolk Chatbot Logo">
+                    <h2>Fisherfolk Chatbot</h2>
                 </div>
                 <button class="new-chat-btn" id="new-chat-btn">
                     <i class="fas fa-plus"></i> New Chat
@@ -98,26 +110,25 @@
                     <input type="text" placeholder="Search chats" id="search-chats">
                 </div>
             </div>
-            <div class="chat-history" id="chat-history">
-                <!-- Chat history will be populated dynamically -->
-            </div>
+            <div class="chat-history" id="chat-history"></div>
             <div class="user-info">
                 <div class="user-avatar">
                     <i class="fas fa-user"></i>
                 </div>
                 <div class="user-name" id="user-name-display">User Name</div>
                 <button id="dark-toggle" class="dark-toggle" title="Toggle dark mode">
-                   <i class="fas fa-moon"></i>
+                    <i class="fas fa-moon"></i>
                 </button>
                 <button class="logout-btn" onclick="logout()">
                     <i class="fas fa-sign-out-alt"></i>
                 </button>
             </div>
         </div>
+
         <div class="main-chat">
             <div class="chat-messages" id="chat-messages">
                 <div class="welcome-message">
-                    <h1>Welcome to FisherMen Chatbot</h1>
+                    <h1>Welcome to Fisherfolk Chatbot</h1>
                     <p>How can I assist you today?</p>
                 </div>
             </div>
@@ -136,7 +147,7 @@
                         </button>
                     </div>
                 </form>
-                <p class="disclaimer">FisherMen Chatbot is designed to assist Bangladeshi fishermen with information and guidance.</p>
+                <p class="disclaimer">Fisherfolk Chatbot is designed to assist Bangladeshi fisherfolk with information and guidance.</p>
             </div>
         </div>
     </div>
@@ -179,11 +190,9 @@
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            
             <div class="voice-body">
                 <p id="live-transcript" class="live-transcript">Speak now...</p>
             </div>
-            
             <div class="voice-footer">
                 <button id="voice-mic-active" class="pulsing-mic" onclick="stopListening()">
                     <i class="fas fa-microphone"></i>
@@ -196,6 +205,39 @@
     </div>
 
     <div class="overlay hidden" id="overlay"></div>
+
+    <script>
+    function validateSignup() {
+        const fishermanId     = document.getElementById('signup-fisherman-id').value;
+        const password        = document.getElementById('signup-password').value;
+        const confirmPassword = document.getElementById('signup-confirm-password').value;
+        const country         = document.getElementById('signup-country').value;
+
+        if (!country) {
+            alert("Please select a country");
+            return false;
+        }
+
+        const idRegex = /^[a-zA-Z0-9]+$/;
+        if (!idRegex.test(fishermanId)) {
+            alert("Fisherfolk ID must contain only letters and numbers");
+            return false;
+        }
+
+        if (password.length < 8) {
+            alert("Password must be at least 8 characters long");
+            return false;
+        }
+
+        if (password !== confirmPassword) {
+            alert("Passwords do not match");
+            return false;
+        }
+
+        return true;
+    }
+    </script>
+
     <script src="js/script.js" defer></script>
 </body>
 </html>
