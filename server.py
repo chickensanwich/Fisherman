@@ -671,6 +671,93 @@ async def delete_graph_relationship(rel_id: str):
         )
     return {"status": "deleted"}
 
+# ====================== USER KNOWLEDGE GRAPH CONTRIBUTION ======================
+class ContributeRequest(BaseModel):
+    subject: str
+    relation: str
+    object_: str
+    context: str = ""
+
+CONTRIBUTIONS_FILE = Path("contributions.json")
+
+def _load_contributions() -> list:
+    if not CONTRIBUTIONS_FILE.exists():
+        return []
+    return json.loads(CONTRIBUTIONS_FILE.read_text(encoding="utf-8"))
+
+def _save_contributions(contributions: list) -> None:
+    CONTRIBUTIONS_FILE.write_text(json.dumps(contributions, indent=2), encoding="utf-8")
+
+
+@app.post("/contribute")
+async def contribute_knowledge(request: ContributeRequest, x_fisherman_id: str = Header(...)):
+    await require_approved_user(x_fisherman_id)
+    if not request.subject.strip() or not request.relation.strip() or not request.object_.strip():
+        raise HTTPException(status_code=400, detail="Subject, relation, and object are required.")
+    import time
+    contributions = _load_contributions()
+    contribution = {
+        "id": f"contrib_{int(time.time() * 1000)}",
+        "fishermanId": x_fisherman_id,
+        "subject": request.subject.strip(),
+        "relation": request.relation.strip().upper().replace(" ", "_"),
+        "object": request.object_.strip(),
+        "context": request.context.strip(),
+        "status": "pending",
+        "submitted_at": datetime.now(timezone.utc).isoformat(),
+    }
+    contributions.append(contribution)
+    _save_contributions(contributions)
+    return {"status": "pending", "message": "Thank you! Your contribution has been submitted for admin review."}
+
+
+@app.get("/admin/contributions")
+async def get_contributions(status: str = "pending"):
+    contributions = _load_contributions()
+    return [c for c in contributions if c.get("status") == status]
+
+
+@app.post("/admin/contributions/review")
+async def review_contribution(contribution_id: str, action: str):
+    if action not in ("approve", "reject"):
+        raise HTTPException(status_code=400, detail="action must be 'approve' or 'reject'.")
+    contributions = _load_contributions()
+    contribution = next((c for c in contributions if c["id"] == contribution_id), None)
+    if not contribution:
+        raise HTTPException(status_code=404, detail="Contribution not found.")
+
+    if action == "approve":
+        def to_label(s: str) -> str:
+            clean = re.sub(r"[^A-Za-z0-9 ]", "", s).title().replace(" ", "_")
+            return clean if re.match(r"^[A-Za-z_][A-Za-z0-9_]*$", clean) else "Entity"
+
+        subj_label = to_label(contribution["subject"])
+        obj_label  = to_label(contribution["object"])
+        rel_type   = _validate_identifier(
+            re.sub(r"[^A-Za-z0-9_]", "_", contribution["relation"])
+        )
+        with neo4j_driver.session() as session:
+            session.run(
+                f"""
+                MERGE (a:{subj_label} {{name: $subj_name}})
+                MERGE (b:{obj_label}  {{name: $obj_name}})
+                MERGE (a)-[r:{rel_type}]->(b)
+                ON CREATE SET r.context = $ctx,
+                              r.contributed_by = $uid,
+                              r.created_at = $ts
+                """,
+                subj_name=contribution["subject"],
+                obj_name=contribution["object"],
+                ctx=contribution.get("context", ""),
+                uid=contribution["fishermanId"],
+                ts=datetime.now(timezone.utc).isoformat(),
+            )
+        contribution["status"] = "approved"
+    else:
+        contribution["status"] = "rejected"
+
+    _save_contributions(contributions)
+    return {"status": contribution["status"], "contribution_id": contribution_id}
 
 @app.on_event("shutdown")
 async def shutdown():

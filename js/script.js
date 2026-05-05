@@ -71,7 +71,22 @@ document.addEventListener('DOMContentLoaded', () => {
     initSpeechRecognition();
     initApp();
 });
+// ── Profile dropdown toggle ──
+function toggleProfileMenu() {
+    const dropdown = document.getElementById('profile-dropdown');
+    dropdown.classList.toggle('hidden');
+}
 
+// Close dropdown when clicking outside
+document.addEventListener('click', (e) => {
+    const dropdown = document.getElementById('profile-dropdown');
+    const profileBtn = document.getElementById('profile-btn');
+    if (dropdown && !dropdown.classList.contains('hidden')) {
+        if (!dropdown.contains(e.target) && !profileBtn.contains(e.target)) {
+            dropdown.classList.add('hidden');
+        }
+    }
+});
 async function initApp() {
     const user = JSON.parse(localStorage.getItem('currentUser') || 'null');
     if (user && user.fishermanId) {
@@ -135,7 +150,7 @@ async function speakMessage(text, btn) {
     }
 }
 
-// ==================== VOICE INPUT (GOOGLE CLOUD STT via /transcribe) ====================
+// ==================== VOICE INPUT google cloud ====================
 let liveTranscriptEl, voiceMicActive, voiceSendBtn;
 
 function initSpeechRecognition() {
@@ -856,3 +871,195 @@ window.showSignup               = showSignup;
 window.showLogin                = showLogin;
 window.logout                   = logout;
 window.closeFeedbackPopup       = closeFeedbackPopup;
+window.toggleProfileMenu        = toggleProfileMenu;
+// ==================== CONTRIBUTE TO KNOWLEDGE GRAPH ====================
+let contribMediaRecorder = null;
+let contribAudioChunks = [];
+let contribIsRecording = false;
+
+function openContributePopup() {
+  const popup = document.getElementById('contribute-popup');
+  const ovl   = document.getElementById('overlay');
+  if (!popup || !ovl) return;
+  popup.classList.remove('hidden');
+  ovl.classList.remove('hidden');
+  clearContribFields();
+  document.getElementById('contrib-status-msg').style.display = 'none';
+  switchContributeTab('text');
+}
+window.openContributePopup = openContributePopup;
+
+function closeContributePopup() {
+  document.getElementById('contribute-popup')?.classList.add('hidden');
+  const feedbackPopup = document.getElementById('feedback-popup');
+  const ovl = document.getElementById('overlay');
+  if (ovl && (!feedbackPopup || feedbackPopup.classList.contains('hidden'))) {
+    ovl.classList.add('hidden');
+  }
+  stopContribMic();
+}
+window.closeContributePopup = closeContributePopup;
+
+function switchContributeTab(tab) {
+  const textPanel  = document.getElementById('contrib-text-panel');
+  const voicePanel = document.getElementById('contrib-voice-panel');
+  const tabText    = document.getElementById('tab-text');
+  const tabVoice   = document.getElementById('tab-voice');
+
+  if (tab === 'text') {
+    textPanel.classList.remove('hidden');
+    voicePanel.classList.add('hidden');
+    tabText.classList.add('active');
+    tabText.setAttribute('aria-selected', 'true');
+    tabVoice.classList.remove('active');
+    tabVoice.setAttribute('aria-selected', 'false');
+    stopContribMic();
+  } else {
+    textPanel.classList.add('hidden');
+    voicePanel.classList.remove('hidden');
+    tabVoice.classList.add('active');
+    tabVoice.setAttribute('aria-selected', 'true');
+    tabText.classList.remove('active');
+    tabText.setAttribute('aria-selected', 'false');
+  }
+}
+window.switchContributeTab = switchContributeTab;
+
+function clearContribFields() {
+  ['contrib-subject','contrib-relation','contrib-object','contrib-context'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  const transcript = document.getElementById('contrib-live-transcript');
+  if (transcript) { transcript.textContent = 'Press the mic to start...'; transcript.style.opacity = '0.5'; }
+  document.getElementById('contrib-use-transcript-btn')?.classList.add('hidden');
+}
+
+// ---- Voice recording ----
+async function toggleContribMic() {
+  if (contribIsRecording) stopContribMic();
+  else await startContribMic();
+}
+window.toggleContribMic = toggleContribMic;
+
+async function startContribMic() {
+  const micBtn     = document.getElementById('contrib-mic-btn');
+  const transcript = document.getElementById('contrib-live-transcript');
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    contribAudioChunks = [];
+    contribMediaRecorder = new MediaRecorder(stream);
+    contribMediaRecorder.ondataavailable = e => { if (e.data.size > 0) contribAudioChunks.push(e.data); };
+    contribMediaRecorder.onstop = async () => {
+      transcript.textContent = 'Transcribing...';
+      transcript.style.opacity = '0.7';
+      micBtn.classList.remove('listening');
+      const blob = new Blob(contribAudioChunks, { type: 'audio/webm' });
+      await transcribeContribAudio(blob);
+      stream.getTracks().forEach(t => t.stop());
+    };
+    contribMediaRecorder.start();
+    contribIsRecording = true;
+    transcript.textContent = 'Listening...';
+    transcript.style.opacity = '0.5';
+    micBtn.classList.add('listening');
+    micBtn.setAttribute('aria-label', 'Stop recording');
+  } catch (err) {
+    console.error('Contrib mic error:', err);
+    transcript.textContent = 'Microphone access denied.';
+  }
+}
+
+function stopContribMic() {
+  if (contribIsRecording && contribMediaRecorder?.state === 'recording') {
+    contribMediaRecorder.stop();
+    contribIsRecording = false;
+    const micBtn = document.getElementById('contrib-mic-btn');
+    if (micBtn) { micBtn.classList.remove('listening'); micBtn.setAttribute('aria-label', 'Start recording'); }
+  }
+}
+
+async function transcribeContribAudio(audioBlob) {
+  if (!currentFishermanId) return;
+  const formData = new FormData();
+  formData.append('audio', audioBlob, 'contrib_voice.webm');
+  const transcript = document.getElementById('contrib-live-transcript');
+  const useBtn     = document.getElementById('contrib-use-transcript-btn');
+  try {
+    const res = await fetch(`${BACKEND_URL}/transcribe`, {
+      method: 'POST',
+      headers: authHeaders(),
+      body: formData
+    });
+    if (!res.ok) throw new Error('Transcription failed');
+    const data = await res.json();
+    if (data.text) {
+      transcript.textContent = data.text;
+      transcript.style.opacity = '1';
+      useBtn.classList.remove('hidden');
+    } else {
+      transcript.textContent = 'Could not hear clearly. Try again.';
+    }
+  } catch (err) {
+    console.error(err);
+    transcript.textContent = 'Server error during transcription.';
+  }
+}
+
+function useContribTranscript() {
+  const text = document.getElementById('contrib-live-transcript').textContent.trim();
+  if (!text || text.includes('Listening') || text.includes('Transcribing') || text.includes('Press the mic')) return;
+  const ctxEl = document.getElementById('contrib-context');
+  if (ctxEl) ctxEl.value = text;
+  switchContributeTab('text');
+  document.getElementById('contrib-subject').focus();
+}
+window.useContribTranscript = useContribTranscript;
+
+// ---- Submit ----
+async function submitContribution() {
+  const subject   = document.getElementById('contrib-subject').value.trim();
+  const relation  = document.getElementById('contrib-relation').value.trim();
+  const object_   = document.getElementById('contrib-object').value.trim();
+  const context   = document.getElementById('contrib-context').value.trim();
+  const statusMsg = document.getElementById('contrib-status-msg');
+  const submitBtn = document.getElementById('contrib-submit-btn');
+
+  if (!subject || !relation || !object_) {
+    statusMsg.style.display  = 'block';
+    statusMsg.style.color    = 'var(--danger-color)';
+    statusMsg.textContent    = 'Please fill in Subject, Relationship, and Object.';
+    return;
+  }
+
+  submitBtn.disabled  = true;
+  submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+  statusMsg.style.display = 'none';
+
+  try {
+    const res = await fetch(`${BACKEND_URL}/contribute`, {
+      method: 'POST',
+      headers: authHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify({ subject, relation, object_, context })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      statusMsg.style.color   = 'var(--secondary-color)';
+      statusMsg.textContent   = '✅ ' + (data.message || 'Submitted for review!');
+      statusMsg.style.display = 'block';
+      clearContribFields();
+      setTimeout(closeContributePopup, 2500);
+    } else {
+      throw new Error(data.detail || 'Submission failed');
+    }
+  } catch (err) {
+    statusMsg.style.color   = 'var(--danger-color)';
+    statusMsg.textContent   = '❌ ' + err.message;
+    statusMsg.style.display = 'block';
+  } finally {
+    submitBtn.disabled  = false;
+    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit';
+  }
+}
+window.submitContribution = submitContribution;
+// ==================== END CONTRIBUTE ====================

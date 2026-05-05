@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
+
 <body>
     <div class="container" id="login-container">
         <div class="form-container">
@@ -112,17 +113,30 @@
             </div>
             <div class="chat-history" id="chat-history"></div>
             <div class="user-info">
-                <div class="user-avatar">
-                    <i class="fas fa-user"></i>
+                <div class="user-avatar" id="profile-btn" title="Profile options" onclick="toggleProfileMenu()">
+                       <i class="fas fa-user"></i>
                 </div>
-                <div class="user-name" id="user-name-display">User Name</div>
-                <button id="dark-toggle" class="dark-toggle" title="Toggle dark mode">
-                    <i class="fas fa-moon"></i>
-                </button>
-                <button class="logout-btn" onclick="logout()">
-                    <i class="fas fa-sign-out-alt"></i>
-                </button>
-            </div>
+               <div class="user-name" id="user-name-display">User Name</div>
+                      <button class="logout-btn" onclick="logout()" title="Logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                     </button>
+
+                     <!-- Profile dropdown menu -->
+                       <div class="profile-dropdown hidden" id="profile-dropdown">
+                             <button id="dark-toggle" class="profile-menu-item" title="Switch Theme">
+                              <i class="fas fa-lightbulb"></i>
+                                <span>Switch Theme</span>
+                                    </button>
+                              <button class="profile-menu-item" id="export-chat" title="Export chat">
+                                 <i class="fas fa-download"></i>
+                                    <span>Export Chat</span>
+                               </button>
+                         <button class="profile-menu-item" id="contribute-btn" title="Contribute to Knowledge Graph" onclick="openContributePopup(); toggleProfileMenu()">
+                                 <i class="fas fa-brain"></i>
+                                <span>Contribute Knowledge</span>
+                                   </button>
+                       </div>
+               </div>
         </div>
 
         <div class="main-chat">
@@ -142,12 +156,10 @@
                         <button type="submit" class="send-btn">
                             <i class="fas fa-paper-plane"></i>
                         </button>
-                        <button type="button" id="export-chat" class="export-btn" title="Export chat">
-                            <i class="fas fa-download"></i>
-                        </button>
+                        
                     </div>
                 </form>
-                <p class="disclaimer">Fisherfolk Chatbot is designed to assist Bangladeshi fisherfolk with information and guidance.</p>
+                <p class="disclaimer">This chatbot provides guidance based on available knowledge and may not always be accurate or up to date. Do not rely solely on this information. For critical decisions consult local authorities or experienced fishermen when needed.</p>
             </div>
         </div>
     </div>
@@ -239,5 +251,98 @@
     </script>
 
     <script src="js/script.js" defer></script>
+    <!-- ===== CONTRIBUTE TO KNOWLEDGE GRAPH POPUP ===== -->
+<div id="contribute-popup" class="feedback-popup hidden" role="dialog" aria-modal="true" aria-labelledby="contribute-title">
+  <div class="voice-content contribute-content">
+    <div class="voice-header">
+      <h3 id="contribute-title">
+        <i class="fas fa-brain" style="color:var(--secondary-color);margin-right:8px;"></i>
+        Contribute to Knowledge Graph
+      </h3>
+      <button class="icon-btn" onclick="closeContributePopup()" aria-label="Close">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;">
+      Share a fact you know as a fisherman. Use the mic or type below.
+      Your contribution will be reviewed before it is added.
+    </p>
+
+    <!-- Tabs -->
+    <div class="contribute-tabs" role="tablist">
+      <button class="contribute-tab active" id="tab-text" role="tab"
+              aria-selected="true" onclick="switchContributeTab('text')">
+        <i class="fas fa-keyboard"></i> Type
+      </button>
+      <button class="contribute-tab" id="tab-voice" role="tab"
+              aria-selected="false" onclick="switchContributeTab('voice')">
+        <i class="fas fa-microphone"></i> Speak
+      </button>
+    </div>
+
+    <!-- Text panel -->
+    <div id="contrib-text-panel">
+      <div class="form-group" style="margin-top:12px;">
+        <label for="contrib-subject">Subject <span style="color:var(--danger-color)">*</span></label>
+        <input type="text" id="contrib-subject" placeholder="e.g. Hilsa fish" autocomplete="off" />
+      </div>
+      <div class="form-group">
+        <label for="contrib-relation">Relationship <span style="color:var(--danger-color)">*</span></label>
+        <input type="text" id="contrib-relation" placeholder="e.g. FOUND_IN, REQUIRES, SEASON_IS" autocomplete="off" />
+      </div>
+      <div class="form-group">
+        <label for="contrib-object">Object <span style="color:var(--danger-color)">*</span></label>
+        <input type="text" id="contrib-object" placeholder="e.g. Padma river" autocomplete="off" />
+      </div>
+      <div class="form-group">
+        <label for="contrib-context">
+          Extra context
+          <span style="color:var(--text-secondary);font-weight:400">(optional)</span>
+        </label>
+        <textarea id="contrib-context" rows="2"
+          placeholder="e.g. Hilsa is most common in the Padma river during monsoon season."></textarea>
+      </div>
+    </div>
+
+    <!-- Voice panel -->
+    <div id="contrib-voice-panel" class="hidden">
+      <p style="font-size:13px;color:var(--text-secondary);margin:12px 0 8px;">
+        Speak a full sentence describing the fact. We will transcribe it and
+        pre-fill the context field for you.
+      </p>
+      <div class="voice-body" style="min-height:60px;">
+        <div id="contrib-live-transcript" class="live-transcript"
+             style="font-size:16px;opacity:0.5;">
+          Press the mic to start...
+        </div>
+      </div>
+      <div class="voice-footer" style="margin-top:12px;">
+        <button id="contrib-mic-btn" class="pulsing-mic"
+                onclick="toggleContribMic()" aria-label="Start recording">
+          <i class="fas fa-microphone"></i>
+        </button>
+        <button id="contrib-use-transcript-btn" class="btn-secondary hidden"
+                onclick="useContribTranscript()"
+                style="font-size:13px;padding:8px 16px;">
+          <i class="fas fa-check"></i> Use this text
+        </button>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div style="margin-top:18px;display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;">
+      <button class="btn-secondary" onclick="closeContributePopup()"
+              style="font-size:14px;padding:9px 18px;">Cancel</button>
+      <button id="contrib-submit-btn" class="btn-primary" onclick="submitContribution()"
+              style="font-size:14px;padding:9px 18px;">
+        <i class="fas fa-paper-plane"></i> Submit
+      </button>
+    </div>
+    <div id="contrib-status-msg"
+         style="margin-top:10px;font-size:13px;text-align:center;display:none;"></div>
+  </div>
+</div>
+<!-- ===== END CONTRIBUTE POPUP ===== -->
 </body>
 </html>

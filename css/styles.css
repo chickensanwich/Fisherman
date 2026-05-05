@@ -1248,3 +1248,119 @@ select:focus {
     text-align: center;
     letter-spacing: 0.02em;
 }
+
+.contribute-content {
+  max-width: 520px;
+  text-align: left;
+}
+
+.contribute-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.contribute-tab {
+  background: var(--background-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 7px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: var(--transition-standard);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.contribute-tab.active {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 2px 6px rgba(26, 115, 232, 0.3);
+}
+
+.contribute-tab:hover:not(.active) {
+  background: var(--border-color);
+  color: var(--text-color);
+}
+
+.contribute-kg-btn {
+  color: var(--secondary-color) !important;
+}
+
+.contribute-kg-btn:hover {
+  color: #1e7e34 !important;
+  transform: scale(1.2);
+}
+
+#contrib-text-panel .form-group { margin-bottom: 12px; }
+#contrib-text-panel label { font-size: 13px; margin-bottom: 5px; }
+#contrib-text-panel input,
+#contrib-text-panel textarea { font-size: 14px; padding: 9px 12px; }
+#contrib-text-panel textarea { resize: vertical; min-height: 56px; }
+
+@media (max-width: 480px) {
+  .contribute-content { width: calc(100vw - 32px); }
+}
+
+.user-info {
+    position: relative;
+}
+
+.profile-dropdown {
+    position: absolute;
+    bottom: 64px;
+    left: 12px;
+    background: var(--background-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    min-width: 200px;
+    padding: 6px;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.profile-dropdown.hidden {
+    display: none;
+}
+
+.profile-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 12px;
+    border: none;
+    background: none;
+    color: var(--text-primary);
+    font-size: 14px;
+    border-radius: 7px;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s ease;
+}
+
+.profile-menu-item:hover {
+    background: var(--hover-color, rgba(0,0,0,0.06));
+    color: var(--primary-color);
+}
+
+.profile-menu-item i {
+    width: 16px;
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+.profile-menu-item:hover i {
+    color: var(--primary-color);
+}
+
+.user-avatar {
+    cursor: pointer;
+}

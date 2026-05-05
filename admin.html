@@ -27,6 +27,7 @@
         .btn-danger:hover   { background: #bb2d3b; }
         .empty-row td { text-align: center; color: #888; font-style: italic; }
         #pending-count { display: inline-block; background: #dc3545; color: #fff; border-radius: 50%; padding: 1px 7px; font-size: 0.8em; margin-left: 6px; vertical-align: middle; }
+        #contrib-count { display: inline-block; background: #28a745; color: #fff; border-radius: 50%; padding: 1px 7px; font-size: 0.8em; margin-left: 6px; vertical-align: middle; }
 
         /* KG editor */
         .kg-toolbar { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
@@ -51,6 +52,15 @@
         .rel-target { font-family: monospace; font-size: 0.8em; color: #888; }
         .no-results { color: #888; font-style: italic; padding: 12px 0; }
 
+        /* Contribution cards */
+        .contrib-card { background: #fff; border: 1px solid #ccc; border-radius: 6px; padding: 12px 14px; margin-bottom: 10px; }
+        .contrib-triple { font-size: 0.95em; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 6px; }
+        .contrib-triple .subj { font-weight: bold; color: #0d6efd; }
+        .contrib-triple .rel  { font-weight: bold; color: #6f42c1; }
+        .contrib-triple .obj  { font-weight: bold; color: #198754; }
+        .contrib-context { font-size: 0.85em; color: #555; font-style: italic; margin-bottom: 8px; }
+        .contrib-meta    { font-size: 0.78em; color: #888; margin-bottom: 8px; }
+
         /* Edit modal */
         #edit-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 1000; align-items: center; justify-content: center; }
         #edit-modal.open { display: flex; }
@@ -73,6 +83,12 @@
         </thead>
         <tbody></tbody>
     </table>
+
+    <!-- ── Pending Contributions ── -->
+    <h2>Pending Contributions <span id="contrib-count">0</span></h2>
+    <div id="contributions-list" style="margin-bottom:24px;">
+        <p class="no-results">Loading...</p>
+    </div>
 
     <!-- ── Knowledge Graph Editor ── -->
     <h2>Knowledge Graph Editor</h2>
@@ -240,7 +256,7 @@
                             <span class="rel-target">${escapeHtml(r.targetId)}</span>
                             <span style="color:#888;font-size:0.8em">${escapeHtml(JSON.stringify(r.targetProps))}</span>
                             <button class="btn btn-danger" style="padding:2px 7px;font-size:0.78em"
-                                onclick="deleteRelationship('${escapeHtml(r.relId)}', '${CSS.escape(node.nodeId)}')">✕</button>
+                                onclick="deleteRelationship('${escapeHtml(r.relId)}', '${CSS.escape(node.nodeId)}')">&#x2715;</button>
                         </div>`).join('')
                     : '<span style="color:#aaa;font-size:0.85em">No outgoing relationships</span>';
 
@@ -362,18 +378,17 @@
                     tbody.innerHTML = '<tr class="empty-row"><td colspan="7">No feedback yet</td></tr>';
                     return;
                 }
-                // newest first
                 [...feedbacks].reverse().forEach(fb => {
                     const tr = document.createElement('tr');
                     const q = fb.userQuestion || '';
                     tr.innerHTML = `
                         <td>${escapeHtml(fb.type)}</td>
-                        <td>${escapeHtml(q || '—')}</td>
+                        <td>${escapeHtml(q || '\u2014')}</td>
                         <td>${escapeHtml(fb.message)}</td>
-                        <td>${escapeHtml(fb.reason || '—')}</td>
-                        <td>${escapeHtml(fb.comments || '—')}</td>
+                        <td>${escapeHtml(fb.reason || '\u2014')}</td>
+                        <td>${escapeHtml(fb.comments || '\u2014')}</td>
                         <td>${new Date(fb.timestamp).toLocaleString()}</td>
-                        <td>${q ? `<button class="btn btn-info" onclick="searchFromFeedback('${escapeHtml(q)}')">Search KG</button>` : '—'}</td>`;
+                        <td>${q ? `<button class="btn btn-info" onclick="searchFromFeedback('${escapeHtml(q)}')">Search KG</button>` : '\u2014'}</td>`;
                     tbody.appendChild(tr);
                 });
             } catch (err) {
@@ -388,9 +403,58 @@
             document.getElementById('kg-search-input').scrollIntoView({ behavior: 'smooth' });
         }
 
+        // ── Contributions ─────────────────────────────────────────
+        async function loadContributions() {
+            const list    = document.getElementById('contributions-list');
+            const countEl = document.getElementById('contrib-count');
+            try {
+                const res = await fetch(`${API}/admin/contributions?status=pending`);
+                if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+                const data = await res.json();
+                countEl.textContent = data.length;
+                if (!data.length) {
+                    list.innerHTML = '<p class="no-results">No pending contributions.</p>';
+                    return;
+                }
+                list.innerHTML = data.map(c => `
+                    <div class="contrib-card">
+                        <div class="contrib-triple">
+                            <span class="subj">${escapeHtml(c.subject)}</span>
+                            <span class="rel">&#8212;[${escapeHtml(c.relation)}]&#8594;</span>
+                            <span class="obj">${escapeHtml(c.object)}</span>
+                        </div>
+                        ${c.context ? `<div class="contrib-context">"${escapeHtml(c.context)}"</div>` : ''}
+                        <div class="contrib-meta">Submitted by <strong>${escapeHtml(c.fishermanId)}</strong> &middot; ${new Date(c.submitted_at).toLocaleString()}</div>
+                        <div>
+                            <button class="btn btn-approve" onclick="reviewContrib('${escapeHtml(c.id)}', 'approve')">&#x2705; Approve &rarr; Add to Neo4j</button>
+                            <button class="btn btn-reject"  onclick="reviewContrib('${escapeHtml(c.id)}', 'reject')">&#x274C; Reject</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                list.innerHTML = `<p class="no-results">Failed to load contributions: ${escapeHtml(err.message)}</p>`;
+            }
+        }
+
+        async function reviewContrib(id, action) {
+            try {
+                const res = await fetch(
+                    `${API}/admin/contributions/review?contribution_id=${encodeURIComponent(id)}&action=${action}`,
+                    { method: 'POST' }
+                );
+                if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+                const data = await res.json();
+                alert(`Contribution ${data.status}!`);
+                loadContributions();
+            } catch (err) {
+                alert(`Failed: ${err.message}`);
+            }
+        }
+
         // ── Init ──────────────────────────────────────────────────
         loadPendingUsers();
         loadFeedbacks();
+        loadContributions();
     </script>
 </body>
 </html>
