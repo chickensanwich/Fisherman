@@ -1,0 +1,65 @@
+[
+  {
+    "type": "negative",
+    "reason": "not-helpful",
+    "comments": "Wrong",
+    "message": "I don't know.",
+    "userQuestion": "",
+    "fishermanId": "123",
+    "timestamp": "2026-05-07T09:20:41.686123+00:00"
+  },
+  {
+    "type": "negative",
+    "reason": "not-helpful",
+    "comments": "",
+    "message": "Sorry, I don't have information on that topic in my knowledge base.",
+    "userQuestion": "",
+    "fishermanId": "123",
+    "timestamp": "2026-05-07T09:23:34.218645+00:00"
+  },
+  {
+    "type": "negative",
+    "reason": "other",
+    "comments": "",
+    "message": "Don\u2019t know.",
+    "userQuestion": "",
+    "fishermanId": "123",
+    "timestamp": "2026-05-07T09:23:37.082275+00:00"
+  },
+  {
+    "type": "negative",
+    "reason": "not-helpful",
+    "comments": "",
+    "message": "Sorry, I don't have information on that topic in my knowledge base.",
+    "userQuestion": "",
+    "fishermanId": "123",
+    "timestamp": "2026-05-07T09:26:18.087950+00:00"
+  },
+  {
+    "type": "negative",
+    "reason": "not-helpful",
+    "comments": "",
+    "message": "I don't know how to fish for salmon.",
+    "userQuestion": "how do I fish for salmon",
+    "fishermanId": "123",
+    "timestamp": "2026-05-07T09:27:08.917615+00:00"
+  },
+  {
+    "type": "positive",
+    "reason": "helpful",
+    "comments": "",
+    "message": "You can find salmon in freshwater during the winter.",
+    "userQuestion": "where can I find salmon",
+    "fishermanId": "123",
+    "timestamp": "2026-05-07T09:29:35.890050+00:00"
+  },
+  {
+    "type": "positive",
+    "reason": "helpful",
+    "comments": "",
+    "message": "I don't know how to fish for salmon.",
+    "userQuestion": "how do I fish for salmon",
+    "fishermanId": "123",
+    "timestamp": "2026-05-07T09:29:49.435878+00:00"
+  }
+]

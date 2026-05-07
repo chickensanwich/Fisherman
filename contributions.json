@@ -1,0 +1,12 @@
+[
+  {
+    "id": "contrib_1778146407162",
+    "fishermanId": "123",
+    "subject": "Salmon",
+    "relation": "SEASON_IS",
+    "object": "Winter",
+    "context": "",
+    "status": "approved",
+    "submitted_at": "2026-05-07T09:33:27.162698+00:00"
+  }
+]

@@ -1,7 +1,6 @@
 from fastapi import FastAPI, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from motor.motor_asyncio import AsyncIOMotorClient
 from neo4j import GraphDatabase
 from deep_translator import GoogleTranslator
 import requests
@@ -9,11 +8,11 @@ import langdetect
 import os
 import json
 import re
+import uuid
 import hashlib
 from datetime import datetime, timezone
 from pathlib import Path
 from dotenv import load_dotenv
-from bson import ObjectId
 import asyncio
 from fastapi import File, UploadFile
 from google.cloud import speech as gcp_speech
@@ -31,27 +30,74 @@ app.add_middleware(
 )
 
 # ====================== CONFIG ======================
-MONGODB_URL = "mongodb://localhost:27017"
-OLLAMA_URL  = "http://localhost:11434/api/chat"
-MODEL_NAME  = "gemma3:1b"
+OLLAMA_URL    = "http://localhost:11434/api/chat"
+MODEL_NAME    = "gemma3:1b"
+SYSTEM_PROMPT = (
+    "You are an assistant for Bangladeshi fishermen. "
+    "You MUST answer ONLY using the knowledge graph context provided in the user message. "
+    "Do NOT use any outside knowledge. If the context does not contain enough information, say you don't know."
+)
 
 NEO4J_URI      = "bolt://localhost:7687"
 NEO4J_USER     = "neo4j"
 NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD", "nej4nej4")
 
 # ====================== GOOGLE CLOUD SPEECH-TO-TEXT ======================
-speech_client = gcp_speech.SpeechClient()
+speech_client = None
 
-# ====================== DATABASES ======================
-mongo_client     = AsyncIOMotorClient(MONGODB_URL)
-db               = mongo_client["fishermen_chatbot"]
-chats_collection = db["chats"]
-
-neo4j_driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
+def _get_speech_client():
+    global speech_client
+    if speech_client is None:
+        speech_client = gcp_speech.SpeechClient()
+    return speech_client
 
 # ====================== JSON FILE STORAGE ======================
 USERS_FILE     = Path("users.json")
 FEEDBACKS_FILE = Path("feedbacks.json")
+CHATS_FILE     = Path("chats.json")
+SETTINGS_FILE  = Path("settings.json")
+
+_DEFAULTS = {
+    "neo4j_uri":         NEO4J_URI,
+    "neo4j_user":        NEO4J_USER,
+    "neo4j_password":    NEO4J_PASSWORD,
+    "ollama_url":        OLLAMA_URL,
+    "model_name":        MODEL_NAME,
+    "google_creds_path": os.getenv("GOOGLE_APPLICATION_CREDENTIALS", ""),
+    "system_prompt":     SYSTEM_PROMPT,
+}
+
+
+def _load_settings() -> dict:
+    if not SETTINGS_FILE.exists():
+        return dict(_DEFAULTS)
+    stored = json.loads(SETTINGS_FILE.read_text(encoding="utf-8"))
+    return {**_DEFAULTS, **stored}
+
+
+def _save_settings_file(data: dict) -> None:
+    SETTINGS_FILE.write_text(json.dumps(data, indent=2), encoding="utf-8")
+
+
+def _apply_settings(s: dict) -> None:
+    global neo4j_driver, OLLAMA_URL, MODEL_NAME, SYSTEM_PROMPT
+    OLLAMA_URL    = s["ollama_url"]
+    MODEL_NAME    = s["model_name"]
+    SYSTEM_PROMPT = s.get("system_prompt") or SYSTEM_PROMPT
+    if s.get("google_creds_path"):
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = s["google_creds_path"]
+    try:
+        neo4j_driver.close()
+    except Exception:
+        pass
+    neo4j_driver = GraphDatabase.driver(s["neo4j_uri"], auth=(s["neo4j_user"], s["neo4j_password"]))
+
+
+# Boot: apply persisted settings (if any) over the compiled defaults
+_apply_settings(_load_settings())
+
+# ====================== DATABASES ======================
+# neo4j_driver is initialised inside _apply_settings above
 
 
 def _load_users() -> list:
@@ -72,6 +118,20 @@ def _load_feedbacks() -> list:
 
 def _save_feedbacks(feedbacks: list) -> None:
     FEEDBACKS_FILE.write_text(json.dumps(feedbacks, indent=2), encoding="utf-8")
+
+
+def _load_chats() -> list:
+    if not CHATS_FILE.exists():
+        return []
+    return json.loads(CHATS_FILE.read_text(encoding="utf-8"))
+
+
+def _save_chats(chats: list) -> None:
+    CHATS_FILE.write_text(json.dumps(chats, indent=2), encoding="utf-8")
+
+
+def _now_iso() -> str:
+    return datetime.now(timezone.utc).isoformat()
 
 
 def _hash_password(password: str) -> str:
@@ -325,7 +385,7 @@ async def transcribe_audio(
             model="latest_long",
         )
         response = await asyncio.to_thread(
-            speech_client.recognize,
+            _get_speech_client().recognize,
             config=config,
             audio=recognition_audio,
         )
@@ -350,120 +410,90 @@ async def transcribe_audio(
 @app.get("/chats")
 async def get_user_chats(x_fisherman_id: str = Header(...)):
     await require_approved_user(x_fisherman_id)
-    chats = await chats_collection.find(
-        {"user_id": x_fisherman_id}
-    ).sort([("pinned", -1), ("updated_at", -1)]).to_list(length=50)
-    for chat in chats:
-        chat["_id"] = str(chat["_id"])
-    return chats
+    chats = [c for c in _load_chats() if c.get("user_id") == x_fisherman_id]
+    chats.sort(key=lambda c: (not c.get("pinned", False), c.get("updated_at", "")), reverse=True)
+    return chats[:50]
 
 
 @app.post("/chats")
 async def create_new_chat(x_fisherman_id: str = Header(...)):
     await require_approved_user(x_fisherman_id)
+    now = _now_iso()
     chat_doc = {
+        "chat_id":    str(uuid.uuid4()),
         "user_id":    x_fisherman_id,
         "title":      "New Chat",
         "messages":   [],
         "pinned":     False,
-        "created_at": datetime.utcnow(),
-        "updated_at": datetime.utcnow(),
+        "created_at": now,
+        "updated_at": now,
     }
-    result = await chats_collection.insert_one(chat_doc)
-    return {"chat_id": str(result.inserted_id), "title": "New Chat"}
+    chats = _load_chats()
+    chats.append(chat_doc)
+    _save_chats(chats)
+    return {"chat_id": chat_doc["chat_id"], "title": "New Chat"}
 
 
 @app.delete("/chats/{chat_id}")
 async def delete_chat(chat_id: str, x_fisherman_id: str = Header(...)):
     await require_approved_user(x_fisherman_id)
-    try:
-        chat_id_obj = ObjectId(chat_id)
-    except Exception:
-        raise HTTPException(status_code=400, detail="Invalid chat_id format")
-
-    chat = await chats_collection.find_one({"_id": chat_id_obj})
+    chats = _load_chats()
+    chat = next((c for c in chats if c["chat_id"] == chat_id), None)
     if not chat:
         raise HTTPException(status_code=404, detail="Chat not found")
     if chat.get("user_id") != x_fisherman_id:
         raise HTTPException(status_code=403, detail="You do not have permission to delete this chat")
-
-    result = await chats_collection.delete_one({"_id": chat_id_obj})
-    if result.deleted_count == 0:
-        raise HTTPException(status_code=404, detail="Failed to delete chat")
+    _save_chats([c for c in chats if c["chat_id"] != chat_id])
     return {"status": "deleted", "message": "Chat successfully deleted"}
 
 
 @app.get("/chats/{chat_id}")
 async def get_chat_by_id(chat_id: str, x_fisherman_id: str = Header(...)):
     await require_approved_user(x_fisherman_id)
-    try:
-        chat_id_obj = ObjectId(chat_id)
-    except Exception:
-        raise HTTPException(status_code=400, detail="Invalid chat_id format")
-
-    chat = await chats_collection.find_one({"_id": chat_id_obj, "user_id": x_fisherman_id})
+    chats = _load_chats()
+    chat = next((c for c in chats if c["chat_id"] == chat_id and c.get("user_id") == x_fisherman_id), None)
     if not chat:
         raise HTTPException(status_code=404, detail="Chat not found or no permission")
-    chat["_id"] = str(chat["_id"])
     return chat
 
 
 @app.put("/chats/{chat_id}/title")
 async def update_chat_title(chat_id: str, body: TitleUpdate, x_fisherman_id: str = Header(...)):
     await require_approved_user(x_fisherman_id)
-    try:
-        chat_id_obj = ObjectId(chat_id)
-    except Exception:
-        raise HTTPException(status_code=400, detail="Invalid chat_id format")
-
-    result = await chats_collection.update_one(
-        {"_id": chat_id_obj, "user_id": x_fisherman_id},
-        {"$set": {"title": body.title.strip() or "Untitled Chat"}}
-    )
-    if result.modified_count == 0:
+    chats = _load_chats()
+    chat = next((c for c in chats if c["chat_id"] == chat_id and c.get("user_id") == x_fisherman_id), None)
+    if not chat:
         raise HTTPException(status_code=404, detail="Chat not found or no permission")
-    return {"status": "success", "title": body.title}
+    chat["title"] = body.title.strip() or "Untitled Chat"
+    _save_chats(chats)
+    return {"status": "success", "title": chat["title"]}
 
 
 @app.put("/chats/{chat_id}/pin")
 async def toggle_pin_chat(chat_id: str, body: PinUpdate, x_fisherman_id: str = Header(...)):
     await require_approved_user(x_fisherman_id)
-    try:
-        chat_id_obj = ObjectId(chat_id)
-    except Exception:
-        raise HTTPException(status_code=400, detail="Invalid chat_id format")
-
-    result = await chats_collection.update_one(
-        {"_id": chat_id_obj, "user_id": x_fisherman_id},
-        {"$set": {"pinned": body.pinned}}
-    )
-    if result.modified_count == 0:
+    chats = _load_chats()
+    chat = next((c for c in chats if c["chat_id"] == chat_id and c.get("user_id") == x_fisherman_id), None)
+    if not chat:
         raise HTTPException(status_code=404, detail="Chat not found or no permission")
+    chat["pinned"] = body.pinned
+    _save_chats(chats)
     return {"status": "success", "pinned": body.pinned}
 
 
 # ====================== CHAT MESSAGE SAVING ======================
-async def save_chat_message(fisherman_id: str, chat_id: str, user_message: str, bot_reply: str):
-    try:
-        chat_id_obj = ObjectId(chat_id)
-    except Exception:
-        raise HTTPException(status_code=400, detail="Invalid chat_id format")
-
-    chat_obj = await chats_collection.find_one({"_id": chat_id_obj, "user_id": fisherman_id})
-    if not chat_obj:
+def save_chat_message(fisherman_id: str, chat_id: str, user_message: str, bot_reply: str):
+    chats = _load_chats()
+    chat = next((c for c in chats if c["chat_id"] == chat_id and c.get("user_id") == fisherman_id), None)
+    if not chat:
         raise HTTPException(status_code=404, detail="Chat not found")
-
-    new_messages = [
-        {"sender": "user", "content": user_message, "timestamp": datetime.utcnow()},
-        {"sender": "bot",  "content": bot_reply,    "timestamp": datetime.utcnow()},
-    ]
-    await chats_collection.update_one(
-        {"_id": chat_id_obj},
-        {
-            "$push": {"messages": {"$each": new_messages}},
-            "$set":  {"updated_at": datetime.utcnow()},
-        }
-    )
+    now = _now_iso()
+    chat["messages"].extend([
+        {"sender": "user", "content": user_message, "timestamp": now},
+        {"sender": "bot",  "content": bot_reply,    "timestamp": now},
+    ])
+    chat["updated_at"] = now
+    _save_chats(chats)
 
 
 # ====================== MAIN CHAT ENDPOINT ======================
@@ -485,7 +515,7 @@ async def chat_endpoint(request: ChatRequest, x_fisherman_id: str = Header(...))
             if is_bangla else
             "Sorry, I don't have information on that topic in my knowledge base."
         )
-        await save_chat_message(fisherman_id, chat_id, user_message, no_info_reply)
+        save_chat_message(fisherman_id, chat_id, user_message, no_info_reply)
         return {"reply": no_info_reply}
 
     language_instruction = (
@@ -500,12 +530,7 @@ async def chat_endpoint(request: ChatRequest, x_fisherman_id: str = Header(...))
             "messages": [
                 {
                     "role": "system",
-                    "content": (
-                        f"You are an assistant for Bangladeshi fishermen. "
-                        f"You MUST answer ONLY using the knowledge graph context provided in the user message. "
-                        f"Do NOT use any outside knowledge. If the context does not contain enough information, say you don't know. "
-                        f"{language_instruction}"
-                    )
+                    "content": f"{SYSTEM_PROMPT} {language_instruction}"
                 },
                 {"role": "user", "content": f"{kg_context}\n\nUser question: {english_message}"}
             ],
@@ -524,15 +549,14 @@ async def chat_endpoint(request: ChatRequest, x_fisherman_id: str = Header(...))
         if is_bangla:
             reply = translate(reply, "en", "bn")
 
-        await save_chat_message(fisherman_id, chat_id, user_message, reply)
+        save_chat_message(fisherman_id, chat_id, user_message, reply)
 
-        chat_obj = await chats_collection.find_one({"_id": ObjectId(chat_id)})
+        chats = _load_chats()
+        chat_obj = next((c for c in chats if c["chat_id"] == chat_id), None)
         if chat_obj and len(chat_obj.get("messages", [])) == 2:
             new_title = await generate_chat_title(user_message, reply)
-            await chats_collection.update_one(
-                {"_id": ObjectId(chat_id)},
-                {"$set": {"title": new_title}}
-            )
+            chat_obj["title"] = new_title
+            _save_chats(chats)
 
         return {"reply": reply}
 
@@ -540,7 +564,7 @@ async def chat_endpoint(request: ChatRequest, x_fisherman_id: str = Header(...))
         raise HTTPException(status_code=503, detail="Ollama is not running.")
     except Exception as e:
         error_reply = "দুঃখিত, সার্ভারে সমস্যা হয়েছে।" if is_bangla else "Sorry, something went wrong."
-        await save_chat_message(fisherman_id, chat_id, user_message, error_reply)
+        save_chat_message(fisherman_id, chat_id, user_message, error_reply)
         return {"reply": error_reply}
 
 
@@ -758,6 +782,34 @@ async def review_contribution(contribution_id: str, action: str):
 
     _save_contributions(contributions)
     return {"status": contribution["status"], "contribution_id": contribution_id}
+
+# ====================== SETTINGS ENDPOINTS ======================
+class SettingsRequest(BaseModel):
+    neo4j_uri:         str
+    neo4j_user:        str
+    neo4j_password:    str
+    ollama_url:        str
+    model_name:        str
+    google_creds_path: str = ""
+    system_prompt:     str = ""
+
+
+@app.get("/settings")
+async def get_settings():
+    s = _load_settings()
+    return s
+
+
+@app.post("/settings")
+async def update_settings(request: SettingsRequest):
+    data = request.dict()
+    _save_settings_file(data)
+    try:
+        _apply_settings(data)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Settings saved but failed to reconnect: {e}")
+    return {"status": "ok"}
+
 
 @app.on_event("shutdown")
 async def shutdown():

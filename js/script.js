@@ -428,15 +428,15 @@ function renderChatHistory(chats) {
     chats.forEach(chat => {
         const item = document.createElement('div');
         item.classList.add('chat-item');
-        if (chat._id === currentChatId) item.classList.add('active');
+        if (chat.chat_id === currentChatId) item.classList.add('active');
 
         const pinIcon = chat.pinned ? '📌 ' : '';
         item.innerHTML = `
         <i class="fas fa-comment"></i>
         <div class="chat-item-title">${pinIcon}${chat.title || 'New Chat'}</div>
-        <button class="menu-dots" onclick="event.stopPropagation(); showChatMenu(this.parentElement, '${chat._id}', ${chat.pinned || false})">⋮</button>`;
+        <button class="menu-dots" onclick="event.stopPropagation(); showChatMenu(this.parentElement, '${chat.chat_id}', ${chat.pinned || false})">⋮</button>`;
 
-        item.addEventListener('click', () => loadChat(chat._id));
+        item.addEventListener('click', () => loadChat(chat.chat_id));
         chatHistory.appendChild(item);
     });
 }
@@ -778,15 +778,25 @@ async function handleFeedback(messageDiv, isPositive) {
     const thumbsDown      = messageDiv.querySelector('.thumbs-down');
     const reportedMessage = messageDiv.querySelector('.message-content').textContent;
 
+    let userQuestion = '';
+    let prev = messageDiv.previousElementSibling;
+    while (prev) {
+        if (prev.classList.contains('user-message')) {
+            userQuestion = prev.querySelector('.message-content')?.textContent || '';
+            break;
+        }
+        prev = prev.previousElementSibling;
+    }
+
     thumbsUp.classList.remove('active');
     thumbsDown.classList.remove('active');
 
     if (isPositive) {
         thumbsUp.classList.add('active');
-        await sendFeedbackToBackend({ type: 'positive', reason: 'helpful', comments: '', message: reportedMessage });
+        await sendFeedbackToBackend({ type: 'positive', reason: 'helpful', comments: '', message: reportedMessage, userQuestion });
     } else {
         thumbsDown.classList.add('active');
-        showFeedbackPopup(reportedMessage);
+        showFeedbackPopup(reportedMessage, userQuestion);
     }
 }
 
@@ -804,8 +814,9 @@ async function sendFeedbackToBackend(feedbackData) {
     }
 }
 
-function showFeedbackPopup(message) {
+function showFeedbackPopup(message, userQuestion = '') {
     feedbackPopup.dataset.reportedMessage = message;
+    feedbackPopup.dataset.userQuestion    = userQuestion;
     feedbackPopup.classList.remove('hidden');
     overlay.classList.remove('hidden');
 }
@@ -815,7 +826,8 @@ async function handleFeedbackSubmit(e) {
     const reason          = document.querySelector('input[name="feedback"]:checked')?.value || "other";
     const comments        = document.getElementById('feedback-text').value.trim();
     const reportedMessage = feedbackPopup.dataset.reportedMessage;
-    await sendFeedbackToBackend({ type: "negative", reason, comments, message: reportedMessage });
+    const userQuestion    = feedbackPopup.dataset.userQuestion || '';
+    await sendFeedbackToBackend({ type: "negative", reason, comments, message: reportedMessage, userQuestion });
     closeFeedbackPopup();
     alert('Thank you for your feedback!');
 }

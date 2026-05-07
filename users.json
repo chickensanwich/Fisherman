@@ -1,0 +1,11 @@
+[
+  {
+    "fishermanId": "123",
+    "name": "H",
+    "country": "Bangladesh",
+    "location": "123",
+    "password_hash": "ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f",
+    "status": "approved",
+    "created_at": "2026-05-07T09:19:36.333776+00:00"
+  }
+]

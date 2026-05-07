@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings – Fisherfolk Chatbot</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f4f8;
+            color: #333;
+            min-height: 100vh;
+            padding: 32px 16px 64px;
+        }
+
+        .page-header {
+            max-width: 760px;
+            margin: 0 auto 28px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .page-header a {
+            font-size: 0.85em;
+            color: #0d6efd;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .page-header a:hover { text-decoration: underline; }
+
+        h1 {
+            font-size: 1.6em;
+            color: #1a1a2e;
+            flex: 1;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #dde3ec;
+            border-radius: 10px;
+            padding: 24px 28px;
+            max-width: 760px;
+            margin: 0 auto 20px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+        }
+
+        .card-title {
+            font-size: 1em;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-title .icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7em;
+            font-weight: 700;
+            letter-spacing: 0;
+        }
+
+        .icon-neo4j   { background: #e8f5e9; color: #2e7d32; }
+        .icon-ollama  { background: #e3f2fd; color: #1565c0; }
+        .icon-google  { background: #fff3e0; color: #e65100; }
+
+        .card-desc {
+            font-size: 0.82em;
+            color: #6b7280;
+            margin-bottom: 18px;
+            margin-left: 36px;
+        }
+
+        .field-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px 20px;
+        }
+
+        .field-grid.full { grid-template-columns: 1fr; }
+
+        .field-group { display: flex; flex-direction: column; gap: 5px; }
+
+        label {
+            font-size: 0.82em;
+            font-weight: 600;
+            color: #374151;
+            letter-spacing: 0.02em;
+        }
+
+        label .required { color: #ef4444; margin-left: 2px; }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="url"] {
+            padding: 9px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.9em;
+            color: #111;
+            background: #fafafa;
+            transition: border-color 0.15s, box-shadow 0.15s;
+            width: 100%;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 3px rgba(13,110,253,0.12);
+            background: #fff;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper input { padding-right: 52px; }
+
+        .toggle-eye {
+            position: absolute;
+            right: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #6b7280;
+            padding: 4px 6px;
+            font-size: 0.78em;
+            font-weight: 600;
+            line-height: 1;
+        }
+
+        .toggle-eye:hover { color: #0d6efd; }
+
+        textarea {
+            padding: 9px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.88em;
+            color: #111;
+            background: #fafafa;
+            transition: border-color 0.15s, box-shadow 0.15s;
+            width: 100%;
+            resize: vertical;
+            min-height: 120px;
+            font-family: Arial, sans-serif;
+            line-height: 1.5;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 3px rgba(13,110,253,0.12);
+            background: #fff;
+        }
+
+        .hint {
+            font-size: 0.76em;
+            color: #9ca3af;
+            margin-top: 1px;
+        }
+
+        .actions {
+            max-width: 760px;
+            margin: 24px auto 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 22px;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 0.92em;
+            font-weight: 600;
+            transition: background 0.15s, transform 0.1s;
+        }
+
+        .btn:active { transform: scale(0.97); }
+
+        .btn-save {
+            background: #0d6efd;
+            color: #fff;
+        }
+
+        .btn-save:hover { background: #0b5ed7; }
+
+        .btn-reset {
+            background: #f3f4f6;
+            color: #374151;
+            border: 1px solid #d1d5db;
+        }
+
+        .btn-reset:hover { background: #e5e7eb; }
+
+        #status-msg {
+            font-size: 0.87em;
+            padding: 8px 14px;
+            border-radius: 6px;
+            display: none;
+        }
+
+        #status-msg.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #6ee7b7;
+        }
+
+        #status-msg.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+
+        @media (max-width: 540px) {
+            .field-grid { grid-template-columns: 1fr; }
+            .card { padding: 18px 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-header">
+    <h1>Settings</h1>
+    <a href="index.html">&larr; Back to Chat</a>
+    <a href="admin.html">Admin Dashboard</a>
+</div>
+
+<!-- Neo4j -->
+<div class="card">
+    <div class="card-title">
+        <span class="icon icon-neo4j">DB</span>
+        Neo4j Graph Database
+    </div>
+    <p class="card-desc">Connection details for the knowledge graph database.</p>
+    <div class="field-grid">
+        <div class="field-group">
+            <label for="neo4j-uri">Bolt URI <span class="required">*</span></label>
+            <input type="text" id="neo4j-uri" placeholder="bolt://localhost:7687">
+        </div>
+        <div class="field-group">
+            <label for="neo4j-user">Username <span class="required">*</span></label>
+            <input type="text" id="neo4j-user" placeholder="neo4j">
+        </div>
+        <div class="field-group" style="grid-column: 1 / -1;">
+            <label for="neo4j-password">Password <span class="required">*</span></label>
+            <div class="input-wrapper">
+                <input type="password" id="neo4j-password" placeholder="Enter Neo4j password">
+                <button class="toggle-eye" type="button" onclick="toggleVis('neo4j-password', this)" title="Show">Show</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Ollama -->
+<div class="card">
+    <div class="card-title">
+        <span class="icon icon-ollama">AI</span>
+        Ollama LLM
+    </div>
+    <p class="card-desc">Local language model endpoint and model selection.</p>
+    <div class="field-grid">
+        <div class="field-group">
+            <label for="ollama-url">API URL <span class="required">*</span></label>
+            <input type="url" id="ollama-url" placeholder="http://localhost:11434/api/chat">
+        </div>
+        <div class="field-group">
+            <label for="model-name">Model Name <span class="required">*</span></label>
+            <input type="text" id="model-name" placeholder="gemma3:1b">
+            <span class="hint">e.g. gemma3:1b, llama3.2:3b, mistral:7b</span>
+        </div>
+    </div>
+</div>
+
+<!-- Google Cloud -->
+<div class="card">
+    <div class="card-title">
+        <span class="icon icon-google">STT</span>
+        Google Cloud Speech-to-Text
+    </div>
+    <p class="card-desc">Path to your Google Cloud service account JSON key file used for voice transcription.</p>
+    <div class="field-grid full">
+        <div class="field-group">
+            <label for="google-creds-path">Credentials File Path</label>
+            <input type="text" id="google-creds-path" placeholder="C:\keys\my-service-account.json or /home/user/keys/sa.json">
+            <span class="hint">Leave blank to use the GOOGLE_APPLICATION_CREDENTIALS environment variable.</span>
+        </div>
+    </div>
+</div>
+
+<!-- System Prompt -->
+<div class="card">
+    <div class="card-title">
+        <span class="icon icon-ollama">SYS</span>
+        Chatbot System Prompt
+    </div>
+    <p class="card-desc">Instructions that define how the chatbot behaves. This is sent to the model before every conversation.</p>
+    <div class="field-grid full">
+        <div class="field-group">
+            <label for="system-prompt">System Prompt</label>
+            <textarea id="system-prompt" rows="6" placeholder="You are an assistant for Bangladeshi fishermen..."></textarea>
+            <span class="hint">Changes take effect immediately after saving. Leave blank to use the server default.</span>
+        </div>
+    </div>
+</div>
+
+<div class="actions">
+    <button class="btn btn-save" onclick="saveSettings()">Save Settings</button>
+    <button class="btn btn-reset" onclick="loadSettings()">Reset</button>
+    <span id="status-msg"></span>
+</div>
+
+<script>
+    const API = 'http://localhost:8000';
+
+    async function loadSettings() {
+        try {
+            const res = await fetch(`${API}/settings`);
+            if (!res.ok) throw new Error(await res.text());
+            const s = await res.json();
+            document.getElementById('neo4j-uri').value         = s.neo4j_uri         || '';
+            document.getElementById('neo4j-user').value        = s.neo4j_user        || '';
+            document.getElementById('neo4j-password').value    = s.neo4j_password    || '';
+            document.getElementById('ollama-url').value        = s.ollama_url        || '';
+            document.getElementById('model-name').value        = s.model_name        || '';
+            document.getElementById('google-creds-path').value = s.google_creds_path || '';
+            document.getElementById('system-prompt').value     = s.system_prompt     || '';
+        } catch (e) {
+            showStatus('Failed to load settings: ' + e.message, 'error');
+        }
+    }
+
+    async function saveSettings() {
+        const payload = {
+            neo4j_uri:         document.getElementById('neo4j-uri').value.trim(),
+            neo4j_user:        document.getElementById('neo4j-user').value.trim(),
+            neo4j_password:    document.getElementById('neo4j-password').value,
+            ollama_url:        document.getElementById('ollama-url').value.trim(),
+            model_name:        document.getElementById('model-name').value.trim(),
+            google_creds_path: document.getElementById('google-creds-path').value.trim(),
+            system_prompt:     document.getElementById('system-prompt').value.trim(),
+        };
+
+        if (!payload.neo4j_uri || !payload.neo4j_user || !payload.neo4j_password) {
+            showStatus('Neo4j URI, username and password are required.', 'error');
+            return;
+        }
+        if (!payload.ollama_url || !payload.model_name) {
+            showStatus('Ollama URL and model name are required.', 'error');
+            return;
+        }
+
+        try {
+            const res = await fetch(`${API}/settings`, {
+                method:  'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body:    JSON.stringify(payload),
+            });
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({ detail: res.statusText }));
+                throw new Error(err.detail || res.statusText);
+            }
+            showStatus('Settings saved successfully.', 'success');
+        } catch (e) {
+            showStatus('Save failed: ' + e.message, 'error');
+        }
+    }
+
+    function showStatus(msg, type) {
+        const el = document.getElementById('status-msg');
+        el.textContent = msg;
+        el.className = type;
+        el.style.display = 'inline-block';
+        if (type === 'success') {
+            setTimeout(() => { el.style.display = 'none'; }, 4000);
+        }
+    }
+
+    function toggleVis(inputId, btn) {
+        const el = document.getElementById(inputId);
+        if (el.type === 'password') {
+            el.type = 'text';
+            btn.title = 'Hide';
+            btn.textContent = 'Hide';
+        } else {
+            el.type = 'password';
+            btn.title = 'Show';
+            btn.textContent = 'Show';
+        }
+    }
+
+    loadSettings();
+</script>
+</body>
+</html>

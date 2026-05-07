@@ -1,6 +1,6 @@
-fastapi
+fastapi[standard]
+aiofiles
 uvicorn[standard]
-motor
 pydantic
 python-multipart
 neo4j

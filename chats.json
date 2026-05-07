@@ -1,0 +1,342 @@
+[
+  {
+    "chat_id": "7a8d4b7f-b9d6-47eb-999a-95fcd0be9588",
+    "user_id": "123",
+    "title": "Fishing Assistance - Bangladesh",
+    "messages": [
+      {
+        "sender": "user",
+        "content": "How do I fish for salmon",
+        "timestamp": "2026-05-07T09:20:14.139214+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I don't know.",
+        "timestamp": "2026-05-07T09:20:14.139214+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "how do I fish for hilsa fish",
+        "timestamp": "2026-05-07T09:23:07.681984+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Don\u2019t know.",
+        "timestamp": "2026-05-07T09:23:07.681984+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "can you say 2",
+        "timestamp": "2026-05-07T09:23:15.464096+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Sorry, I don't have information on that topic in my knowledge base.",
+        "timestamp": "2026-05-07T09:23:15.464096+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "fish",
+        "timestamp": "2026-05-07T09:23:26.252753+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Don\u2019t know.",
+        "timestamp": "2026-05-07T09:23:26.252753+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "H",
+        "timestamp": "2026-05-07T09:26:15.334967+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Sorry, I don't have information on that topic in my knowledge base.",
+        "timestamp": "2026-05-07T09:26:15.334967+00:00"
+      }
+    ],
+    "pinned": false,
+    "created_at": "2026-05-07T09:20:01.324997+00:00",
+    "updated_at": "2026-05-07T09:26:15.334967+00:00"
+  },
+  {
+    "chat_id": "e2fb557c-68e2-4d36-b2d5-e3bc0c181fdc",
+    "user_id": "123",
+    "title": "Fishing Tips for Bangladeshi Salmon",
+    "messages": [
+      {
+        "sender": "user",
+        "content": "how do I fish for salmon",
+        "timestamp": "2026-05-07T09:27:02.823303+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I don't know how to fish for salmon.",
+        "timestamp": "2026-05-07T09:27:02.823303+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "where can I find salmon",
+        "timestamp": "2026-05-07T09:29:22.197275+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "You can find salmon in freshwater during the winter.",
+        "timestamp": "2026-05-07T09:29:22.197275+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "when can I find salmon",
+        "timestamp": "2026-05-07T09:29:33.541074+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I do not know.",
+        "timestamp": "2026-05-07T09:29:33.541074+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "when should I fish for salmon",
+        "timestamp": "2026-05-07T09:33:49.891828+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Don\u2019t know.",
+        "timestamp": "2026-05-07T09:33:49.891828+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "what season is salmon found in",
+        "timestamp": "2026-05-07T09:34:02.702179+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Salmon is found in the Winter season.",
+        "timestamp": "2026-05-07T09:34:02.702179+00:00"
+      }
+    ],
+    "pinned": false,
+    "created_at": "2026-05-07T09:26:57.953052+00:00",
+    "updated_at": "2026-05-07T09:34:02.702179+00:00"
+  },
+  {
+    "chat_id": "a6cfe20a-f84c-4c76-85ec-22d11ecf1fe8",
+    "user_id": "123",
+    "title": "Fishing Tips for Salmon",
+    "messages": [
+      {
+        "sender": "user",
+        "content": "how do I fish for salmon",
+        "timestamp": "2026-05-07T09:42:33.015837+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "That\u2019s a great question! Salmon are seasonally available in the winter.  Did you mean \u2018how do I fish for salmon\u2019? \n\nHere are a few options for where you might find them:\n\n1.  **Freshwater rivers**\n2.  **Winter months**\n3.  **Specific locations**",
+        "timestamp": "2026-05-07T09:42:33.015837+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "3",
+        "timestamp": "2026-05-07T09:43:02.052897+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Sorry, I don't have information on that topic in my knowledge base.",
+        "timestamp": "2026-05-07T09:43:02.052897+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "2",
+        "timestamp": "2026-05-07T09:43:06.618633+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Sorry, I don't have information on that topic in my knowledge base.",
+        "timestamp": "2026-05-07T09:43:06.618633+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "when should I fish for salmon",
+        "timestamp": "2026-05-07T09:43:31.589032+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Did you mean \u2018when\u2019 to fish for salmon?\n\nHere are a few options:\n\n1.  During the winter months\n2.  In freshwater rivers\n3.  During the salmon season",
+        "timestamp": "2026-05-07T09:43:31.589032+00:00"
+      }
+    ],
+    "pinned": false,
+    "created_at": "2026-05-07T09:42:24.792389+00:00",
+    "updated_at": "2026-05-07T09:43:31.589032+00:00"
+  },
+  {
+    "chat_id": "95df5e20-f7e6-4603-ba9e-8921e41b741d",
+    "user_id": "123",
+    "title": "Salmon Fishing Guide \u2013 Bangladesh",
+    "messages": [
+      {
+        "sender": "user",
+        "content": "when should I fish for salmon",
+        "timestamp": "2026-05-07T09:45:02.710632+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Salmon is seasonally available in winter.",
+        "timestamp": "2026-05-07T09:45:02.710632+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "where should I fish for salmon",
+        "timestamp": "2026-05-07T09:45:16.311377+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Salmon are seasonally available in the winter.",
+        "timestamp": "2026-05-07T09:45:16.311377+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "how should I fish for salmon",
+        "timestamp": "2026-05-07T09:45:27.513995+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Salmon are seasonally available in winter. Did you mean \u2018Salmon\u2019?",
+        "timestamp": "2026-05-07T09:45:27.513995+00:00"
+      }
+    ],
+    "pinned": false,
+    "created_at": "2026-05-07T09:44:57.651949+00:00",
+    "updated_at": "2026-05-07T09:45:27.513995+00:00"
+  },
+  {
+    "chat_id": "f966566b-0017-451a-8e19-3b578afbb0f1",
+    "user_id": "123",
+    "title": "Salmon Fishing Tips \u2013 Bangladeshi Edition",
+    "messages": [
+      {
+        "sender": "user",
+        "content": "when should i fish for salmon",
+        "timestamp": "2026-05-07T09:47:13.272500+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Salmon are seasonally available in the winter.",
+        "timestamp": "2026-05-07T09:47:13.272500+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "where should i fish for salmon",
+        "timestamp": "2026-05-07T09:47:27.081068+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Salmon are seasonally available in freshwater during the winter.",
+        "timestamp": "2026-05-07T09:47:27.081068+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "how do I fish for salmon",
+        "timestamp": "2026-05-07T09:47:42.022539+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Salmon are seasonally available in winter.",
+        "timestamp": "2026-05-07T09:47:42.022539+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "what fishing methods should I use for salmon",
+        "timestamp": "2026-05-07T09:48:01.465709+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I only have information about fishing methods for salmon.",
+        "timestamp": "2026-05-07T09:48:01.465709+00:00"
+      }
+    ],
+    "pinned": false,
+    "created_at": "2026-05-07T09:47:08.322683+00:00",
+    "updated_at": "2026-05-07T09:48:01.465709+00:00"
+  },
+  {
+    "chat_id": "36df7229-2dc5-4413-a7c6-823b81f2cd1c",
+    "user_id": "123",
+    "title": "Fishing Advice for Bangladeshi Fishermen",
+    "messages": [
+      {
+        "sender": "user",
+        "content": "when should I fish for salmon",
+        "timestamp": "2026-05-07T09:50:55.981067+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I only have information about Fishing.",
+        "timestamp": "2026-05-07T09:50:55.981067+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "what season should I fish for salmon",
+        "timestamp": "2026-05-07T09:51:32.776010+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I only have information about Season.",
+        "timestamp": "2026-05-07T09:51:32.776010+00:00"
+      }
+    ],
+    "pinned": false,
+    "created_at": "2026-05-07T09:50:51.014806+00:00",
+    "updated_at": "2026-05-07T09:51:32.776010+00:00"
+  },
+  {
+    "chat_id": "c1cf1683-5de1-4229-8e33-17c0b09b97f5",
+    "user_id": "123",
+    "title": "Hilsha Fish Chat: Salmon Inquiry",
+    "messages": [
+      {
+        "sender": "user",
+        "content": "when should I fish for salmon",
+        "timestamp": "2026-05-07T09:52:16.989266+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I only have information about when to fish for Hilsha Fish, not salmon.",
+        "timestamp": "2026-05-07T09:52:16.989266+00:00"
+      }
+    ],
+    "pinned": false,
+    "created_at": "2026-05-07T09:52:07.178201+00:00",
+    "updated_at": "2026-05-07T09:52:16.989266+00:00"
+  },
+  {
+    "chat_id": "19ba59e0-ce1e-46d5-a4d4-d1bf38862e2d",
+    "user_id": "123",
+    "title": "Fishing Advice: Bangladesh",
+    "messages": [
+      {
+        "sender": "user",
+        "content": "when should I fish for salmon",
+        "timestamp": "2026-05-07T10:01:48.005145+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "That\u2019s a great question! To help me give you the best advice, could you tell me where you live? Salmon are often found in freshwater during the winter.",
+        "timestamp": "2026-05-07T10:01:48.005145+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "how do I fish for salmon",
+        "timestamp": "2026-05-07T10:04:35.140079+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Sorry, something went wrong.",
+        "timestamp": "2026-05-07T10:04:35.140079+00:00"
+      }
+    ],
+    "pinned": false,
+    "created_at": "2026-05-07T10:00:29.041221+00:00",
+    "updated_at": "2026-05-07T10:04:35.140079+00:00"
+  }
+]
