@@ -61,5 +61,77 @@
     "userQuestion": "how do I fish for salmon",
     "fishermanId": "123",
     "timestamp": "2026-05-07T09:29:49.435878+00:00"
+  },
+  {
+    "type": "negative",
+    "reason": "other",
+    "comments": "",
+    "message": "I don\u2019t know.",
+    "userQuestion": "in which months fishing is banned",
+    "fishermanId": "123",
+    "timestamp": "2026-05-18T02:10:45.281625+00:00"
+  },
+  {
+    "type": "negative",
+    "reason": "incorrect",
+    "comments": "",
+    "message": "I don\u2019t know.",
+    "userQuestion": "when is fishing banned",
+    "fishermanId": "123",
+    "timestamp": "2026-05-18T02:15:44.401302+00:00"
+  },
+  {
+    "type": "negative",
+    "reason": "not-helpful",
+    "comments": "",
+    "message": "The national fish of Bangladesh is the Catfish (also known as the \u2018Rampur Catfish\u2019). \n\n(Knowledge Graph Context: {'name': 'Catfish'})\n\n",
+    "userQuestion": "national fish of bangladesh?",
+    "fishermanId": "123",
+    "timestamp": "2026-05-18T04:46:28.585074+00:00"
+  },
+  {
+    "type": "negative",
+    "reason": "not-helpful",
+    "comments": "",
+    "message": "I do not know based on the knowledge graph.",
+    "userQuestion": "where is tiger found",
+    "fishermanId": "123",
+    "timestamp": "2026-05-18T07:37:28.855806+00:00"
+  },
+  {
+    "type": "negative",
+    "reason": "not-helpful",
+    "comments": "",
+    "message": "\u201cI do not know based on the knowledge graph.\u201d",
+    "userQuestion": "which fish in meghna",
+    "fishermanId": "123",
+    "timestamp": "2026-05-18T07:58:58.871401+00:00"
+  },
+  {
+    "type": "negative",
+    "reason": "other",
+    "comments": "",
+    "message": "I do not know based on the knowledge graph.",
+    "userQuestion": "where is tiger found",
+    "fishermanId": "123",
+    "timestamp": "2026-05-18T09:19:37.701448+00:00"
+  },
+  {
+    "type": "negative",
+    "reason": "other",
+    "comments": "",
+    "message": "\u201cTilapia and salmon are good fish for winter.\u201d",
+    "userQuestion": "What fish is good in winter?",
+    "fishermanId": "123",
+    "timestamp": "2026-05-20T12:02:40.164320+00:00"
+  },
+  {
+    "type": "negative",
+    "reason": "other",
+    "comments": "",
+    "message": "I don't have that information right now.",
+    "userQuestion": "which fish is found in meghna river",
+    "fishermanId": "123",
+    "timestamp": "2026-05-21T07:46:29.826793+00:00"
   }
 ]

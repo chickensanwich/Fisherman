@@ -16,6 +16,7 @@ from dotenv import load_dotenv
 import asyncio
 from fastapi import File, UploadFile
 from google.cloud import speech as gcp_speech
+from typer import prompt
 
 load_dotenv()
 
@@ -33,11 +34,33 @@ app.add_middleware(
 OLLAMA_URL    = "http://localhost:11434/api/chat"
 MODEL_NAME    = "gemma3:1b"
 SYSTEM_PROMPT = (
-    "You are an assistant for Bangladeshi fishermen. "
-    "You MUST answer ONLY using the knowledge graph context provided in the user message. "
-    "Do NOT use any outside knowledge. If the context does not contain enough information, say you don't know."
+    "You are an expert fishing assistant. You must answer the user's question using ONLY the provided [DATABASE FACTS].\n\n"
+    
+    "EXAMPLE 1 (Baits & Gear):\n"
+    "[DATABASE FACTS]\n"
+    "- Fact: Bait 'Dough Bait' attracts FishSpecies 'Catla'.\n"
+    "User: কাতলা মাছ কোন খাবার দিয়ে ধরা যায়? (What food catches Katala?)\n"
+    "Assistant: কাতলা (Catla) মাছ ধরতে Dough Bait বা আটার টোপ ব্যবহার করা যায়।\n\n"
+    
+    "EXAMPLE 2 (Bans & Prohibitions):\n"
+    "[DATABASE FACTS]\n"
+    "- Fact: Activity 'River Fishing' is banned in Month 'September'.\n"
+    "User: সেপ্টেম্বর মাসে মাছ ধরা কি নিষিদ্ধ? (Is fishing prohibited in September?)\n"
+    "Assistant: হ্যাঁ, সেপ্টেম্বর মাসে নদীতে মাছ ধরা (River Fishing) নিষিদ্ধ।\n\n"
+    
+    "HOW TO READ THE DATABASE FACTS (CHEAT SHEET):\n"
+    "- 'Bait X attracts Fish Y' -> X is the bait/food used to catch Y.\n"
+    "- 'Gear X is suitable for Fish Y' -> X is the rod, net, or tool used to catch Y.\n"
+    "- 'Fish X is found in WaterBody Y' -> Y is the river or location to catch X.\n"
+    "- 'Fish X is best in Month Y' -> Y is the best time to catch X.\n"
+    "- 'is banned in' or 'protected in' -> Fishing is prohibited, illegal, restricted, or not allowed.\n\n"
+    
+    "CRITICAL CONSTRAINTS:\n"
+    "- BE DIRECT: Answer immediately. List all relevant items found in the facts.\n"
+    "- SYNONYMS: 'Banned', 'Prohibited', and 'Not allowed' all mean the exact same thing. Treat them interchangeably.\n"
+    "- NO FILLER: Never say 'According to the database' or 'The facts show'.\n"
+    "- MISSING INFO: If the provided facts do not contain the answer to the user's specific question, you must output exactly: 'I do not have that information right now.'\n"
 )
-
 NEO4J_URI      = "bolt://localhost:7687"
 NEO4J_USER     = "neo4j"
 NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD", "nej4nej4")
@@ -225,39 +248,207 @@ def translate(text: str, source: str, target: str) -> str:
         return text
 
 
+import requests
+import re
+
+import requests
+import re
+
+def extract_database_keywords_via_llm(user_message: str) -> list:
+    try:
+
+        prompt = f"""Extract the main entities (fish, bait, location, gear, weather, water condition, month, season, constraints) from the text.
+        
+Example 1:
+Text: নদীর পানি ঘোলা থাকলে কি জাল দিয়ে মাছ ধরা যাবে? (If river water is murky, can I catch fish with a net?)
+Keywords: Murky Water, Net, Catch
+
+Example 2:
+Text: অক্টোবর মাসে ইলিশ মাছ ধরা কি ঠিক হবে? (Is it okay to catch Hilsa fish in October?)
+Keywords: October, Hilsa
+
+Example 3:
+Text: কাতলা মাছ কোন টোপ দিয়ে ধরা যায়? (Which bait catches Katala fish?)
+Keywords: Katala, Bait
+
+Text: {user_message}
+Keywords:"""
+
+        response = requests.post(OLLAMA_URL, json={
+            "model": MODEL_NAME,
+            "messages": [{"role": "user", "content": prompt}],
+            "stream": False,
+            "options": {"temperature": 0.2}
+        }, timeout=10)
+        
+        response.raise_for_status()
+        data = response.json()
+        
+        content = ""
+        if "message" in data and "content" in data["message"]:
+            content = data["message"]["content"].strip()
+        elif "response" in data:
+            content = data["response"].strip()
+            
+        
+        if '</think>' in content:
+            content = content.split('</think>')[-1]
+        content = content.replace('<think>', '')
+        
+        content = content.replace('\n', ',') 
+        raw_keywords = [
+            kw.strip() for kw in content.split(',') 
+            if kw.strip() and '<' not in kw and '>' not in kw
+        ]
+        
+        if len(raw_keywords) == 1 and ' ' in raw_keywords[0]:
+            raw_keywords = raw_keywords[0].split(' ')
+            
+        
+        alias_map = {
+            # === FISH SPECIES ===
+            "katala": "Catla", "katla": "Catla",
+            "rui": "Rohu", "rohu": "Rohu",
+            "bhetki": "Vetki", "barramundi": "Vetki",
+            "ilish": "Hilsa", "hilsha": "Hilsa",
+            "shrimp": "Chingri", "prawn": "Chingri", "lobster": "Chingri",
+            "magur": "Magur", "catfish": "Magur",
+            "boal": "Boal", "wallago": "Boal",
+            "pabda": "Pabda",
+            "koi": "Koi", "climbing perch": "Koi",
+            "pangas": "Pangas", "pangasius": "Pangas",
+            "mrigal": "Mrigal", "mirgal": "Mrigal",
+            "tilapia": "Tilapia",
+            "tengra": "Tengra",
+            "chital": "Chital", "knifefish": "Chital",
+            "shol": "Shoal", "shoal": "Shoal", "snakehead": "Shoal",
+            "taki": "Taki",
+            "puti": "Puti", "punti": "Puti",
+            "mola": "Mola",
+            "kachki": "Kachki",
+            "ayre": "Ayre", "aor": "Ayre",
+            "baam": "Baam", "eel": "Baam",
+            "rupchanda": "Rupchanda", "pomfret": "Rupchanda",
+
+            # === BAIT & FOOD ===
+            "earthworm": "Worm", "worm": "Worm", "kecho": "Worm",
+            "dough": "Dough Bait", "ata": "Dough Bait", "bread": "Dough Bait", "paste": "Dough Bait",
+            "ant eggs": "Ant Eggs", "piprar dim": "Ant Eggs",
+            "snail": "Snail", "shamuk": "Snail",
+            "crab": "Small Crab", "kakra": "Small Crab",
+            "insects": "Insects", "poka": "Insects",
+            "frog": "Frog", "bang": "Frog",
+            "minnow": "Minnow", "small fish": "Minnow",
+            "char": "Groundbait",
+
+            # === GEAR & TECHNIQUES ===
+            "hook": "Hook and Line", "borshi": "Hook and Line",
+            "rod": "Float Rod", "chhip": "Float Rod",
+            "net": "Fishing Net", "jal": "Fishing Net",
+            "cast net": "Cast Net", "jhaki jal": "Cast Net",
+            "push net": "Push Net", "thela jal": "Push Net",
+            "gill net": "Gill Net", "current jal": "Gill Net",
+            "trap": "Trap Basket", "chhai": "Trap Basket", "antol": "Trap Basket",
+            "long line": "Long Line",
+            "bottom rig": "Bottom Rig",
+            "night fishing": "Night Fishing",
+            "netting": "Net Setting",
+            "boat fishing": "Boat Fishing",
+
+            # === WATER & WEATHER CONDITIONS ===
+            "murky": "Murky Water", "ghola": "Murky Water", "muddy": "Murky Water",
+            "current": "Fast Current", "srot": "Fast Current",
+            "rough": "Rough Water",
+            "stormy": "Stormy", "jhor": "Stormy",
+            "rainy": "Rainy", "brishti": "Rainy",
+            "windy": "Windy",
+            "foggy": "Foggy", "kuasha": "Foggy",
+            "high tide": "High Tide", "joar": "High Tide",
+            "low tide": "Low Tide", "vata": "Low Tide",
+            "monsoon": "Monsoon", "borsha": "Monsoon",
+            "sea": "Sea Fishing", "ocean": "Sea Fishing"
+        }
+        
+        final_keywords = []
+        for kw in raw_keywords:
+            kw_clean = kw.strip()
+         
+            if len(kw_clean) > 2:
+                kw_lower = kw_clean.lower()
+                
+               
+                if kw_lower in alias_map:
+                    final_keywords.append(alias_map[kw_lower])
+                  
+                    final_keywords.append(kw_clean) 
+                else:
+                    final_keywords.append(kw_clean)
+                    
+        return final_keywords
+            
+    except Exception as e:
+        print(f"[LLM KEYWORD EXTRACTION FAILED]: {e}")
+        
+    return []
+    
 def query_knowledge_graph(english_message: str) -> str:
-    keywords     = [word for word in english_message.lower().split() if len(word) > 3]
-    context_parts = []
+    raw_keywords = extract_database_keywords_via_llm(english_message)
+    
+    stop_words = {"food", "bait", "fish", "fishing", "catch", "river", "water", "gear", "net", "how", "what", "where", "best", "the", "a", "an"}
+    keywords = [kw for kw in raw_keywords if kw.lower() not in stop_words]
+    
+    print(f"DEBUG UNIVERSAL LLM KEYWORDS SEARCHING FOR: {keywords}")
+    
+    if not keywords:
+        return ""
+        
+    context_parts = set() 
 
     with neo4j_driver.session() as session:
-        for keyword in keywords[:5]:
-            result = session.run(
-                """
-                MATCH (n)
-                WHERE any(prop in keys(n) WHERE toLower(toString(n[prop])) CONTAINS $keyword)
-                OPTIONAL MATCH (n)-[r]->(m)
-                RETURN n, type(r) as rel_type, m
-                LIMIT 5
-                """,
-                keyword=keyword
-            )
-            for record in result:
-                node    = dict(record["n"])
-                rel     = record.get("rel_type")
-                related = dict(record["m"]) if record["m"] else None
-                if rel and related:
-                    context_parts.append(f"{node} --[{rel}]--> {related}")
-                else:
-                    context_parts.append(str(node))
+        
+        result = session.run(
+            """
+            MATCH (n)
+            WHERE any(kw IN $keywords WHERE toLower(n.name) CONTAINS toLower(kw))
+            
+            OPTIONAL MATCH (n)-[r]-(m)
+            RETURN 
+                n, r,
+                labels(startNode(r))[0] AS start_label, startNode(r).name AS start_name,
+                type(r) AS r_type,
+                labels(endNode(r))[0] AS end_label, endNode(r).name AS end_name
+            LIMIT 15
+            """,
+            keywords=keywords
+        )
+        
+        for record in result:
+            r_type = record["r_type"]
+            node = record["n"]
+            
+            if r_type:
+                start_label = record["start_label"] or "Entity"
+                start_name = record["start_name"] or "Unknown"
+                end_label = record["end_label"] or "Entity"
+                end_name = record["end_name"] or "Unknown"
+                
+                clean_rel = r_type.lower().replace("_", " ")
+                
+                fact = f"- Fact: {start_label} '{start_name}' {clean_rel} {end_label} '{end_name}'."
+                context_parts.add(fact)
+            else:
+                n_label = list(node.labels)[0] if node.labels else "Entity"
+                n_name = node.get("name", "Unknown")
+                context_parts.add(f"- Fact: {n_label} '{n_name}' exists in the database.")
 
-    return "Relevant knowledge graph context:\n" + "\n".join(context_parts) if context_parts else ""
-
+    context_list = list(context_parts)
+    return "Relevant knowledge graph context:\n" + "\n".join(context_list) if context_list else ""
 
 # ====================== AUTO-GENERATE CHAT TITLE ======================
 async def generate_chat_title(user_message: str, bot_reply: str) -> str:
     try:
         prompt = f"""Generate a short, clear, and suitable title (maximum 6 words) for this chat.
-Context: Bangladeshi fishermen chatbot.
+Context: 
 User first message: {user_message}
 Assistant reply: {bot_reply[:300]}
 
@@ -499,74 +690,74 @@ def save_chat_message(fisherman_id: str, chat_id: str, user_message: str, bot_re
 # ====================== MAIN CHAT ENDPOINT ======================
 @app.post("/chat")
 async def chat_endpoint(request: ChatRequest, x_fisherman_id: str = Header(...)):
-    fisherman_id  = await require_approved_user(x_fisherman_id)
-    user_message  = request.message.strip()
-    chat_id       = request.chat_id
+    fisherman_id = await require_approved_user(x_fisherman_id)
+    user_message = request.message.strip()
+    chat_id      = request.chat_id
 
+    # 1. Detect language and isolate the immediate message intent
     detected_lang   = detect_language(user_message)
     is_bangla       = detected_lang == "bn"
     english_message = translate(user_message, "bn", "en") if is_bangla else user_message
 
+    # 2. Extract database keywords ONLY from the current message
     kg_context = await asyncio.to_thread(query_knowledge_graph, english_message)
+    print("\n=== DEBUG: CONTEXT SENT TO LLM ===")
+    print(kg_context)
+    print("==================================\n")
 
+    # 3. Handle early exit guardrail if database has no info
     if not kg_context:
-        no_info_reply = (
-            "দুঃখিত, এই বিষয়ে আমার কাছে কোনো তথ্য নেই।"
-            if is_bangla else
-            "Sorry, I don't have information on that topic in my knowledge base."
-        )
-        save_chat_message(fisherman_id, chat_id, user_message, no_info_reply)
-        return {"reply": no_info_reply}
+        fallback_reply = "এই তথ্য আমার কাছে এখন নেই।" if is_bangla else "I don't have that information right now."
+        save_chat_message(fisherman_id, chat_id, user_message, fallback_reply)
+        return {"reply": fallback_reply}
 
-    language_instruction = (
-        "You MUST reply in Bangla script only. Do not use English in your response."
-        if is_bangla else
-        "Reply in English."
-    )
+    # 4. Construct the prompt payload for the LLM
+    # We combine the system instructions and the graph insights into the system role
+    llm_messages = [
+        {
+            "role": "system", 
+            "content": f"{SYSTEM_PROMPT}\n\n[DATABASE FACTS]\n{kg_context}"
+        },
+        {
+            "role": "user", 
+            "content": english_message
+        }
+    ]
 
+    # 5. Call the local Ollama instance
     try:
-        response = requests.post(OLLAMA_URL, json={
-            "model": MODEL_NAME,
-            "messages": [
-                {
-                    "role": "system",
-                    "content": f"{SYSTEM_PROMPT} {language_instruction}"
-                },
-                {"role": "user", "content": f"{kg_context}\n\nUser question: {english_message}"}
-            ],
-            "stream": False
-        }, timeout=60)
+        response = await asyncio.to_thread(
+            requests.post,
+            OLLAMA_URL,
+            json={
+                "model": MODEL_NAME,
+                "messages": llm_messages,
+                "stream": False,
+                "options": {"temperature": 0.3} # Low temperature helps keep facts stable
+            },
+            timeout=15
+        )
         response.raise_for_status()
         data = response.json()
-
+        
+        # Parse the reply content safely
+        bot_reply_en = ""
         if "message" in data and "content" in data["message"]:
-            reply = data["message"]["content"]
+            bot_reply_en = data["message"]["content"].strip()
         elif "response" in data:
-            reply = data["response"]
-        else:
-            reply = "Sorry, I couldn't generate a response."
+            bot_reply_en = data["response"].strip()
 
-        if is_bangla:
-            reply = translate(reply, "en", "bn")
+        # 6. Translate back to Bangla if the user originally wrote in Bangla
+        final_reply = translate(bot_reply_en, "en", "bn") if is_bangla else bot_reply_en
 
-        save_chat_message(fisherman_id, chat_id, user_message, reply)
+        # 7. Save and return the interaction
+        save_chat_message(fisherman_id, chat_id, user_message, final_reply)
+        return {"reply": final_reply}
 
-        chats = _load_chats()
-        chat_obj = next((c for c in chats if c["chat_id"] == chat_id), None)
-        if chat_obj and len(chat_obj.get("messages", [])) == 2:
-            new_title = await generate_chat_title(user_message, reply)
-            chat_obj["title"] = new_title
-            _save_chats(chats)
-
-        return {"reply": reply}
-
-    except requests.exceptions.ConnectionError:
-        raise HTTPException(status_code=503, detail="Ollama is not running.")
     except Exception as e:
-        error_reply = "দুঃখিত, সার্ভারে সমস্যা হয়েছে।" if is_bangla else "Sorry, something went wrong."
-        save_chat_message(fisherman_id, chat_id, user_message, error_reply)
-        return {"reply": error_reply}
-
+        print(f"[LLM GENERATION FAILED]: {e}")
+        error_reply = "দুঃখিত, একটি অভ্যন্তরীণ সমস্যা হয়েছে।" if is_bangla else "Sorry, an internal error occurred."
+        raise HTTPException(status_code=500, detail=str(error_reply))
 
 # ====================== FEEDBACK ======================
 @app.post("/feedback")

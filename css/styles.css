@@ -1292,7 +1292,7 @@ select:focus {
 }
 
 .contribute-kg-btn:hover {
-  color: #1e7e34 !important;
+  color: #095ee7 !important;
   transform: scale(1.2);
 }
 
@@ -1311,19 +1311,23 @@ select:focus {
 }
 
 .profile-dropdown {
-    position: absolute;
-    bottom: 64px;
-    left: 12px;
-    background: var(--background-primary);
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-    min-width: 200px;
-    padding: 6px;
-    z-index: 100;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
+  position: absolute;
+  bottom: 64px;
+  left: 12px;
+  background-color: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  min-width: 200px;
+  padding: 6px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.profile-menu-item {
+  color: var(--text-color);
 }
 
 .profile-dropdown.hidden {

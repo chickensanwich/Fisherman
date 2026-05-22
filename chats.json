@@ -310,33 +310,2473 @@
     "updated_at": "2026-05-07T09:52:16.989266+00:00"
   },
   {
-    "chat_id": "19ba59e0-ce1e-46d5-a4d4-d1bf38862e2d",
+    "chat_id": "ed8d0f98-4588-4a5d-a739-b11c3d5ba5ab",
     "user_id": "123",
-    "title": "Fishing Advice: Bangladesh",
+    "title": "Hilsa Gear Recommendations",
     "messages": [
       {
         "sender": "user",
-        "content": "when should I fish for salmon",
-        "timestamp": "2026-05-07T10:01:48.005145+00:00"
+        "content": "What gear is suitable for Hilsa?",
+        "timestamp": "2026-05-18T06:31:24.293342+00:00"
       },
       {
         "sender": "bot",
-        "content": "That\u2019s a great question! To help me give you the best advice, could you tell me where you live? Salmon are often found in freshwater during the winter.",
-        "timestamp": "2026-05-07T10:01:48.005145+00:00"
+        "content": "Hilsa is suitable for cast net (gear) and gill net (gear).",
+        "timestamp": "2026-05-18T06:31:24.293342+00:00"
       },
       {
         "sender": "user",
-        "content": "how do I fish for salmon",
-        "timestamp": "2026-05-07T10:04:35.140079+00:00"
+        "content": "Which fish are found in the Meghna River?",
+        "timestamp": "2026-05-18T06:32:11.047836+00:00"
       },
       {
         "sender": "bot",
-        "content": "Sorry, something went wrong.",
-        "timestamp": "2026-05-07T10:04:35.140079+00:00"
+        "content": "The Meghna River is home to Hilsa, Catla, Tilapia, Pangas, Pabda, Chandpur, Barisal, Bhola, Noakhali, Padma, Tetulia, and Hilsa.",
+        "timestamp": "2026-05-18T06:32:11.047836+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "Which months are best for Chingri?",
+        "timestamp": "2026-05-18T06:34:33.588709+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Chingri is best caught in January, November, and December.",
+        "timestamp": "2026-05-18T06:34:33.588709+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "What affects Sea Fishing?",
+        "timestamp": "2026-05-18T06:34:49.129769+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Sea Fishing --[DONE_IN]--> Sundarbans Estuary (WaterBody) and Bay of Bengal (WaterBody)",
+        "timestamp": "2026-05-18T06:34:49.129769+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "When is River Fishing banned?",
+        "timestamp": "2026-05-18T06:35:24.455631+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I do not know based on the knowledge graph.",
+        "timestamp": "2026-05-18T06:35:24.455631+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "Which water bodies are connected to Bhola?",
+        "timestamp": "2026-05-18T06:35:41.932468+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Bhola is connected to the Meghna River, Bay of Bengal, and Tetulia River.",
+        "timestamp": "2026-05-18T06:35:41.932468+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "Is Night Fishing suitable during a Full Moon?",
+        "timestamp": "2026-05-18T06:43:17.325872+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Night Fishing is suitable during a Full Moon.",
+        "timestamp": "2026-05-18T06:43:17.325872+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "how to catch boal? what bait can we use",
+        "timestamp": "2026-05-18T06:44:12.595586+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Boal is best suited for using Bottom Rig (Gear) and Long Line (Gear). You can also use Dough Bait to attract shrimp, small crabs, and minnow.",
+        "timestamp": "2026-05-18T06:44:12.595586+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "Which fish are found in the Meghna River?",
+        "timestamp": "2026-05-18T07:02:49.850378+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "The Meghna River is known to be home to Hilsa, Catla, Tilapia, Pangas, and Pabda fish.",
+        "timestamp": "2026-05-18T07:02:49.850378+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "What gear is suitable for Hilsa?",
+        "timestamp": "2026-05-18T07:03:06.722860+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Hilsa fish are best suited for Cast Net and Gill Net.",
+        "timestamp": "2026-05-18T07:03:06.722860+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "how to catch boal? what bait can we use",
+        "timestamp": "2026-05-18T07:03:41.439515+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "To catch Boal, you can use the Long Line and Bottom Rig baits. Shrimp, Small Crab, and Minnow are excellent bait choices for Boal.",
+        "timestamp": "2026-05-18T07:03:41.439515+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "What weather affects Sea Fishing",
+        "timestamp": "2026-05-18T07:04:42.367114+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Sea Fishing is typically done in the Sundarbans Estuary and Bay of Bengal. \n\nWeather conditions can influence Sea Fishing.",
+        "timestamp": "2026-05-18T07:04:42.367114+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "Which fish are protected in certain months?",
+        "timestamp": "2026-05-18T07:04:57.291068+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I do not know based on the knowledge graph.",
+        "timestamp": "2026-05-18T07:04:57.291068+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "Which fish are protected in certain months?",
+        "timestamp": "2026-05-18T07:05:02.259959+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I do not know based on the knowledge graph.",
+        "timestamp": "2026-05-18T07:05:02.259959+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "What makes Night Fishing not suitable?",
+        "timestamp": "2026-05-18T07:05:19.098656+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Night Fishing is not suitable during or in New Moon and Waning Crescent.",
+        "timestamp": "2026-05-18T07:05:19.098656+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "Is River Fishing suitable during a full moon?",
+        "timestamp": "2026-05-18T07:05:47.499775+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I do not know based on the knowledge graph.",
+        "timestamp": "2026-05-18T07:05:47.499775+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "Fish in Meghna?",
+        "timestamp": "2026-05-18T07:06:31.725055+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "The Meghna River is known to be a habitat for various fish species, including Hilsa, Catla, Tilapia, Pangas, and Pabda.",
+        "timestamp": "2026-05-18T07:06:31.725055+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "Is it safe now?",
+        "timestamp": "2026-05-18T07:06:50.323155+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I do not know based on the knowledge graph.",
+        "timestamp": "2026-05-18T07:06:50.323155+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "What bait attracts Hilsa?",
+        "timestamp": "2026-05-18T07:07:09.315725+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Hilsa fish are typically caught with Cast Net and Gill Net.",
+        "timestamp": "2026-05-18T07:07:09.315725+00:00"
       }
     ],
     "pinned": false,
-    "created_at": "2026-05-07T10:00:29.041221+00:00",
-    "updated_at": "2026-05-07T10:04:35.140079+00:00"
+    "created_at": "2026-05-18T06:31:16.860527+00:00",
+    "updated_at": "2026-05-18T07:07:09.315725+00:00"
+  },
+  {
+    "chat_id": "955c9160-8e86-447d-bdda-c1aa96d67f5c",
+    "user_id": "123",
+    "title": "Tilapia Bait Recommendations",
+    "messages": [
+      {
+        "sender": "user",
+        "content": "What bait works best for tilapia?",
+        "timestamp": "2026-05-18T07:09:34.582159+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Tilapia are best caught with Cast Net, Hook and Line, and Float Rod. Worms and Insects are effective baits for attracting them.",
+        "timestamp": "2026-05-18T07:09:34.582159+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "Which fish are active during rainy weather?",
+        "timestamp": "2026-05-18T07:09:56.170312+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Sea Fishing is not suitable for rainy weather.",
+        "timestamp": "2026-05-18T07:09:56.170312+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "What fishing technique is recommended during high tide?",
+        "timestamp": "2026-05-18T07:10:30.805029+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Sea Fishing is recommended during high tide.",
+        "timestamp": "2026-05-18T07:10:30.805029+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "Which fish can be caught in winter?",
+        "timestamp": "2026-05-18T07:10:47.419209+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Winter is related to February through includes month.",
+        "timestamp": "2026-05-18T07:10:47.419209+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "What safety precautions should I take during rough water conditions?",
+        "timestamp": "2026-05-18T07:11:09.824917+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I do not know based on the knowledge graph.",
+        "timestamp": "2026-05-18T07:11:09.824917+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "What bait should I use for barramundi during warm weather?",
+        "timestamp": "2026-05-18T07:11:26.829054+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I do not know based on the knowledge graph.",
+        "timestamp": "2026-05-18T07:11:26.829054+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "What is the best fishing setup for calm weather and clear water?",
+        "timestamp": "2026-05-18T07:11:40.069968+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I do not know based on the knowledge graph.",
+        "timestamp": "2026-05-18T07:11:40.069968+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "The water is murky after rain \u2014 what should I use?",
+        "timestamp": "2026-05-18T07:12:02.709331+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I do not know based on the knowledge graph.",
+        "timestamp": "2026-05-18T07:12:02.709331+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "Is it safe to fish when the tide is strong and the weather is windy?",
+        "timestamp": "2026-05-18T07:12:17.396960+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I do not know based on the knowledge graph.",
+        "timestamp": "2026-05-18T07:12:17.396960+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "How to catch hilsa and what net should I use?",
+        "timestamp": "2026-05-18T07:17:54.979673+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\"Hilsa are typically caught using cast net and gill net.\"",
+        "timestamp": "2026-05-18T07:17:54.979673+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "Is it safe to fish when the tide is strong and the weather is windy?",
+        "timestamp": "2026-05-18T07:18:31.876486+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u201cFishing is generally not recommended when the tide is strong and the weather is windy.\u201d",
+        "timestamp": "2026-05-18T07:18:31.876486+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "hat bait should I use for barramundi during warm weather?",
+        "timestamp": "2026-05-18T07:18:46.682392+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u201cDough bait is recommended for Barramundi during warm weather.\u201d",
+        "timestamp": "2026-05-18T07:18:46.682392+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "What safety precautions should I take during rough water conditions?",
+        "timestamp": "2026-05-18T07:20:41.203404+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u201cIt\u2019s important to secure your boat and equipment when fishing in rough water.\u201d",
+        "timestamp": "2026-05-18T07:20:41.203404+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09a6\u09c1\u09b0\u09cd\u09af\u09cb\u0997\u09aa\u09c2\u09b0\u09cd\u09a3 \u0986\u09ac\u09b9\u09be\u0993\u09af\u09bc\u09be\u09af\u09bc \u0995\u09bf\u09ad\u09be\u09ac\u09c7 \u09ae\u09be\u099b \u09a7\u09b0\u09ac\u09cb",
+        "timestamp": "2026-05-18T07:22:30.454734+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u0986\u09ae\u09bf \u099c\u09cd\u099e\u09be\u09a8 \u0997\u09cd\u09b0\u09be\u09ab \u0989\u09aa\u09b0 \u09ad\u09bf\u09a4\u09cd\u09a4\u09bf \u0995\u09b0\u09c7 \u099c\u09be\u09a8\u09bf \u09a8\u09be.",
+        "timestamp": "2026-05-18T07:22:30.454734+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u0989\u09a4\u09cd\u09a4\u09be\u09b2 \u099c\u09b2\u09b0\u09be\u09b6\u09bf\u09b0 \u09b8\u09ae\u09af\u09bc \u0986\u09ae\u09be\u09b0 \u0995\u09c0 \u0995\u09c0 \u09a8\u09bf\u09b0\u09be\u09aa\u09a4\u09cd\u09a4\u09be \u09b8\u09a4\u09b0\u09cd\u0995\u09a4\u09be \u0985\u09ac\u09b2\u09ae\u09cd\u09ac\u09a8 \u0995\u09b0\u09be \u0989\u099a\u09bf\u09a4?",
+        "timestamp": "2026-05-18T07:23:53.784357+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\"\u0989\u099a\u09cd\u099a \u099c\u09cb\u09af\u09bc\u09be\u09b0\u09c7\u09b0 \u09b8\u09ae\u09af\u09bc, \u09b8\u09ae\u09cd\u09ad\u09be\u09ac\u09cd\u09af \u09b6\u0995\u09cd\u09a4\u09bf\u09b6\u09be\u09b2\u09c0 \u09b8\u09cd\u09b0\u09cb\u09a4 \u098f\u09ac\u0982 \u09a4\u09b0\u0999\u09cd\u0997 \u09a5\u09c7\u0995\u09c7 \u09b8\u09a4\u09b0\u09cd\u0995 \u09a5\u09be\u0995\u09c1\u09a8\u0964\"",
+        "timestamp": "2026-05-18T07:23:53.784357+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u0995\u09c0\u09ad\u09be\u09ac\u09c7 \u0987\u09b2\u09bf\u09b6 \u09a7\u09b0\u09a4\u09c7 \u09b9\u09af\u09bc \u098f\u09ac\u0982 \u0995\u09c0 \u09a7\u09b0\u09a8\u09c7\u09b0 \u099c\u09be\u09b2 \u09ac\u09cd\u09af\u09ac\u09b9\u09be\u09b0 \u0995\u09b0\u09be \u0989\u099a\u09bf\u09a4?",
+        "timestamp": "2026-05-18T07:25:22.544551+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\"\u09b8\u09be\u09a7\u09be\u09b0\u09a3\u09a4 \u0995\u09be\u09b8\u09cd\u099f \u09a8\u09c7\u099f \u098f\u09ac\u0982 \u09ab\u09c1\u09b2\u0995\u09be \u099c\u09be\u09b2 \u09ac\u09cd\u09af\u09ac\u09b9\u09be\u09b0 \u0995\u09b0\u09c7 \u0987\u09b2\u09bf\u09b6 \u09a7\u09b0\u09be \u09b9\u09af\u09bc\u0964\"",
+        "timestamp": "2026-05-18T07:25:22.544551+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u0995\u09be\u09a4\u09b2\u09be \u09ae\u09be\u099b \u0995\u09cb\u09a5\u09be\u09af\u09bc \u09aa\u09be\u0993\u09af\u09bc\u09be \u09af\u09be\u09af\u09bc",
+        "timestamp": "2026-05-18T07:26:44.539015+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\"\u0995\u09be\u09a4\u09b2\u09be \u09aa\u09a6\u09cd\u09ae\u09be \u09a8\u09a6\u09c0, \u09ae\u09c7\u0998\u09a8\u09be \u09a8\u09a6\u09c0 \u098f\u09ac\u0982 \u09af\u09ae\u09c1\u09a8\u09be \u09a8\u09a6\u09c0\u09a4\u09c7 \u09aa\u09be\u0993\u09af\u09bc\u09be \u09af\u09be\u09af\u09bc\u0964\"",
+        "timestamp": "2026-05-18T07:26:44.539015+00:00"
+      }
+    ],
+    "pinned": false,
+    "created_at": "2026-05-18T07:09:30.708675+00:00",
+    "updated_at": "2026-05-18T07:26:44.539015+00:00"
+  },
+  {
+    "chat_id": "82030872-56de-4687-9c47-dae83896710c",
+    "user_id": "123",
+    "title": "Tiger Locations \u2013 Knowledge Graph",
+    "messages": [
+      {
+        "sender": "user",
+        "content": "where is tiger found",
+        "timestamp": "2026-05-18T07:36:31.168485+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I do not know based on the knowledge graph.",
+        "timestamp": "2026-05-18T07:36:31.168485+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "where is tiger found",
+        "timestamp": "2026-05-18T07:36:59.846045+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I do not know based on the knowledge graph.",
+        "timestamp": "2026-05-18T07:36:59.846045+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "royal bengal tiger",
+        "timestamp": "2026-05-18T07:37:15.284635+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\"The Bay of Bengal is known to be home to Hilsa, Chingri, and Vetki fish.\"",
+        "timestamp": "2026-05-18T07:37:15.284635+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "sundarb",
+        "timestamp": "2026-05-18T07:44:08.913904+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\"Chingri and Vetki are common fish found in the Sundarbans Estuary.\"",
+        "timestamp": "2026-05-18T07:44:08.913904+00:00"
+      }
+    ],
+    "pinned": false,
+    "created_at": "2026-05-18T07:36:31.129718+00:00",
+    "updated_at": "2026-05-18T07:44:08.913904+00:00"
+  },
+  {
+    "chat_id": "1db87508-2e56-4405-b8c1-7d43db3b32af",
+    "user_id": "123",
+    "title": "Ilish Gear Knowledge Request",
+    "messages": [
+      {
+        "sender": "user",
+        "content": "gear for ilish",
+        "timestamp": "2026-05-18T07:56:21.007623+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u201cI do not know based on the knowledge graph.\u201d",
+        "timestamp": "2026-05-18T07:56:21.007623+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "best monht for chingri",
+        "timestamp": "2026-05-18T07:56:53.306534+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u201cJanuary and November are the best months for catching chingri.\u201d",
+        "timestamp": "2026-05-18T07:56:53.306534+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "gear for hilsa",
+        "timestamp": "2026-05-18T07:57:17.048174+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u201cHilsa are a type of fish that is best fished using gear for bottom fishing.\u201d",
+        "timestamp": "2026-05-18T07:57:17.048174+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "which fish in meghna",
+        "timestamp": "2026-05-18T07:58:50.956178+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u201cI do not know based on the knowledge graph.\u201d",
+        "timestamp": "2026-05-18T07:58:50.956178+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "which fish is found in meghna",
+        "timestamp": "2026-05-18T08:01:33.575708+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\"I do not know based on the knowledge graph.\"",
+        "timestamp": "2026-05-18T08:01:33.575708+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "which fish is found in meghna river",
+        "timestamp": "2026-05-18T08:02:01.474287+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u201cCatla, Tilapia, Pangas, Pabda, Bhola, Noakhali, Barisal, Chandpur, and Has water body are found in the Meghna River.\u201d",
+        "timestamp": "2026-05-18T08:02:01.474287+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "which fish in meghna",
+        "timestamp": "2026-05-18T08:02:58.305736+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u201cHilsa, Catla, Tilapia, Pangas, and Pabda are found in the Meghna River.\u201d",
+        "timestamp": "2026-05-18T08:02:58.305736+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "gear for hils",
+        "timestamp": "2026-05-18T08:03:31.872584+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\"Cast Net and Gill Net are suitable gear for Hilsa.\"",
+        "timestamp": "2026-05-18T08:03:31.872584+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "which fish in meghna",
+        "timestamp": "2026-05-18T08:10:53.723280+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\"Hilsa, Catla, Tilapia, Pangas, and Pabda are fish found in the Meghna River.\"",
+        "timestamp": "2026-05-18T08:10:53.723280+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "how catch boal",
+        "timestamp": "2026-05-18T08:11:20.966912+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\"Boal is found in Padma River, Jamuna River, and Karnaphuli River.\"",
+        "timestamp": "2026-05-18T08:11:20.966912+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "how to catch it? which nets to use?",
+        "timestamp": "2026-05-18T08:11:46.317371+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Did you mean Cast Net, Fishing Net, or Gill Net?",
+        "timestamp": "2026-05-18T08:11:46.317371+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "no",
+        "timestamp": "2026-05-18T08:12:01.395404+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I do not know based on the knowledge graph.",
+        "timestamp": "2026-05-18T08:12:01.395404+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "when is hilsa protected",
+        "timestamp": "2026-05-18T08:13:42.337413+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u201cHilsa fish are protected in the Padma River, Meghna River, Bay of Bengal, and Tetulia River.\u201d",
+        "timestamp": "2026-05-18T08:13:42.337413+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "when is hilsa protected",
+        "timestamp": "2026-05-18T08:15:21.585273+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\"Hilsa is protected in October.\"",
+        "timestamp": "2026-05-18T08:15:21.585273+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "is it banned to fish hilsa in october",
+        "timestamp": "2026-05-18T08:15:42.603975+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u201cHilsa is protected in October.\u201d",
+        "timestamp": "2026-05-18T08:15:42.603975+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "where is tiger found",
+        "timestamp": "2026-05-18T09:19:20.930740+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I do not know based on the knowledge graph.",
+        "timestamp": "2026-05-18T09:19:20.930740+00:00"
+      }
+    ],
+    "pinned": false,
+    "created_at": "2026-05-18T07:56:02.689655+00:00",
+    "updated_at": "2026-05-18T09:19:20.930740+00:00"
+  },
+  {
+    "chat_id": "86af50e7-bb29-436f-8053-c4d47d7ae5bc",
+    "user_id": "123",
+    "title": "Knowledge Graph Response Unavailable",
+    "messages": [
+      {
+        "sender": "user",
+        "content": "hi",
+        "timestamp": "2026-05-20T11:31:06.756233+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I do not know based on the knowledge graph.",
+        "timestamp": "2026-05-20T11:31:06.756233+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "hello",
+        "timestamp": "2026-05-20T11:37:20.449886+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I do not know based on the knowledge graph.",
+        "timestamp": "2026-05-20T11:37:20.449886+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "hi",
+        "timestamp": "2026-05-20T11:38:27.466748+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I do not know based on the knowledge graph.",
+        "timestamp": "2026-05-20T11:38:27.466748+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "When is River Fishing banned?",
+        "timestamp": "2026-05-20T11:39:40.812370+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I don\u2019t know based on the knowledge graph. \n\nI understand River Fishing is done in Padma, Meghna, Jamuna, and Halda Rivers.",
+        "timestamp": "2026-05-20T11:39:40.812370+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "where is tiger found",
+        "timestamp": "2026-05-20T11:40:19.857522+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I do not know based on the knowledge graph.",
+        "timestamp": "2026-05-20T11:40:19.857522+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "is tiger found in forest",
+        "timestamp": "2026-05-20T11:40:46.795043+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I do not know based on the knowledge graph.",
+        "timestamp": "2026-05-20T11:40:46.795043+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "What fish is good in winter?",
+        "timestamp": "2026-05-20T12:02:33.398498+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u201cTilapia and salmon are good fish for winter.\u201d",
+        "timestamp": "2026-05-20T12:02:33.398498+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "why?",
+        "timestamp": "2026-05-20T12:03:40.642135+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I do not know based on the knowledge graph.",
+        "timestamp": "2026-05-20T12:03:40.642135+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "tiger",
+        "timestamp": "2026-05-20T12:09:25.432051+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I do not know based on the knowledge graph.",
+        "timestamp": "2026-05-20T12:09:25.432051+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "sundarban",
+        "timestamp": "2026-05-20T12:09:38.883478+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u201cThe Chingri and Vetki are fish that live in Sundarbans Estuary.\u201d",
+        "timestamp": "2026-05-20T12:09:38.883478+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "meghna",
+        "timestamp": "2026-05-20T12:09:49.333243+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\"You can catch Hilsa, Catla, Tilapia, Pangas, and Pabda in the Meghna River.\"",
+        "timestamp": "2026-05-20T12:09:49.333243+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "where is tiger found",
+        "timestamp": "2026-05-21T07:12:05.850110+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "The tiger is found in forests.",
+        "timestamp": "2026-05-21T07:12:05.850110+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "where is rod fishing suitable",
+        "timestamp": "2026-05-21T07:12:48.464440+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I don't know.",
+        "timestamp": "2026-05-21T07:12:48.464440+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "is clean water suitable for rod fishing",
+        "timestamp": "2026-05-21T07:13:09.521002+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I don\u2019t know.",
+        "timestamp": "2026-05-21T07:13:09.521002+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "is net fishing affected by murky water",
+        "timestamp": "2026-05-21T07:13:46.114380+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Don't know.",
+        "timestamp": "2026-05-21T07:13:46.114380+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "meghna",
+        "timestamp": "2026-05-21T07:17:19.295841+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I don\u2019t know.",
+        "timestamp": "2026-05-21T07:17:19.295841+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "meghna river fishes",
+        "timestamp": "2026-05-21T07:17:33.658714+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I don\u2019t know.",
+        "timestamp": "2026-05-21T07:17:33.658714+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "Which water bodies are connected to Bhola?",
+        "timestamp": "2026-05-21T07:19:54.112764+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I don\u2019t know.",
+        "timestamp": "2026-05-21T07:19:54.112764+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "Which fish are found in the Meghna River?",
+        "timestamp": "2026-05-21T07:20:09.382987+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Rohu, Catla, Mrigal, and likely Night Fishing.",
+        "timestamp": "2026-05-21T07:20:09.382987+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "Which fish in Meghna?",
+        "timestamp": "2026-05-21T07:20:37.554152+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I don\u2019t know.",
+        "timestamp": "2026-05-21T07:20:37.554152+00:00"
+      }
+    ],
+    "pinned": false,
+    "created_at": "2026-05-20T11:31:02.811207+00:00",
+    "updated_at": "2026-05-21T07:20:37.554152+00:00"
+  },
+  {
+    "chat_id": "fcf474e3-f039-4ed4-9216-052b126889f8",
+    "user_id": "123",
+    "title": "Mrigal Fishing Guide",
+    "messages": [
+      {
+        "sender": "user",
+        "content": "mrigal",
+        "timestamp": "2026-05-20T12:24:25.823677+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Mrigal is located in the Padma River and the Jamuna River. It is best fished in June and July.",
+        "timestamp": "2026-05-20T12:24:25.823677+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "How to catch Boal, and what bait can we use?",
+        "timestamp": "2026-05-20T12:25:02.769050+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "We don\u2019t have specific information on how to catch Boal. However, Dough Bait is known to attract Rohu, Catla, and Mrigal.",
+        "timestamp": "2026-05-20T12:25:02.769050+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "What gear is suitable for Hilsa?",
+        "timestamp": "2026-05-20T12:25:42.717516+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Sorry, I don't have information on that topic in my knowledge base.",
+        "timestamp": "2026-05-20T12:25:42.717516+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "Tiger?",
+        "timestamp": "2026-05-20T12:26:02.452954+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Sorry, I don't have information on that topic in my knowledge base.",
+        "timestamp": "2026-05-20T12:26:02.452954+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "tiger",
+        "timestamp": "2026-05-20T12:26:12.915134+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "",
+        "timestamp": "2026-05-20T12:26:12.915134+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "What gear is suitable for Hilsa?",
+        "timestamp": "2026-05-20T12:26:28.447390+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Sorry, I don't have information on that topic in my knowledge base.",
+        "timestamp": "2026-05-20T12:26:28.447390+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "gill net",
+        "timestamp": "2026-05-20T12:26:59.393885+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "The provided context suggests that gill nets are suitable for hilsa, pabda, and vetki.",
+        "timestamp": "2026-05-20T12:26:59.393885+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "Which fish in Meghna?",
+        "timestamp": "2026-05-21T07:26:43.506997+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I don\u2019t know.",
+        "timestamp": "2026-05-21T07:26:43.506997+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "which fish in meghna?",
+        "timestamp": "2026-05-21T07:29:58.633191+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "{'name': 'River Fishing'} --[DONE_IN]--> {'name': 'Meghna River'}",
+        "timestamp": "2026-05-21T07:29:58.633191+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "which fish in meghna",
+        "timestamp": "2026-05-21T07:30:32.830152+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "{'name': 'Net Fishing'}",
+        "timestamp": "2026-05-21T07:30:32.830152+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "which fish in meghna",
+        "timestamp": "2026-05-21T07:31:17.185116+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I don\u2019t know.",
+        "timestamp": "2026-05-21T07:31:17.185116+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "which fish in meghna river",
+        "timestamp": "2026-05-21T07:31:42.040244+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "{'name': 'Catla'}",
+        "timestamp": "2026-05-21T07:31:42.040244+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "which fish is found in meghna river",
+        "timestamp": "2026-05-21T07:32:02.921936+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "{'name': 'Rohu'}",
+        "timestamp": "2026-05-21T07:32:02.921936+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "which fish is found in meghna river",
+        "timestamp": "2026-05-21T07:39:07.396622+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Entity: {\"name\": \"Meghna River\"}",
+        "timestamp": "2026-05-21T07:39:07.396622+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "which fish is found in meghna river",
+        "timestamp": "2026-05-21T07:40:48.568071+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Entity: {\"name\": \"Meghna River\"}",
+        "timestamp": "2026-05-21T07:40:48.568071+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "What affects Sea Fishing?",
+        "timestamp": "2026-05-21T07:40:59.507105+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Sea Fishing is NOT_SUITABLE_FOR with High Tide, Rising Tide, Green Flag.",
+        "timestamp": "2026-05-21T07:40:59.507105+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "which fish is found in meghna river",
+        "timestamp": "2026-05-21T07:46:08.542407+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I don't have that information right now.",
+        "timestamp": "2026-05-21T07:46:08.542407+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "which fish is found in meghna river",
+        "timestamp": "2026-05-21T07:52:01.476907+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I don't have that information right now.",
+        "timestamp": "2026-05-21T07:52:01.476907+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "which fish is found in meghna river",
+        "timestamp": "2026-05-21T07:53:08.398100+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I don't have that information right now.",
+        "timestamp": "2026-05-21T07:53:08.398100+00:00"
+      }
+    ],
+    "pinned": false,
+    "created_at": "2026-05-20T12:24:17.288080+00:00",
+    "updated_at": "2026-05-21T07:53:08.398100+00:00"
+  },
+  {
+    "chat_id": "f06a92d6-ba74-44cc-9e60-f8ca667d04c6",
+    "user_id": "123",
+    "title": "Fish in Meghna River?",
+    "messages": [
+      {
+        "sender": "user",
+        "content": "which fish is found in meghna river",
+        "timestamp": "2026-05-21T07:53:58.086457+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I don't have that information right now.",
+        "timestamp": "2026-05-21T07:53:58.086457+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "which fish is found in meghna river",
+        "timestamp": "2026-05-21T07:58:21.218544+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I don't have that information right now.",
+        "timestamp": "2026-05-21T07:58:21.218544+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "which fish is found in meghna river",
+        "timestamp": "2026-05-21T08:03:14.761023+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I don't have that information right now.",
+        "timestamp": "2026-05-21T08:03:14.761023+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "which fish is found in meghna river",
+        "timestamp": "2026-05-21T08:04:53.632630+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I don't have that information right now.",
+        "timestamp": "2026-05-21T08:04:53.632630+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "which fish is found in meghna river",
+        "timestamp": "2026-05-21T08:09:46.732909+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "The Meghna River has the following fish recorded as being found in it: Hilsa, Catla, Tilapia, Pangas, and Pabda.",
+        "timestamp": "2026-05-21T08:09:46.732909+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "Which activities are done in the Bay of Bengal?",
+        "timestamp": "2026-05-21T08:10:10.793218+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Sorry, I don't have information on that topic in my knowledge base.",
+        "timestamp": "2026-05-21T08:10:10.793218+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "Which activities are done in the Bay of Bengal?",
+        "timestamp": "2026-05-21T08:10:23.857455+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Sorry, I don't have information on that topic in my knowledge base.",
+        "timestamp": "2026-05-21T08:10:23.857455+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "Which activities are done in the Bay of Bengal?",
+        "timestamp": "2026-05-21T08:11:12.828616+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Sorry, I don't have information on that topic in my knowledge base.",
+        "timestamp": "2026-05-21T08:11:12.828616+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "which fish is found in meghna river",
+        "timestamp": "2026-05-21T08:11:44.317119+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "The Meghna River is home to several fish species, including Hilsa, Catla, Tilapia, Pangas, and Pabda.",
+        "timestamp": "2026-05-21T08:11:44.317119+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "what do you know about bank fishing",
+        "timestamp": "2026-05-21T08:12:25.910580+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Bank fishing is associated with a float rod\u2014according to the data, a bank fishing activity uses a float rod (the relationship is marked as\u202fUSES_GEAR). Additionally, bank fishing is connected to rod fishing; the knowledge base notes that bank fishing is linked to rod fishing via the\u202fUSES_IN\u202frelationship (and the inverse statement also appears: rod fishing is linked to bank fishing via\u202fUSES_IN). These are the only facts about bank fishing present in the provided context.",
+        "timestamp": "2026-05-21T08:12:25.910580+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "What affects Sea Fishing?",
+        "timestamp": "2026-05-21T08:13:13.156655+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Sorry, I don't have information on that topic in my knowledge base.",
+        "timestamp": "2026-05-21T08:13:13.156655+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "sea fishing?",
+        "timestamp": "2026-05-21T08:13:47.117079+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Sorry, I don't have information on that topic in my knowledge base.",
+        "timestamp": "2026-05-21T08:13:47.117079+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "sea",
+        "timestamp": "2026-05-21T08:14:02.859637+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Sea Fishing is not suitable for windy, rainy, stormy, or foggy conditions, and it is also not suitable when there is a red flag, a cyclone warning, or a thunderstorm alert. It is suitable for high tide and rising tide, and when a green flag is shown. Sea Fishing is done in the Sundarbans Estuary and the Bay of Bengal. It uses gear such as gill nets and long lines. Sea Fishing can be limited by engine trouble, low visibility, and fuel shortage. It is also used in drifting.",
+        "timestamp": "2026-05-21T08:14:02.859637+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "give me all the information about catla",
+        "timestamp": "2026-05-21T08:14:52.919501+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Catla is found in the Padma River, Meghna River, and Jamuna River.  \nCatla is suitable for fishing with a fishing net and with a float rod.  \nCatla is best caught in the months of May, June, and July.  \nCatla is attracted to dough bait.",
+        "timestamp": "2026-05-21T08:14:52.919501+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "when is night fishing suitable",
+        "timestamp": "2026-05-21T08:15:36.631744+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Sorry, I don't have information on that topic in my knowledge base.",
+        "timestamp": "2026-05-21T08:15:36.631744+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "when is night fishing suitable",
+        "timestamp": "2026-05-21T08:15:48.019436+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Sorry, I don't have information on that topic in my knowledge base.",
+        "timestamp": "2026-05-21T08:15:48.019436+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "night fishing",
+        "timestamp": "2026-05-21T08:16:01.763066+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Night fishing is a fishing activity that uses hook\u2011and\u2011line gear as well as a bottom rig. It is considered suitable during a full moon and a waning gibbous moon, but not suitable during a new moon or a waning crescent moon. Night fishing takes place in the Meghna River and the Bay of Bengal. One of its limiting factors is low visibility, and it is related to bottom fishing (it can be done as part of bottom fishing). These are the details available in the provided context.",
+        "timestamp": "2026-05-21T08:16:01.763066+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "What affects Sea Fishing?",
+        "timestamp": "2026-05-21T08:22:04.350534+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I don't have that information right now.",
+        "timestamp": "2026-05-21T08:22:04.350534+00:00"
+      }
+    ],
+    "pinned": false,
+    "created_at": "2026-05-21T07:53:34.486465+00:00",
+    "updated_at": "2026-05-21T08:22:04.350534+00:00"
+  },
+  {
+    "chat_id": "749f4f97-3c7d-4a19-a2e9-19c529f6d87c",
+    "user_id": "123",
+    "title": "Factors Affecting Sea Fishing Suitability",
+    "messages": [
+      {
+        "sender": "user",
+        "content": "What affects Sea Fishing?",
+        "timestamp": "2026-05-21T08:23:56.592271+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Sea fishing is affected by several conditions. It is unsuitable when it is windy, rainy, stormy, foggy, when a red flag is raised, when there is a cyclone warning, or when a thunderstorm alert is in effect. Conversely, it is suitable during high tide, rising tide, and when a green flag is shown. Additionally, factors such as engine trouble, low visibility, and fuel shortage can limit sea\u2011fishing activities.",
+        "timestamp": "2026-05-21T08:23:56.592271+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "Which months are best for Chingri?",
+        "timestamp": "2026-05-21T08:26:01.398683+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "The best months for Chingri are January, November, and December.",
+        "timestamp": "2026-05-21T08:26:01.398683+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "When is River Fishing banned?",
+        "timestamp": "2026-05-21T08:26:28.709026+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Sorry, I don't have information on that topic in my knowledge base.",
+        "timestamp": "2026-05-21T08:26:28.709026+00:00"
+      }
+    ],
+    "pinned": false,
+    "created_at": "2026-05-21T08:23:48.257581+00:00",
+    "updated_at": "2026-05-21T08:26:28.709026+00:00"
+  },
+  {
+    "chat_id": "56103eb0-4e9c-4ec4-8223-732ca597cda0",
+    "user_id": "123",
+    "title": "New Chat",
+    "messages": [
+      {
+        "sender": "user",
+        "content": "When is River Fishing banned",
+        "timestamp": "2026-05-21T09:11:12.360072+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Sorry, I don't have information on that topic in my knowledge base.",
+        "timestamp": "2026-05-21T09:11:12.360072+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "is river fishing banned",
+        "timestamp": "2026-05-21T09:13:50.996823+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Sorry, I don't have information on that topic in my knowledge base.",
+        "timestamp": "2026-05-21T09:13:50.996823+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "When is River Fishing banned",
+        "timestamp": "2026-05-21T09:17:56.116403+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "River Fishing is banned in September and November.",
+        "timestamp": "2026-05-21T09:17:56.116403+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "where is meghna river located",
+        "timestamp": "2026-05-21T09:18:20.734764+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I don't have that information right now.",
+        "timestamp": "2026-05-21T09:18:20.734764+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "which parts has the water body meghna",
+        "timestamp": "2026-05-21T09:19:12.718360+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "The Meghna River is a water body that is found in the districts of Barisal, Chandpur, Bhola, and Noakhali.",
+        "timestamp": "2026-05-21T09:19:12.718360+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "what fishing information do you have about november month",
+        "timestamp": "2026-05-21T09:20:22.213821+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I don't have that information right now.",
+        "timestamp": "2026-05-21T09:20:22.213821+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "what fishing information do you have about november month",
+        "timestamp": "2026-05-21T09:21:31.341929+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "In November, the database shows that Vetki and Chingri are both noted as being best caught during this month (BEST_IN_MONTH links). November is also classified as part of the Post\u2011Monsoon season (INCLUDES_MONTH link). Regarding river fishing, the information indicates that river fishing is banned in November (IS_BANNED_IN links both from November to River Fishing and from River Fishing to November). No other specific fishing details for November are provided in the given context.",
+        "timestamp": "2026-05-21T09:21:31.341929+00:00"
+      }
+    ],
+    "pinned": false,
+    "created_at": "2026-05-21T09:11:09.431931+00:00",
+    "updated_at": "2026-05-21T09:21:31.341929+00:00"
+  },
+  {
+    "chat_id": "0e686204-f93f-4107-8826-955370d9feb9",
+    "user_id": "123",
+    "title": "September River Fishing Ban",
+    "messages": [
+      {
+        "sender": "user",
+        "content": "what fishing information do you have about september",
+        "timestamp": "2026-05-21T09:27:59.778057+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "In September, river fishing is restricted\u2014it falls under a fishing\u2011ban period, so river fishing isn\u2019t allowed during that month.",
+        "timestamp": "2026-05-21T09:27:59.778057+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "which is best found in this month",
+        "timestamp": "2026-05-21T09:29:25.763405+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I don't have that information right now.",
+        "timestamp": "2026-05-21T09:29:25.763405+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "which rivers does chadpur have",
+        "timestamp": "2026-05-21T09:37:06.154164+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Sorry, I don't have information on that topic in my knowledge base.",
+        "timestamp": "2026-05-21T09:37:06.154164+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "which river does chadpur have",
+        "timestamp": "2026-05-21T09:37:33.037584+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I don't have that information right now.",
+        "timestamp": "2026-05-21T09:37:33.037584+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "which river does chandpur have",
+        "timestamp": "2026-05-21T09:38:21.040548+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Chandpur has the Padma River and the Meghna River.",
+        "timestamp": "2026-05-21T09:38:21.040548+00:00"
+      }
+    ],
+    "pinned": false,
+    "created_at": "2026-05-21T09:27:50.627316+00:00",
+    "updated_at": "2026-05-21T09:38:21.040548+00:00"
+  },
+  {
+    "chat_id": "17bbf26b-778d-40b8-afa3-e2a519fc97e2",
+    "user_id": "123",
+    "title": "Halda River: Fishing Overview",
+    "messages": [
+      {
+        "sender": "user",
+        "content": "Tell me about the Halda River",
+        "timestamp": "2026-05-21T09:42:03.268559+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "The Halda River is one of the rivers where river fishing is recorded as taking place.",
+        "timestamp": "2026-05-21T09:42:03.268559+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "Which activities can I do there?",
+        "timestamp": "2026-05-21T09:42:39.219248+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I don't have that information right now.",
+        "timestamp": "2026-05-21T09:42:39.219248+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "when is the best time to catch Vetki",
+        "timestamp": "2026-05-21T09:43:21.656277+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "The best months to catch Vetki are November and December.",
+        "timestamp": "2026-05-21T09:43:21.656277+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "What bait attracts them?",
+        "timestamp": "2026-05-21T09:43:41.974839+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Shrimp and small crab are the baits that attract vetki.",
+        "timestamp": "2026-05-21T09:43:41.974839+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "What limits night fishing",
+        "timestamp": "2026-05-21T09:44:16.780437+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Night fishing is limited by low visibility.",
+        "timestamp": "2026-05-21T09:44:16.780437+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "Is it safe to go sea fishing during a cyclone warning",
+        "timestamp": "2026-05-21T09:44:48.841453+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "No, it isn't safe to go sea fishing when a cyclone warning is in effect. The information shows that sea fishing is not suitable during a cyclone warning.",
+        "timestamp": "2026-05-21T09:44:48.841453+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "What affects Sea Fishing",
+        "timestamp": "2026-05-21T09:45:41.748465+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "Sea Fishing does well when the tide is rising or high and when a green flag is showing. It is not advised during foggy weather, when there is a cyclone warning, when it\u2019s windy, during thunderstorm alerts, when it\u2019s rainy, during stormy conditions, or when a red flag is displayed.",
+        "timestamp": "2026-05-21T09:45:41.748465+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "which fishes can i found in sea",
+        "timestamp": "2026-05-21T10:04:45.464596+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I don't have that information right now.",
+        "timestamp": "2026-05-21T10:04:45.464596+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "What season happens in November",
+        "timestamp": "2026-05-21T10:06:09.628823+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "In November, the season is the post\u2011monsoon season.",
+        "timestamp": "2026-05-21T10:06:09.628823+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "What other months are part of it",
+        "timestamp": "2026-05-21T10:06:24.311458+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I don't have that information right now.",
+        "timestamp": "2026-05-21T10:06:24.311458+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "Where can I catch Boal fish",
+        "timestamp": "2026-05-21T10:07:48.280528+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I don't have that information right now.",
+        "timestamp": "2026-05-21T10:07:48.280528+00:00"
+      }
+    ],
+    "pinned": false,
+    "created_at": "2026-05-21T09:41:56.938820+00:00",
+    "updated_at": "2026-05-21T10:07:48.280528+00:00"
+  },
+  {
+    "chat_id": "ffd1979b-e896-4b1e-9044-1af089864a2a",
+    "user_id": "123",
+    "title": "Boal Fish Catch Locations",
+    "messages": [
+      {
+        "sender": "user",
+        "content": "Where can I catch Boal fish",
+        "timestamp": "2026-05-21T10:08:07.361349+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I don't have that information right now.",
+        "timestamp": "2026-05-21T10:08:07.361349+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "Where can I catch Boal fish",
+        "timestamp": "2026-05-21T10:10:17.788465+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "I don't have that information right now.",
+        "timestamp": "2026-05-21T10:10:17.788465+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "what bait should i use for boal",
+        "timestamp": "2026-05-21T10:10:35.637532+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "You can use minnow, small crab, or shrimp as bait when trying to catch boal. These are the items noted to attract boal in the information provided.",
+        "timestamp": "2026-05-21T10:10:35.637532+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "what bait should i use for boal",
+        "timestamp": "2026-05-21T10:13:02.093227+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "You can use minnow, small crab, or shrimp as bait for boal.",
+        "timestamp": "2026-05-21T10:13:02.093227+00:00"
+      }
+    ],
+    "pinned": false,
+    "created_at": "2026-05-21T10:08:03.367967+00:00",
+    "updated_at": "2026-05-21T10:13:02.093227+00:00"
+  },
+  {
+    "chat_id": "74d6e9e2-e878-46f3-920f-4843147084e1",
+    "user_id": "123",
+    "title": "Fish Species in the Meghna River",
+    "messages": [
+      {
+        "sender": "user",
+        "content": "\u09ae\u09c7\u0998\u09a8\u09be \u09a8\u09a6\u09c0\u09a4\u09c7 \u0995\u09bf \u0995\u09bf \u09ae\u09be\u099b \u0986\u099b\u09c7?",
+        "timestamp": "2026-05-21T10:14:27.743431+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u09ae\u09c7\u09b9\u09be \u09a8\u09a6\u09c0\u09a4\u09c7 \u09aa\u09be\u0999\u09cd\u0997\u09be\u09b8, \u09aa\u09be\u09ac\u09a6\u09be, \u099f\u09bf\u09b2\u09be\u09aa\u09bf\u09af\u09bc\u09be, \u0995\u09be\u09a4\u09b2\u09be \u098f\u09ac\u0982 \u0987\u09b2\u09bf\u09b6 \u09ae\u09be\u099b \u09aa\u09be\u0993\u09af\u09bc\u09be \u09af\u09be\u09af\u09bc\u0964",
+        "timestamp": "2026-05-21T10:14:27.743431+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u099a\u09bf\u0982\u09a1\u09bc\u09bf \u09ae\u09be\u099b \u0995\u09cb\u09a8 \u099c\u09b2\u09be\u09b6\u09af\u09bc\u09c7 \u09aa\u09be\u0993\u09af\u09bc\u09be \u09af\u09be\u09af\u09bc?",
+        "timestamp": "2026-05-21T10:14:48.370799+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09a4\u09a5\u09cd\u09af \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u098f\u0996\u09a8\u09cb \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-21T10:14:48.370799+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09b0\u09c1\u0987 \u09ae\u09be\u099b \u09a7\u09b0\u09be\u09b0 \u099c\u09a8\u09cd\u09af \u0995\u09cb\u09a8 \u09b8\u09b0\u099e\u09cd\u099c\u09be\u09ae \u0989\u09aa\u09af\u09c1\u0995\u09cd\u09a4?",
+        "timestamp": "2026-05-21T10:15:33.542407+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u0986\u09ae\u09bf \u098f\u0987 \u09ae\u09c1\u09b9\u09c1\u09b0\u09cd\u09a4\u09c7 \u098f\u0987 \u09a4\u09a5\u09cd\u09af \u09b0\u09be\u0996\u09bf \u09a8\u09be\u0964",
+        "timestamp": "2026-05-21T10:15:33.542407+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09b8\u09c7\u09aa\u09cd\u099f\u09c7\u09ae\u09cd\u09ac\u09b0 \u09ae\u09be\u09b8\u09c7 \u09ae\u09be\u099b \u09a7\u09b0\u09be \u0995\u09bf \u09a8\u09bf\u09b7\u09bf\u09a6\u09cd\u09a7?",
+        "timestamp": "2026-05-21T10:16:17.341124+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u09b9\u09cd\u09af\u09be\u0981, \u09b8\u09c7\u09aa\u09cd\u099f\u09c7\u09ae\u09cd\u09ac\u09b0 \u09ae\u09be\u09b8\u09c7\u09a8\u09be \u09ae\u09be\u099b\u09ae\u09be\u09b0\u09bf \u09a8\u09bf\u09b7\u09c7\u09a7\u09bf\u09a4\u0964",
+        "timestamp": "2026-05-21T10:16:17.341124+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u0995\u09b0\u09cd\u09a3\u09ab\u09c1\u09b2\u09c0 \u09a8\u09a6\u09c0\u09a4\u09c7 \u0995\u09bf \u0987\u09b2\u09bf\u09b6 \u09ae\u09be\u099b \u09aa\u09be\u0993\u09af\u09bc\u09be \u09af\u09be\u09af\u09bc?",
+        "timestamp": "2026-05-21T10:16:48.143734+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u09b9\u09bf\u09b2\u09b6\u09be \u09ae\u09be\u099b \u0995\u09b0\u09cd\u09a3\u09ab\u09c1\u09b2\u09bf \u09a8\u09a6\u09c7 \u09aa\u09be\u0993\u09af\u09bc\u09be \u09af\u09be\u09af\u09bc \u09a8\u09be\u0964",
+        "timestamp": "2026-05-21T10:16:48.143734+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09b6\u09c0\u09a4\u0995\u09be\u09b2\u09c7 \u09ae\u09be\u099b \u09a7\u09b0\u09be\u09b0 \u099c\u09a8\u09cd\u09af \u0995\u09bf \u0995\u09bf \u09b8\u09b0\u099e\u09cd\u099c\u09be\u09ae \u09aa\u09cd\u09b0\u09df\u09cb\u099c\u09a8?",
+        "timestamp": "2026-05-21T10:17:10.589804+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u0986\u09ae\u09bf \u098f\u0987 \u09a4\u09a5\u09cd\u09af \u098f\u0996\u09a8\u09cb \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-21T10:17:10.589804+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u0987\u09b2\u09bf\u09b6 \u09ae\u09be\u099b \u09a7\u09b0\u09be\u09b0 \u09b8\u09ac\u099a\u09c7\u09af\u09bc\u09c7 \u09ad\u09be\u09b2\u09cb \u09ae\u09be\u09b8 \u0995\u09cb\u09a8\u099f\u09bf?",
+        "timestamp": "2026-05-21T10:18:00.155536+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u09b9\u09bf\u09b2\u09b8\u09be \u09ae\u09be\u099b\u09c7\u09b0 \u099c\u09a8\u09cd\u09af \u09ad\u09be\u09b2\u09cb \u09ae\u09be\u09b8\u0997\u09c1\u09b2\u09cb \u099c\u09c1\u09b2\u09be\u0987, \u0986\u0997\u09b8\u09cd\u099f \u098f\u09ac\u0982 \u0985\u0995\u09cd\u099f\u09cb\u09ac\u09b0\u0964",
+        "timestamp": "2026-05-21T10:18:00.155536+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09b8\u09c7\u09aa\u09cd\u099f\u09c7\u09ae\u09cd\u09ac\u09b0 \u09ae\u09be\u09b8\u09c7 \u09ae\u09be\u099b \u09a7\u09b0\u09be \u0995\u09bf \u09a8\u09bf\u09b7\u09bf\u09a6\u09cd\u09a7?",
+        "timestamp": "2026-05-21T10:26:43.930177+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u09b8\u09c7\u09aa\u09cd\u099f\u09c7\u09ae\u09cd\u09ac\u09b0 \u09ae\u09be\u09b8\u09c7 \u09a8\u09a6\u09c0 \u09ae\u09be\u099b\u09a7\u09b0\u09be \u0996\u09cb\u09b2\u09be\u0964 \u0985\u09a8\u09cd\u09af\u09be\u09a8\u09cd\u09af \u09a7\u09b0\u09a8\u09c7\u09b0 \u09ae\u09be\u099b \u09a7\u09b0\u09a4\u09c7 \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u09a4\u09a5\u09cd\u09af \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-21T10:26:43.930177+00:00"
+      }
+    ],
+    "pinned": false,
+    "created_at": "2026-05-21T10:14:19.740728+00:00",
+    "updated_at": "2026-05-21T10:26:43.930177+00:00"
+  },
+  {
+    "chat_id": "2d82cc96-2bea-4380-8903-24e2dd3f0526",
+    "user_id": "123",
+    "title": "Shrimp Fish Habitat Overview",
+    "messages": [
+      {
+        "sender": "user",
+        "content": "\"\u099a\u09bf\u0982\u09a1\u09bc\u09bf \u09ae\u09be\u099b \u0995\u09cb\u09a8 \u099c\u09b2\u09be\u09b6\u09af\u09bc\u09c7 \u09aa\u09be\u0993\u09af\u09bc\u09be \u09af\u09be\u09af\u09bc?",
+        "timestamp": "2026-05-21T10:30:01.525620+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u099a\u09bf\u0982\u09a1\u09bc\u09bf \u09ac\u0999\u09cd\u0997\u09aa\u09cb\u09b8\u09be\u0997\u09b0 \u098f\u09ac\u0982 \u09b8\u09c1\u09a8\u09cd\u09a6\u09b0\u09ac\u09a8 \u09ae\u09c1\u0996\u09cb \u099c\u09b2\u09c7 \u09aa\u09be\u0993\u09af\u09bc\u09be \u09af\u09be\u09af\u09bc\u0964",
+        "timestamp": "2026-05-21T10:30:01.525620+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09a8\u09ad\u09c7\u09ae\u09cd\u09ac\u09b0 \u098f\u09ac\u0982 \u09a1\u09bf\u09b8\u09c7\u09ae\u09cd\u09ac\u09b0 \u09ae\u09be\u09b8\u09c7 \u0995\u09cb\u09a8 \u09ae\u09be\u099b \u09b8\u09ac\u099a\u09c7\u09af\u09bc\u09c7 \u09ad\u09be\u09b2\u09cb \u09aa\u09be\u0993\u09af\u09bc\u09be \u09af\u09be\u09af\u09bc?",
+        "timestamp": "2026-05-21T10:31:00.104615+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u09a8\u09ad\u09c7\u09ae\u09cd\u09ac\u09b0 \u098f\u09ac\u0982 \u09a1\u09bf\u09b8\u09c7\u09ae\u09cd\u09ac\u09b0\u09c7 \u09ad\u09c7\u099f\u0995\u09bf \u098f\u09ac\u0982 \u099a\u09bf\u0982\u09a1\u09bc\u09bf \u09b8\u09ac\u099a\u09c7\u09af\u09bc\u09c7 \u09ac\u09c7\u09b6\u09bf \u09aa\u09be\u0993\u09af\u09bc\u09be \u09af\u09be\u09af\u09bc\u0964",
+        "timestamp": "2026-05-21T10:31:00.104615+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09ac\u09cb\u09af\u09bc\u09be\u09b2 \u09ae\u09be\u099b \u09a7\u09b0\u09be\u09b0 \u099c\u09a8\u09cd\u09af \u0995\u09bf \u099f\u09cb\u09aa \u09ac\u09cd\u09af\u09ac\u09b9\u09be\u09b0 \u0995\u09b0\u09be \u0989\u099a\u09bf\u09a4?",
+        "timestamp": "2026-05-21T10:31:43.747897+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u09ac\u09cb\u09af\u09bc\u09be\u09b2 \u09ae\u09be\u099b\u0995\u09c7 \u09ae\u09bf\u09b2\u09cb\u09b0 \u0995\u09b0\u09a4\u09c7 \u09b6\u09bf\u09ae\u09cd\u09aa, \u098f\u09ac\u0982 \u099b\u09cb\u099f \u0995\u09c7\u0981\u099a\u09be \u09ac\u09cd\u09af\u09ac\u09b9\u09be\u09b0 \u0995\u09b0\u09be \u09b9\u09af\u09bc\u0964 \u098f\u0987 \u099c\u09c0\u09ac\u09c7 \u09ac\u09cb\u09af\u09bc\u09be\u09b2 \u0986\u0995\u09c3\u09b7\u09cd\u099f \u09b9\u09af\u09bc, \u09a4\u09be\u0987 \u0986\u09aa\u09a8\u09bf \u09ad\u09bf\u09a8\u09cd\u09a8 \u098f\u0995\u099f\u0995\u09c7 \u09ac\u09be\u0987\u099f\u09be\u09a8 \u09b9\u09bf\u09b8\u09c7\u09ac\u09c7 \u09a8\u09c7\u09b2\u09c7 \u09ad\u09be\u09b2\u09cb \u09ab\u09b2 \u09aa\u09be\u09ac\u09c7\u09a8\u0964 \u0986\u09b6\u09be \u0986\u09aa\u09a8\u09be\u09b0 \u09ae\u09be\u099b\u0995\u09c7\u09b2\u09be \u09b8\u09ab\u09b2 \u09b9\u09ac\u09c7 \u0989\u09aa\u0995\u09c1\u09b2\u09c7 \u09b8\u09c1\u0996\u09a6 \u09b8\u09ae\u09af\u09bc \u0995\u09be\u099f\u09be\u09ac\u09c7\u09a8\u0964",
+        "timestamp": "2026-05-21T10:31:43.747897+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u0995\u09be\u09a4\u09b2\u09be \u09ae\u09be\u099b \u0995\u09cb\u09a8 \u0996\u09be\u09ac\u09be\u09b0 \u09ac\u09be \u099f\u09cb\u09aa \u09a6\u09bf\u09df\u09c7 \u09a7\u09b0\u09be \u09af\u09be\u09df?",
+        "timestamp": "2026-05-21T10:32:38.632233+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u0995\u09be\u09a4\u09b2\u09be \u09ae\u09be\u099b \u09a1\u09c1\u0998 \u09ac\u09c7\u099f\u0995\u09c7 \u0986\u0995\u09c3\u09b7\u09cd\u099f \u0995\u09b0\u09c7, \u098f\u0987 \u09a4\u09a5\u09cd\u09af \u0986\u099b\u09c7\u0964 \u0995\u09cb\u09a8\u09cb \u0985\u09a8\u09cd\u09af \u0995\u09cd\u09b7\u09c7\u09a4\u09cd\u09b0\u09c7 \u0986\u09aa\u09a8\u09be\u09b0 \u0995\u09cb\u09a8\u09cb \u09a4\u09a5\u09cd\u09af \u09a8\u09c7\u0987, \u09b8\u09c7 \u0995\u09be\u09b0\u09a3\u09c7 \u09a8\u09bf\u09b6\u09cd\u099a\u09bf\u09a4\u09ad\u09be\u09ac\u09c7 \u09ac\u09b2\u09be \u09af\u09be\u09af\u09bc \u09a8\u09be \u09af\u09c7 \u0995\u09cb\u09a8\u09cb \u09ac\u09be\u099f \u09a6\u09bf\u09af\u09bc\u09c7 \u09aa\u09a1\u09bc\u09be \u09af\u09be\u09ac\u09c7\u0964",
+        "timestamp": "2026-05-21T10:32:38.632233+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u0995\u09be\u09a4\u09b2\u09be \u09ae\u09be\u099b \u0995\u09cb\u09a8 \u0996\u09be\u09ac\u09be\u09b0 \u09ac\u09be \u099f\u09cb\u09aa \u09a6\u09bf\u09df\u09c7 \u09a7\u09b0\u09be \u09af\u09be\u09df?",
+        "timestamp": "2026-05-21T10:48:58.268740+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u0995\u09be\u09a4\u09b2\u09be \u09ae\u09be\u099b \u0986\u099f\u09be\u09b0 \u099f\u09cb\u09aa \u09a6\u09cd\u09ac\u09be\u09b0\u09be \u0986\u0995\u09c3\u09b7\u09cd\u099f \u09b9\u09af\u09bc, \u09a4\u09be\u0987 \u098f\u099f\u09bf \u0986\u099f\u09be\u09b0 \u099f\u09cb\u09aa \u09ac\u09cd\u09af\u09ac\u09b9\u09be\u09b0 \u0995\u09b0\u09c7 \u09a7\u09b0\u09be \u09af\u09be\u09af\u09bc\u0964 \u098f\u099f\u09be \u09b6\u09c1\u09a7\u09c1 \u0995\u09cb\u09a8 \u0996\u09be\u09ac\u09be\u09b0 \u09ac\u09be \u099f\u09cb\u09aa \u0986\u0995\u09c3\u09b7\u09cd\u099f \u09b9\u09af\u09bc \u099c\u09be\u09a8\u09be \u09af\u09be\u09af\u09bc \u09a8\u09be.",
+        "timestamp": "2026-05-21T10:48:58.268740+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\"\u099a\u09bf\u0982\u09a1\u09bc\u09bf \u09ae\u09be\u099b \u0995\u09cb\u09a8 \u099c\u09b2\u09be\u09b6\u09af\u09bc\u09c7 \u09aa\u09be\u0993\u09af\u09bc\u09be \u09af\u09be\u09af\u09bc?",
+        "timestamp": "2026-05-21T10:49:41.186592+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09a4\u09a5\u09cd\u09af \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u098f\u0996\u09a8 \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-21T10:49:41.186592+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u0995\u09be\u09a4\u09b2\u09be \u09ae\u09be\u099b \u0995\u09cb\u09a8 \u0996\u09be\u09ac\u09be\u09b0 \u09ac\u09be \u099f\u09cb\u09aa \u09a6\u09bf\u09df\u09c7 \u09a7\u09b0\u09be \u09af\u09be\u09df?",
+        "timestamp": "2026-05-21T10:55:57.699911+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09a4\u09a5\u09cd\u09af \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u098f\u0996\u09a8 \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-21T10:55:57.699911+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u0995\u09be\u09a4\u09b2\u09be \u09ae\u09be\u099b \u0995\u09cb\u09a8 \u0996\u09be\u09ac\u09be\u09b0 \u09ac\u09be \u099f\u09cb\u09aa \u09a6\u09bf\u09af\u09bc\u09c7 \u09a7\u09b0\u09be \u09af\u09be\u09af\u09bc",
+        "timestamp": "2026-05-21T11:01:31.519429+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09a4\u09a5\u09cd\u09af \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u098f\u0996\u09a8 \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-21T11:01:31.519429+00:00"
+      }
+    ],
+    "pinned": false,
+    "created_at": "2026-05-21T10:29:40.706482+00:00",
+    "updated_at": "2026-05-21T11:01:31.519429+00:00"
+  },
+  {
+    "chat_id": "b41ffd4b-780c-4c8d-88c6-ae7ed0353e4d",
+    "user_id": "123",
+    "title": "New Chat",
+    "messages": [
+      {
+        "sender": "user",
+        "content": "\u0995\u09be\u09b0\u09c7\u09a8\u09cd\u099f \u099c\u09be\u09b2 \u09a6\u09bf\u09df\u09c7 \u0995\u09cb\u09a8 \u0995\u09cb\u09a8 \u09ae\u09be\u099b \u09a7\u09b0\u09be \u09b8\u09ac\u099a\u09c7\u09df\u09c7 \u09b8\u09b9\u099c?\"",
+        "timestamp": "2026-05-21T11:22:23.169132+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09ae\u09c1\u09b9\u09c2\u09b0\u09cd\u09a4\u09c7 \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u09b8\u09c7\u0987 \u09a4\u09a5\u09cd\u09af \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-21T11:22:23.169132+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u0998\u09c2\u09b0\u09cd\u09a3\u09bf\u099d\u09dc\u09c7\u09b0 \u09b8\u09a4\u09b0\u09cd\u0995\u09a4\u09be\u09b0 \u09b8\u09ae\u09df \u0995\u09bf \u09b8\u09ae\u09c1\u09a6\u09cd\u09b0\u09c7 \u09ae\u09be\u099b \u09a7\u09b0\u09be \u09a8\u09bf\u09b0\u09be\u09aa\u09a6?",
+        "timestamp": "2026-05-21T11:22:40.795611+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u0998\u09c2\u09b0\u09cd\u09a3\u09bf\u099d\u09a1\u09bc \u09b8\u09a4\u09b0\u09cd\u0995\u09a4\u09be \u0995\u09be\u09b0\u09cd\u09af\u0995\u09b0 \u09b9\u09b2\u09c7 \u09b8\u09be\u0997\u09b0\u09c7 \u09ae\u09be\u099b \u09a7\u09b0\u09be \u09a8\u09bf\u09b0\u09be\u09aa\u09a6 \u09a8\u09af\u09bc\u0964 \u09b8\u09a4\u09b0\u09cd\u0995\u09ac\u09be\u09b0\u09cd\u09a4\u09be\u099f\u09bf \u09a8\u09bf\u09b0\u09cd\u09a6\u09c7\u09b6 \u0995\u09b0\u09c7 \u09af\u09c7 \u098f\u0987 \u09aa\u09b0\u09bf\u09b8\u09cd\u09a5\u09bf\u09a4\u09bf\u09a4\u09c7 \u09b8\u09ae\u09c1\u09a6\u09cd\u09b0\u09c7 \u09ae\u09be\u099b \u09a7\u09b0\u09be\u09b0 \u0989\u09aa\u09af\u09c1\u0995\u09cd\u09a4 \u09a8\u09af\u09bc\u0964",
+        "timestamp": "2026-05-21T11:22:40.795611+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\"\u0985\u0995\u09cd\u099f\u09cb\u09ac\u09b0 \u09ae\u09be\u09b8\u09c7 \u0995\u09cb\u09a8 \u09ae\u09be\u099b \u09a7\u09b0\u09be\u09b0 \u0989\u09aa\u09b0 \u09a8\u09bf\u09b7\u09c7\u09a7\u09be\u099c\u09cd\u099e\u09be \u09a5\u09be\u0995\u09c7?\"",
+        "timestamp": "2026-05-21T11:23:07.918841+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09ae\u09c1\u09b9\u09c2\u09b0\u09cd\u09a4\u09c7 \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u09b8\u09c7\u0987 \u09a4\u09a5\u09cd\u09af \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-21T11:23:07.918841+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09aa\u09a6\u09cd\u09ae\u09be \u09a8\u09a6\u09c0\u09a4\u09c7 \u09b8\u09be\u09a7\u09be\u09b0\u09a3\u09a4 \u0995\u09cb\u09a8 \u0995\u09cb\u09a8 \u09ae\u09be\u099b \u09aa\u09be\u0993\u09df\u09be \u09af\u09be\u09df?\"",
+        "timestamp": "2026-05-21T11:23:34.477129+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u09aa\u09a6\u09cd\u09ae\u09be \u09a8\u09a6\u09c0\u09a4\u09c7 \u09b8\u09be\u09a7\u09be\u09b0\u09a3\u09a4 \u09b0\u09cb\u09b9\u09c1, \u0987\u09b2\u09bf\u09b6, \u09ae\u09c3\u0997\u09b2 \u0993 \u0995\u09be\u09a4\u09b2\u09be \u09aa\u09be\u0993\u09af\u09bc\u09be \u09af\u09be\u09af\u09bc\u0964",
+        "timestamp": "2026-05-21T11:23:34.477129+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\"\u09b0\u09c1\u0987 \u09ae\u09be\u099b \u09a7\u09b0\u09be\u09b0 \u099c\u09a8\u09cd\u09af \u0986\u099f\u09be\u09b0 \u0996\u09be\u09ae\u09bf\u09b0 \u09ac\u09be \u099f\u09cb\u09aa \u0995\u09bf \u09ad\u09be\u09b2\u09cb \u0995\u09be\u099c \u0995\u09b0\u09c7?",
+        "timestamp": "2026-05-21T11:23:53.362167+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09ae\u09c1\u09b9\u09c2\u09b0\u09cd\u09a4\u09c7 \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u09b8\u09c7\u0987 \u09a4\u09a5\u09cd\u09af \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-21T11:23:53.362167+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u0987\u09b2\u09bf\u09b6 \u09ae\u09be\u099b \u09a7\u09b0\u09be\u09b0 \u099c\u09a8\u09cd\u09af \u0995\u09cb\u09a8 \u09a7\u09b0\u09a8\u09c7\u09b0 \u099c\u09be\u09b2 \u09b8\u09ac\u099a\u09c7\u09df\u09c7 \u09ad\u09be\u09b2\u09cb?",
+        "timestamp": "2026-05-21T11:43:34.094450+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u0995\u09be\u09b8\u09cd\u099f \u09a8\u09c7\u099f \u098f\u09ac\u0982 \u0997\u09bf\u09b2 \u09a8\u09c7\u099f \u0989\u09ad\u09af\u09bc\u0987 \u0987\u09b2\u09bf\u09b6 \u09a7\u09b0\u09be\u09b0 \u099c\u09a8\u09cd\u09af \u0989\u09aa\u09af\u09c1\u0995\u09cd\u09a4\u0964",
+        "timestamp": "2026-05-21T11:43:34.094450+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u0986\u09ae\u09bf \u099a\u09be\u0981\u09a6\u09aa\u09c1\u09b0\u09c7 \u0986\u099b\u09bf\u0964 \u09b8\u09c7\u0996\u09be\u09a8\u09c7 \u09a8\u09a6\u09c0\u09a4\u09c7 \u0995\u09bf \u09ae\u09be\u099b \u09aa\u09c7\u09a4\u09c7 \u09aa\u09be\u09b0\u09bf?",
+        "timestamp": "2026-05-21T11:44:33.664063+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09ae\u09c1\u09b9\u09c2\u09b0\u09cd\u09a4\u09c7 \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u09b8\u09c7\u0987 \u09a4\u09a5\u09cd\u09af \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-21T11:44:33.664063+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u0986\u09ae\u09bf \u099a\u09be\u0981\u09a6\u09aa\u09c1\u09b0\u09c7 \u0986\u099b\u09bf\u0964 \u09b8\u09c7\u0996\u09be\u09a8\u09c7 \u09a8\u09a6\u09c0\u09a4\u09c7 \u0995\u09bf \u09ae\u09be\u099b \u09aa\u09c7\u09a4\u09c7 \u09aa\u09be\u09b0\u09bf?",
+        "timestamp": "2026-05-21T11:49:52.232459+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09ae\u09c1\u09b9\u09c2\u09b0\u09cd\u09a4\u09c7 \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u09b8\u09c7\u0987 \u09a4\u09a5\u09cd\u09af \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-21T11:49:52.232459+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u0986\u09ae\u09bf \u099a\u09be\u0981\u09a6\u09aa\u09c1\u09b0\u09c7 \u0986\u099b\u09bf\u0964 \u09b8\u09c7\u0996\u09be\u09a8\u09c7 \u09a8\u09a6\u09c0\u09a4\u09c7 \u0995\u09bf \u09ae\u09be\u099b \u09aa\u09c7\u09a4\u09c7 \u09aa\u09be\u09b0\u09bf?",
+        "timestamp": "2026-05-21T11:52:20.252631+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u09b9\u09cd\u09af\u09be\u0981, \u099a\u09be\u0981\u09a6\u09aa\u09c1\u09b0\u09c7\u09b0 \u0986\u09b6\u09c7\u09aa\u09be\u09b6\u09c7\u09b0 \u09a8\u09a6\u09c0\u09a4\u09c7 \u09ae\u09be\u099b \u09a7\u09b0\u09a4\u09c7 \u09aa\u09be\u09b0\u09c7\u09a8\u0964 \u099a\u09be\u0981\u09a6\u09aa\u09c1\u09b0 \u09aa\u09a6\u09cd\u09ae\u09be \u09a8\u09a6\u09c0 \u0993 \u09ae\u09c7\u0998\u09a8\u09be \u09a8\u09a6\u09c0\u09b0 \u09a4\u09c0\u09b0\u09c7 \u0985\u09ac\u09b8\u09cd\u09a5\u09bf\u09a4\u0964 \u09aa\u09a6\u09cd\u09ae\u09be \u09a8\u09a6\u09c0\u09a4\u09c7 \u0986\u09aa\u09a8\u09bf \u0987\u09b2\u09bf\u09b6, \u09ac\u09cb\u09af\u09bc\u09be\u09b2, \u09ae\u09c3\u0997\u09b2, \u09aa\u09be\u09ac\u09a6\u09be, \u0995\u09be\u09a4\u09b2\u09be \u098f\u09ac\u0982 \u09b0\u09cb\u09b9\u09c1 \u09aa\u09cd\u09b0\u099c\u09be\u09a4\u09bf \u09a6\u09c7\u0996\u09a4\u09c7 \u09aa\u09be\u09ac\u09c7\u09a8\u0964 \u09ae\u09c7\u0998\u09a8\u09be \u09a8\u09a6\u09c0\u09a4\u09c7 \u0986\u09aa\u09a8\u09bf \u09aa\u09be\u09ac\u09a6\u09be, \u09aa\u09be\u0999\u09cd\u0997\u09be\u09b8, \u09a4\u09c7\u09b2\u09be\u09aa\u09bf\u09af\u09bc\u09be, \u0995\u09be\u09a4\u09b2\u09be \u098f\u09ac\u0982 \u0987\u09b2\u09bf\u09b6\u09c7\u09b0 \u09ae\u09a4\u09cb \u09aa\u09cd\u09b0\u099c\u09be\u09a4\u09bf \u09a6\u09c7\u0996\u09a4\u09c7 \u09aa\u09be\u09ac\u09c7\u09a8\u0964 \u09a4\u09be\u0987 \u0986\u09aa\u09a8\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u09a7\u09b0\u09be\u09b0 \u099c\u09a8\u09cd\u09af \u09aa\u09cd\u09b0\u099a\u09c1\u09b0 \u09ae\u09be\u099b \u09aa\u09be\u0993\u09af\u09bc\u09be \u09af\u09be\u09af\u09bc\u0964",
+        "timestamp": "2026-05-21T11:52:20.252631+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09b8\u09ae\u09c1\u09a6\u09cd\u09b0\u09c7 \u09ae\u09be\u099b \u09a7\u09b0\u09a4\u09c7 \u09af\u09be\u0993\u09df\u09be\u09b0 \u09b8\u09ae\u09df \u09af\u09a6\u09bf \u09ea \u09a8\u09ae\u09cd\u09ac\u09b0 \u09b8\u09a4\u09b0\u09cd\u0995 \u09b8\u0982\u0995\u09c7\u09a4 \u09ac\u09be \u0998\u09c2\u09b0\u09cd\u09a3\u09bf\u099d\u09dc\u09c7\u09b0 (Cyclone) \u0996\u09ac\u09b0 \u09a5\u09be\u0995\u09c7, \u09a4\u09be\u09b9\u09b2\u09c7 \u0995\u09bf \u0995\u09b0\u09be \u0989\u099a\u09bf\u09a4?",
+        "timestamp": "2026-05-21T11:53:29.583260+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09a4\u09a5\u09cd\u09af \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u098f\u0996\u09a8 \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-21T11:53:29.583260+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\"\u09b8\u09ae\u09c1\u09a6\u09cd\u09b0\u09c7 \u09ae\u09be\u099b \u09a7\u09b0\u09a4\u09c7 \u09af\u09be\u0993\u09df\u09be\u09b0 \u09b8\u09ae\u09df \u09af\u09a6\u09bf \u09ea \u09a8\u09ae\u09cd\u09ac\u09b0 \u09b8\u09a4\u09b0\u09cd\u0995 \u09b8\u0982\u0995\u09c7\u09a4 \u09ac\u09be \u0998\u09c2\u09b0\u09cd\u09a3\u09bf\u099d\u09dc\u09c7\u09b0 (Cyclone) \u0996\u09ac\u09b0 \u09a5\u09be\u0995\u09c7, \u09a4\u09be\u09b9\u09b2\u09c7 \u0995\u09bf \u0995\u09b0\u09be \u0989\u099a\u09bf\u09a4?\"",
+        "timestamp": "2026-05-21T11:55:38.581319+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u09af\u09a6\u09bf \u098f\u0995\u099f\u09bf \u0998\u09c2\u09b0\u09cd\u09a3\u09bf\u099d\u09a1\u09bc \u09b8\u09a4\u09b0\u09cd\u0995\u09a4\u09be (\u09ac\u09be \u098f\u0995\u099f\u09bf \u09a8\u09ae\u09cd\u09ac\u09b0 4 \u09b8\u09a4\u09b0\u09cd\u0995\u09c0\u0995\u09b0\u09a3 \u09b8\u0982\u0995\u09c7\u09a4) \u0995\u09be\u09b0\u09cd\u09af\u0995\u09b0 \u09a5\u09be\u0995\u09c7, \u09a4\u09be\u09b9\u09b2\u09c7 \u09b8\u09ae\u09c1\u09a6\u09cd\u09b0\u09c7 \u09ae\u09be\u099b \u09a7\u09b0\u09be \u0989\u09aa\u09af\u09c1\u0995\u09cd\u09a4 \u09a8\u09af\u09bc \u098f\u09ac\u0982 \u098f\u09a1\u09bc\u09be\u09a8\u09cb \u0989\u099a\u09bf\u09a4\u0964",
+        "timestamp": "2026-05-21T11:55:38.581319+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09b8\u09c7\u09aa\u09cd\u099f\u09c7\u09ae\u09cd\u09ac\u09b0 \u0993 \u09a8\u09ad\u09c7\u09ae\u09cd\u09ac\u09b0 \u09ae\u09be\u09b8\u09c7 \u09a8\u09a6\u09c0\u09a4\u09c7 \u09ae\u09be\u099b \u09a7\u09b0\u09be \u09a8\u09bf\u09df\u09c7 \u0995\u09bf \u0995\u09cb\u09a8 \u09a8\u09bf\u09b7\u09c7\u09a7\u09be\u099c\u09cd\u099e\u09be \u0986\u099b\u09c7?",
+        "timestamp": "2026-05-21T11:57:49.264799+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u09b8\u09c7\u09aa\u09cd\u099f\u09c7\u09ae\u09cd\u09ac\u09b0 \u098f\u09ac\u0982 \u09a8\u09ad\u09c7\u09ae\u09cd\u09ac\u09b0 \u0989\u09ad\u09af\u09bc \u09b8\u09ae\u09af\u09bc\u09c7 \u09a8\u09a6\u09c0\u09a4\u09c7 \u09ae\u09be\u099b \u09a7\u09b0\u09be \u09a8\u09bf\u09b7\u09bf\u09a6\u09cd\u09a7\u0964",
+        "timestamp": "2026-05-21T11:57:49.264799+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u0995\u09be\u09a4\u09b2\u09be \u09ae\u09be\u099b \u0995\u09cb\u09a8 \u0996\u09be\u09ac\u09be\u09b0 \u09ac\u09be \u099f\u09cb\u09aa \u09a6\u09bf\u09af\u09bc\u09c7 \u09a7\u09b0\u09be \u09af\u09be\u09af\u09bc",
+        "timestamp": "2026-05-21T11:58:38.675822+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09a4\u09a5\u09cd\u09af \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u098f\u0996\u09a8 \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-21T11:58:38.675822+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u0995\u09be\u09a4\u09b2\u09be \u09ae\u09be\u099b \u0995\u09cb\u09a8 \u0996\u09be\u09ac\u09be\u09b0 \u09ac\u09be \u099f\u09cb\u09aa \u09a6\u09bf\u09af\u09bc\u09c7 \u09a7\u09b0\u09be \u09af\u09be\u09af\u09bc",
+        "timestamp": "2026-05-21T11:59:32.313560+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09a4\u09a5\u09cd\u09af \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u098f\u0996\u09a8 \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-21T11:59:32.313560+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09b8\u09c7\u09aa\u09cd\u099f\u09c7\u09ae\u09cd\u09ac\u09b0 \u09ae\u09be\u09b8\u09c7 \u09ae\u09c7\u0998\u09a8\u09be \u09a8\u09a6\u09c0\u09a4\u09c7 \u09ae\u09be\u099b \u09a7\u09b0\u09be\u09b0 \u0995\u09cd\u09b7\u09c7\u09a4\u09cd\u09b0\u09c7 \u0995\u09cb\u09a8 \u09a8\u09bf\u09df\u09ae \u09ac\u09be \u09a8\u09bf\u09b7\u09c7\u09a7\u09be\u099c\u09cd\u099e\u09be \u0986\u099b\u09c7 \u0995\u09bf?",
+        "timestamp": "2026-05-21T12:00:10.391212+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u09b9\u09cd\u09af\u09be\u0981, \u09b8\u09c7\u09aa\u09cd\u099f\u09c7\u09ae\u09cd\u09ac\u09b0 \u09ae\u09be\u09b8\u09c7 \u09a8\u09a6\u09c0\u09a4\u09c7 \u09ae\u09be\u099b \u09a7\u09b0\u09be \u09a8\u09bf\u09b7\u09bf\u09a6\u09cd\u09a7, \u09a4\u09be\u0987 \u09b8\u09c7\u0987 \u09ae\u09be\u09b8\u09c7 \u09ae\u09c7\u0998\u09a8\u09be \u09a8\u09a6\u09c0\u09a4\u09c7 \u09ae\u09be\u099b \u09a7\u09b0\u09be \u09a8\u09bf\u09b7\u09bf\u09a6\u09cd\u09a7\u0964",
+        "timestamp": "2026-05-21T12:00:10.391212+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u0986\u09ae\u09bf \u09af\u09a6\u09bf \u09b0\u09be\u09a4\u09c7 \u09ac\u09cb\u099f\u09ae \u09ab\u09bf\u09b6\u09bf\u0982 (Bottom Fishing) \u0995\u09b0\u09a4\u09c7 \u099a\u09be\u0987, \u09a4\u09be\u09b9\u09b2\u09c7 \u0986\u09ae\u09be\u09b0 \u0995\u09c0 \u09a7\u09b0\u09a8\u09c7\u09b0 \u09b8\u09b0\u099e\u09cd\u099c\u09be\u09ae \u09b2\u09be\u0997\u09ac\u09c7?",
+        "timestamp": "2026-05-21T12:00:51.054014+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u0986\u09aa\u09a8\u09be\u09b0 \u098f\u0995\u099f\u09bf \u09a8\u09c0\u099a\u09c7\u09b0 \u09b0\u09bf\u0997 \u098f\u09ac\u0982 \u098f\u0995\u099f\u09bf \u09b9\u09c1\u0995-\u098f\u09a8\u09cd\u09a1-\u09b2\u09be\u0987\u09a8 \u09b8\u09c7\u099f\u0986\u09aa\u09c7\u09b0 \u09aa\u09cd\u09b0\u09af\u09bc\u09cb\u099c\u09a8 \u09b9\u09ac\u09c7\u09f7",
+        "timestamp": "2026-05-21T12:00:51.054014+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09ac\u09cb\u09af\u09bc\u09be\u09b2 \u09ae\u09be\u099b \u09a7\u09b0\u09be\u09b0 \u099c\u09a8\u09cd\u09af \u09b8\u09ac\u099a\u09c7\u09af\u09bc\u09c7 \u09ad\u09be\u09b2\u09cb \u099f\u09cb\u09aa (Bait) \u0995\u09cb\u09a8\u099f\u09bf? \u0986\u09b0 \u0995\u09cb\u09a8 \u099c\u09be\u09b2 \u09a6\u09bf\u09af\u09bc\u09c7 \u09ac\u09cb\u09af\u09bc\u09be\u09b2 \u09a7\u09b0\u09be \u09af\u09be\u09af\u09bc?",
+        "timestamp": "2026-05-21T12:01:31.493144+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09ae\u09c1\u09b9\u09c2\u09b0\u09cd\u09a4\u09c7 \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u09b8\u09c7\u0987 \u09a4\u09a5\u09cd\u09af \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-21T12:01:31.493144+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09ac\u09cb\u09af\u09bc\u09be\u09b2 \u09ae\u09be\u099b \u09a7\u09b0\u09be\u09b0 \u099c\u09a8\u09cd\u09af \u09b8\u09ac\u099a\u09c7\u09af\u09bc\u09c7 \u09ad\u09be\u09b2\u09cb \u099f\u09cb\u09aa (Bait) \u0995\u09cb\u09a8\u099f\u09bf? \u0986\u09b0 \u0995\u09cb\u09a8 \u099c\u09be\u09b2 \u09a6\u09bf\u09af\u09bc\u09c7 \u09ac\u09cb\u09af\u09bc\u09be\u09b2 \u09a7\u09b0\u09be \u09af\u09be\u09af\u09bc?",
+        "timestamp": "2026-05-21T12:03:43.463174+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u09ac\u09cb\u09af\u09bc\u09be\u09b2\u09c7\u09b0 \u099c\u09a8\u09cd\u09af \u09b8\u09ac\u099a\u09c7\u09af\u09bc\u09c7 \u09ad\u09be\u09b2\u09cb \u099f\u09cb\u09aa \u09b9\u09b2 \u099a\u09bf\u0982\u09a1\u09bc\u09bf\u0964 \u09aa\u09a6\u09cd\u09ae\u09be \u09a8\u09a6\u09c0\u09a4\u09c7 \u099c\u09be\u09b2 \u09ae\u09be\u099b \u09a7\u09b0\u09be \u09af\u09be\u09af\u09bc\u0964",
+        "timestamp": "2026-05-21T12:03:43.463174+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09ac\u09cb\u09af\u09bc\u09be\u09b2 \u09ae\u09be\u099b \u09a7\u09b0\u09be\u09b0 \u099c\u09a8\u09cd\u09af \u09b8\u09ac\u099a\u09c7\u09af\u09bc\u09c7 \u09ad\u09be\u09b2\u09cb \u099f\u09cb\u09aa (Bait) \u0995\u09cb\u09a8\u099f\u09bf? \u0986\u09b0 \u0995\u09cb\u09a8 \u099c\u09be\u09b2 \u09a6\u09bf\u09af\u09bc\u09c7 \u09ac\u09cb\u09af\u09bc\u09be\u09b2 \u09a7\u09b0\u09be \u09af\u09be\u09af\u09bc?",
+        "timestamp": "2026-05-21T12:06:20.441783+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09ae\u09c1\u09b9\u09c2\u09b0\u09cd\u09a4\u09c7 \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u09b8\u09c7\u0987 \u09a4\u09a5\u09cd\u09af \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-21T12:06:20.441783+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09ac\u09cb\u09af\u09bc\u09be\u09b2 \u09ae\u09be\u099b \u09a7\u09b0\u09be\u09b0 \u099c\u09a8\u09cd\u09af \u09b8\u09ac\u099a\u09c7\u09af\u09bc\u09c7 \u09ad\u09be\u09b2\u09cb \u099f\u09cb\u09aa (Bait) \u0995\u09cb\u09a8\u099f\u09bf? \u0986\u09b0 \u0995\u09cb\u09a8 \u099c\u09be\u09b2 \u09a6\u09bf\u09af\u09bc\u09c7 \u09ac\u09cb\u09af\u09bc\u09be\u09b2 \u09a7\u09b0\u09be \u09af\u09be\u09af\u09bc?",
+        "timestamp": "2026-05-21T12:08:41.283169+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u09ac\u09cb\u09af\u09bc\u09be\u09b2\u09c7\u09b0 \u099c\u09a8\u09cd\u09af, \u09af\u09c7 \u099f\u09cb\u09aa\u099f\u09bf \u09b8\u09ac\u099a\u09c7\u09af\u09bc\u09c7 \u09ad\u09be\u09b2\u09cb \u0995\u09be\u099c \u0995\u09b0\u09c7 \u09a4\u09be \u09b9\u09b2 **\u099a\u09bf\u0982\u09a1\u09bc\u09bf**\u2014\u098f\u099f\u09bf \u09ac\u09cb\u09af\u09bc\u09be\u09b2\u0995\u09c7 \u0986\u0995\u09b0\u09cd\u09b7\u09a3 \u0995\u09b0\u09a4\u09c7 \u09aa\u09b0\u09bf\u099a\u09bf\u09a4\u0964\n\n\u099c\u09be\u09b2\u09c7\u09b0 \u099c\u09a8\u09cd\u09af, **\u09aa\u09a6\u09cd\u09ae\u09be \u09a8\u09a6\u09c0\u09a4\u09c7 \u099c\u09be\u09b2 \u09ae\u09be\u099b \u09a7\u09b0\u09be** \u09ac\u09cb\u09af\u09bc\u09be\u09b2 \u09a7\u09b0\u09be\u09b0 \u099c\u09a8\u09cd\u09af \u0995\u09be\u09b0\u09cd\u09af\u0995\u09b0, \u09af\u09c7\u09b9\u09c7\u09a4\u09c1 \u09ac\u09cb\u09af\u09bc\u09be\u09b2 \u09b8\u09c7\u0996\u09be\u09a8\u09c7 \u09aa\u09be\u0993\u09af\u09bc\u09be \u09af\u09be\u09af\u09bc \u098f\u09ac\u0982 \u09b8\u09c7\u0987 \u09a8\u09a6\u09c0\u09a4\u09c7 \u099c\u09be\u09b2 \u09ae\u09be\u099b \u09a7\u09b0\u09be\u09b0 \u0985\u09a8\u09c1\u09b6\u09c0\u09b2\u09a8 \u0995\u09b0\u09be \u09b9\u09af\u09bc\u0964",
+        "timestamp": "2026-05-21T12:08:41.283169+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09ac\u09cb\u09af\u09bc\u09be\u09b2 \u09ae\u09be\u099b \u09a7\u09b0\u09be\u09b0 \u099c\u09a8\u09cd\u09af \u09b8\u09ac\u099a\u09c7\u09af\u09bc\u09c7 \u09ad\u09be\u09b2\u09cb \u099f\u09cb\u09aa (Bait) \u0995\u09cb\u09a8\u099f\u09bf? \u0986\u09b0 \u0995\u09cb\u09a8 \u099c\u09be\u09b2 \u09a6\u09bf\u09af\u09bc\u09c7 \u09ac\u09cb\u09af\u09bc\u09be\u09b2 \u09a7\u09b0\u09be \u09af\u09be\u09af\u09bc?",
+        "timestamp": "2026-05-21T12:13:01.788247+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u09af\u09c7 \u099f\u09cb\u09aa\u099f\u09bf \u09ac\u09cb\u09af\u09bc\u09be\u09b2\u0995\u09c7 \u0986\u0995\u09b0\u09cd\u09b7\u09a3 \u0995\u09b0\u09c7 \u09a4\u09be \u09b9\u09b2 **\u099a\u09bf\u0982\u09a1\u09bc\u09bf**\u0964  \n\n\u099c\u09be\u09b2 \u09ac\u09cd\u09af\u09ac\u09b9\u09be\u09b0 \u0995\u09b0\u09be\u09b0 \u0995\u09cd\u09b7\u09c7\u09a4\u09cd\u09b0\u09c7, \u0986\u09ae\u09be\u09a6\u09c7\u09b0 \u0995\u09be\u099b\u09c7 \u09af\u09c7 \u09a4\u09a5\u09cd\u09af \u0986\u099b\u09c7 \u09a4\u09be \u09ac\u09cb\u09af\u09bc\u09be\u09b2 \u09a7\u09b0\u09be\u09b0 \u09b8\u09be\u09a5\u09c7 \u099c\u09be\u09b2 \u09ae\u09be\u099b \u09a7\u09b0\u09be\u09b0 \u09b8\u09ae\u09cd\u09aa\u09b0\u09cd\u0995 \u09b0\u09be\u0996\u09c7 \u09a8\u09be\u0964 \u09aa\u09b0\u09bf\u09ac\u09b0\u09cd\u09a4\u09c7, \u09ac\u09cb\u09af\u09bc\u09be\u09b2\u09c7\u09b0 \u099c\u09a8\u09cd\u09af \u0989\u09aa\u09af\u09cb\u0997\u09c0 \u09b9\u09bf\u09b8\u09be\u09ac\u09c7 \u0989\u09b2\u09cd\u09b2\u09c7\u0996 \u0995\u09b0\u09be \u0997\u09bf\u09af\u09bc\u09be\u09b0\u099f\u09bf \u09b9\u09b2 \u098f\u0995\u099f\u09bf **\u09ac\u099f\u09ae \u09b0\u09bf\u0997** \u09ac\u09be \u098f\u0995\u099f\u09bf **\u09b2\u0982 \u09b2\u09be\u0987\u09a8**\u0964 \u09b8\u09c1\u09a4\u09b0\u09be\u0982, \u09ac\u09cb\u09af\u09bc\u09be\u09b2\u0995\u09c7 \u099f\u09be\u09b0\u09cd\u0997\u09c7\u099f \u0995\u09b0\u09be\u09b0 \u099c\u09a8\u09cd\u09af, \u0986\u09aa\u09a8\u09bf \u09a8\u09c7\u099f\u09c7\u09b0 \u09aa\u09b0\u09bf\u09ac\u09b0\u09cd\u09a4\u09c7 \u098f\u0995\u099f\u09bf \u09ac\u099f\u09ae \u09b0\u09bf\u0997 \u09ac\u09be \u09b2\u0982 \u09b2\u09be\u0987\u09a8 \u09a6\u09bf\u09af\u09bc\u09c7 \u09ad\u09be\u09b2 \u0995\u09b0\u09ac\u09c7\u09a8\u0964",
+        "timestamp": "2026-05-21T12:13:01.788247+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09a8\u09a6\u09c0\u09b0 \u09aa\u09be\u09a8\u09bf \u09af\u09a6\u09bf \u0996\u09c1\u09ac \u0998\u09cb\u09b2\u09be (Murky) \u09a5\u09be\u0995\u09c7 \u098f\u09ac\u0982 \u09b8\u09cd\u09b0\u09cb\u09a4 \u09ac\u09c7\u09b6\u09bf (Fast Current) \u09a5\u09be\u0995\u09c7, \u09a4\u09be\u09b9\u09b2\u09c7 \u0995\u09bf \u099c\u09be\u09b2 \u09a6\u09bf\u09df\u09c7 \u09ae\u09be\u099b \u09a7\u09b0\u09be \u09af\u09be\u09ac\u09c7?",
+        "timestamp": "2026-05-21T12:16:43.524364+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u09b9\u09cd\u09af\u09be\u0981\u2014\u098f\u0996\u09a8\u0993 \u0998\u09cb\u09b2\u09be\u099f\u09c7, \u09a6\u09cd\u09b0\u09c1\u09a4 \u09aa\u09cd\u09b0\u09ac\u09be\u09b9\u09bf\u09a4 \u09a8\u09a6\u09c0\u09b0 \u099c\u09b2\u09c7 \u099c\u09be\u09b2 \u09ae\u09be\u099b \u09a7\u09b0\u09be \u09af\u09c7\u09a4\u09c7 \u09aa\u09be\u09b0\u09c7\u0964 \u099c\u09be\u09b2 \u09ae\u09be\u099b \u09a7\u09b0\u09be\u09b0 \u0995\u09be\u09b0\u09cd\u09af\u0995\u09b2\u09be\u09aa **\u0998\u09cb\u09b2\u09be \u099c\u09b2 \u098f\u09ac\u0982 \u09a6\u09cd\u09b0\u09c1\u09a4 \u09b8\u09cd\u09b0\u09cb\u09a4 \u0989\u09ad\u09af\u09bc\u09c7\u09b0 \u09a6\u09cd\u09ac\u09be\u09b0\u09be \u09aa\u09cd\u09b0\u09ad\u09be\u09ac\u09bf\u09a4** \u09b9\u09bf\u09b8\u09be\u09ac\u09c7 \u0989\u09b2\u09cd\u09b2\u09c7\u0996 \u0995\u09b0\u09be \u09b9\u09af\u09bc\u09c7\u099b\u09c7, \u09af\u09be\u09b0 \u0985\u09b0\u09cd\u09a5 \u098f\u0987 \u0985\u09ac\u09b8\u09cd\u09a5\u09be\u0997\u09c1\u09b2\u09bf \u099c\u09be\u09b2 \u0995\u09a4\u099f\u09be \u09ad\u09be\u09b2\u09ad\u09be\u09ac\u09c7 \u0995\u09be\u099c \u0995\u09b0\u09c7 \u09a4\u09be\u09b0 \u0989\u09aa\u09b0 \u09aa\u09cd\u09b0\u09ad\u09be\u09ac \u09ab\u09c7\u09b2\u09ac\u09c7 (\u09af\u09c7\u09ae\u09a8, \u09a6\u09c3\u09b6\u09cd\u09af\u09ae\u09be\u09a8\u09a4\u09be \u09b9\u09cd\u09b0\u09be\u09b8 \u0995\u09b0\u09be \u09b9\u09af\u09bc \u098f\u09ac\u0982 \u09b6\u0995\u09cd\u09a4\u09bf\u09b6\u09be\u09b2\u09c0 \u09aa\u09cd\u09b0\u09ac\u09be\u09b9 \u09a6\u09cd\u09ac\u09be\u09b0\u09be \u099c\u09be\u09b2 \u099a\u09be\u09b0\u09aa\u09be\u09b6\u09c7 \u09a0\u09c7\u09b2\u09c7 \u09a6\u09c7\u0993\u09af\u09bc\u09be \u09af\u09c7\u09a4\u09c7 \u09aa\u09be\u09b0\u09c7), \u0995\u09bf\u09a8\u09cd\u09a4\u09c1 \u09a4\u09be\u09b0\u09be \u099c\u09be\u09b2\u09c7\u09b0 \u09ac\u09cd\u09af\u09ac\u09b9\u09be\u09b0 \u09b8\u09ae\u09cd\u09aa\u09c2\u09b0\u09cd\u09a3 \u09a8\u09bf\u09b7\u09bf\u09a6\u09cd\u09a7 \u0995\u09b0\u09c7 \u09a8\u09be\u0964 \u0986\u09aa\u09a8\u09bf \u09af\u09a6\u09bf \u098f\u0987 \u0985\u09ac\u09b8\u09cd\u09a5\u09be\u09b0 \u0985\u09a7\u09c0\u09a8\u09c7 \u099c\u09be\u09b2 \u09a6\u09bf\u09af\u09bc\u09c7 \u09ae\u09be\u099b \u09a7\u09b0\u09be\u09b0 \u09b8\u09bf\u09a6\u09cd\u09a7\u09be\u09a8\u09cd\u09a4 \u09a8\u09c7\u09a8, \u09a4\u09be\u09b9\u09b2\u09c7 \u098f\u0995\u099f\u09bf \u09b6\u0995\u09cd\u09a4 \u099c\u09be\u09b2\u09c7\u09b0 \u09a7\u09b0\u09a8 \u09ac\u09c7\u099b\u09c7 \u09a8\u09bf\u09a8 \u09af\u09c7\u09ae\u09a8 \u098f\u0995\u099f\u09bf \u0997\u09bf\u09b2 \u09a8\u09c7\u099f, \u09a2\u09be\u09b2\u09be\u0987 \u099c\u09be\u09b2 \u09ac\u09be \u098f\u0995\u099f\u09bf \u09b8\u09be\u09a7\u09be\u09b0\u09a3 \u09ae\u09be\u099b \u09a7\u09b0\u09be\u09b0 \u099c\u09be\u09b2 \u09af\u09be \u09a6\u09cd\u09b0\u09c1\u09a4 \u09b8\u09cd\u09b0\u09cb\u09a4 \u09aa\u09b0\u09bf\u099a\u09be\u09b2\u09a8\u09be \u0995\u09b0\u09a4\u09c7 \u09aa\u09be\u09b0\u09c7 \u098f\u09ac\u0982 \u09a6\u09c3\u09b6\u09cd\u09af\u09ae\u09be\u09a8\u09a4\u09be \u098f\u09ac\u0982 \u099c\u09b2 \u099a\u09b2\u09be\u099a\u09b2\u09c7\u09b0 \u09b9\u09cd\u09b0\u09be\u09b8\u09c7\u09b0 \u0995\u09be\u09b0\u09a3\u09c7 \u09b8\u09ae\u09cd\u09ad\u09be\u09ac\u09cd\u09af\u09ad\u09be\u09ac\u09c7 \u0995\u09ae \u09a7\u09b0\u09be\u09b0 \u09b9\u09be\u09b0\u09c7\u09b0 \u099c\u09a8\u09cd\u09af \u09aa\u09cd\u09b0\u09b8\u09cd\u09a4\u09c1\u09a4 \u09a5\u09be\u0995\u09c1\u09a8\u0964",
+        "timestamp": "2026-05-21T12:16:43.524364+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09a8\u09a6\u09c0\u09b0 \u09aa\u09be\u09a8\u09bf \u09af\u09a6\u09bf \u0996\u09c1\u09ac \u0998\u09cb\u09b2\u09be \u09a5\u09be\u0995\u09c7 \u098f\u09ac\u0982 \u09b8\u09cd\u09b0\u09cb\u09a4 \u09ac\u09c7\u09b6\u09bf \u09a5\u09be\u0995\u09c7, \u09a4\u09be\u09b9\u09b2\u09c7 \u0995\u09bf \u099c\u09be\u09b2 \u09a6\u09bf\u09df\u09c7 \u09ae\u09be\u099b \u09a7\u09b0\u09be \u09af\u09be\u09ac\u09c7?",
+        "timestamp": "2026-05-21T12:18:23.191302+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09a4\u09a5\u09cd\u09af \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u098f\u0996\u09a8 \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-21T12:18:23.191302+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09ac\u09cb\u09af\u09bc\u09be\u09b2 \u09ae\u09be\u099b \u09a7\u09b0\u09be\u09b0 \u099c\u09a8\u09cd\u09af \u09b8\u09ac\u099a\u09c7\u09af\u09bc\u09c7 \u09ad\u09be\u09b2\u09cb \u099f\u09cb\u09aa \u0995\u09cb\u09a8\u099f\u09bf? \u0986\u09b0 \u0995\u09cb\u09a8 \u099c\u09be\u09b2 \u09a6\u09bf\u09af\u09bc\u09c7 \u09ac\u09cb\u09af\u09bc\u09be\u09b2 \u09a7\u09b0\u09be \u09af\u09be\u09af\u09bc?",
+        "timestamp": "2026-05-21T12:18:52.171596+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u09ac\u09cb\u09af\u09bc\u09be\u09b2\u09bf\u09b6\u09bf\u0982\u09a1\u09bc\u09bf \u09a7\u09b0\u09be\u09b0 \u099c\u09a8\u09cd\u09af \u09b8\u09c7\u09b0\u09be \u099f\u09cb\u09aa\u0964  \n\n\u09a8\u09c7\u099f \u09ac\u09cd\u09af\u09ac\u09b9\u09be\u09b0 \u0995\u09b0\u09be \u09ac\u09cb\u09af\u09bc\u09be\u09b2\u09bf\u09a8 \u09a1\u09c7\u099f\u09be\u09b0 \u099c\u09a8\u09cd\u09af \u0995\u09be\u09b0\u09cd\u09af\u0995\u09b0 \u09ac\u09b2\u09c7 \u09a6\u09c7\u0996\u09be\u09a8\u09cb \u09b9\u09af\u09bc \u09a8\u09be; \u099c\u09be\u09b2 \u09ae\u09be\u099b \u09a7\u09b0\u09be\u09b0 \u09b8\u09be\u09a5\u09c7 \u098f\u0987 \u09aa\u09cd\u09b0\u099c\u09be\u09a4\u09bf\u09b0 \u0995\u09cb\u09a8 \u09af\u09cb\u0997\u09b8\u09c2\u09a4\u09cd\u09b0 \u09a8\u09c7\u0987\u0964 \u09aa\u09b0\u09bf\u09ac\u09b0\u09cd\u09a4\u09c7, \u09ac\u09cb\u09af\u09bc\u09be\u09b2\u09b0\u09c7 \u098f\u09ac\u099f\u09ae\u09b0\u09bf\u0997\u09b0 \u0986\u09b2\u0982\u09b2\u09be\u0987\u09a8\u09c7\u09b0 \u099c\u09a8\u09cd\u09af \u0989\u09aa\u09af\u09c1\u0995\u09cd\u09a4 \u09b9\u09bf\u09b8\u09be\u09ac\u09c7 \u09b8\u09cd\u09aa\u09b7\u09cd\u099f\u09ad\u09be\u09ac\u09c7 \u0989\u09b2\u09cd\u09b2\u09c7\u0996 \u0995\u09b0\u09be \u0997\u09bf\u09af\u09bc\u09be\u09b0\u0964 \u0986\u09aa\u09a8\u09bf \u09af\u09a6\u09bf \u09ac\u09cb\u09af\u09bc\u09be\u09b2\u0995\u09c7 \u099f\u09be\u09b0\u09cd\u0997\u09c7\u099f \u0995\u09b0\u09a4\u09c7 \u099a\u09be\u09a8 \u09a4\u09ac\u09c7 \u099f\u09cb\u09aa \u09b9\u09bf\u09b8\u09be\u09ac\u09c7 \u099a\u09bf\u0982\u09a1\u09bc\u09bf \u09b8\u09b9 \u09a4\u09be\u09a6\u09c7\u09b0 \u09ae\u09a7\u09cd\u09af\u09c7 \u098f\u0995\u099f\u09bf \u099a\u09c7\u09b7\u09cd\u099f\u09be \u0995\u09b0\u09c1\u09a8\u0964",
+        "timestamp": "2026-05-21T12:18:52.171596+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u0986\u099c \u09b0\u09be\u09a4\u09c7 \u09aa\u09c2\u09b0\u09cd\u09a3\u09bf\u09ae\u09be \u0964 \u0986\u09ae\u09bf \u0995\u09bf \u09b0\u09be\u09a4\u09c7 \u09b8\u09be\u0997\u09b0\u09c7 \u09ae\u09be\u099b \u09a7\u09b0\u09a4\u09c7 \u09aa\u09be\u09b0\u09bf?",
+        "timestamp": "2026-05-21T12:19:40.730253+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u09b9\u09cd\u09af\u09be\u0981\u2014\u09b8\u09ae\u09c1\u09a6\u09cd\u09b0\u09c7 \u09b0\u09be\u09a4\u09c7\u09b0 \u09ae\u09be\u099b \u09a7\u09b0\u09be \u09b8\u09ae\u09cd\u09ad\u09ac \u098f\u09ac\u0982 \u098f\u09ae\u09a8\u0995\u09bf \u099a\u09be\u0981\u09a6 \u09aa\u09c2\u09b0\u09cd\u09a3 \u09b9\u09b2\u09c7 \u09b8\u09c1\u09aa\u09be\u09b0\u09bf\u09b6 \u0995\u09b0\u09be \u09b9\u09af\u09bc\u0964 \"\u09a8\u09be\u0987\u099f \u09ab\u09bf\u09b6\u09bf\u0982\" \u0995\u09be\u09b0\u09cd\u09af\u0995\u09b2\u09be\u09aa\u099f\u09bf \u09ac\u0999\u09cd\u0997\u09cb\u09aa\u09b8\u09be\u0997\u09b0\u09c7 (\u098f\u0995\u099f\u09bf \u09b8\u09ae\u09c1\u09a6\u09cd\u09b0) \u0995\u09b0\u09be \u09b9\u09af\u09bc \u098f\u09ac\u0982 \u09aa\u09c2\u09b0\u09cd\u09a3\u09bf\u09ae\u09be \u09aa\u09b0\u09cd\u09ac\u09c7\u09b0 \u099c\u09a8\u09cd\u09af \u0989\u09aa\u09af\u09c1\u0995\u09cd\u09a4 \u09b9\u09bf\u09b8\u09be\u09ac\u09c7 \u09a4\u09be\u09b2\u09bf\u0995\u09be\u09ad\u09c1\u0995\u09cd\u09a4 \u0995\u09b0\u09be \u09b9\u09af\u09bc\u0964 \u0986\u09aa\u09a8\u09bf \u09b8\u09c7\u0996\u09be\u09a8\u09c7 \u09b0\u09be\u09a4\u09c7\u09b0 \u09ae\u09be\u099b \u09a7\u09b0\u09be\u09b0 \u099c\u09a8\u09cd\u09af \u09b9\u09c1\u0995 \u098f\u09ac\u0982 \u09b2\u09be\u0987\u09a8 \u09ac\u09be \u09ac\u099f\u09ae \u09b0\u09bf\u0997\u09c7\u09b0 \u09ae\u09a4\u09cb \u0997\u09bf\u09af\u09bc\u09be\u09b0 \u09ac\u09cd\u09af\u09ac\u09b9\u09be\u09b0 \u0995\u09b0\u09a4\u09c7 \u09aa\u09be\u09b0\u09c7\u09a8\u0964 \u09b6\u09c1\u09a7\u09c1 \u09ae\u09a8\u09c7 \u09b0\u09be\u0996\u09ac\u09c7\u09a8 \u09af\u09c7 \u0995\u09ae \u09a6\u09c3\u09b6\u09cd\u09af\u09ae\u09be\u09a8\u09a4\u09be \u098f\u0996\u09a8\u0993 \u0995\u09be\u09b0\u09cd\u09af\u0995\u09b2\u09be\u09aa\u0995\u09c7 \u09b8\u09c0\u09ae\u09bf\u09a4 \u0995\u09b0\u09a4\u09c7 \u09aa\u09be\u09b0\u09c7, \u09a4\u09ac\u09c7 \u098f\u0995\u099f\u09bf \u09aa\u09c2\u09b0\u09cd\u09a3\u09bf\u09ae\u09be \u09b8\u09be\u09a7\u09be\u09b0\u09a3\u09a4 \u0985\u09a8\u09cd\u09a7\u0995\u09be\u09b0 \u099a\u09be\u0981\u09a6\u09c7\u09b0 \u09aa\u09b0\u09cd\u09af\u09be\u09af\u09bc\u0997\u09c1\u09b2\u09bf\u09b0 \u09a4\u09c1\u09b2\u09a8\u09be\u09af\u09bc \u09a6\u09c3\u09b6\u09cd\u09af\u09ae\u09be\u09a8\u09a4\u09be \u0989\u09a8\u09cd\u09a8\u09a4 \u0995\u09b0\u09c7\u0964",
+        "timestamp": "2026-05-21T12:19:40.730253+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u0995\u09be\u09a4\u09b2\u09be \u09ae\u09be\u099b \u0995\u09cb\u09a8 \u0996\u09be\u09ac\u09be\u09b0 \u09ac\u09be \u099f\u09cb\u09aa \u09a6\u09bf\u09df\u09c7 \u09a7\u09b0\u09be \u09af\u09be\u09df?",
+        "timestamp": "2026-05-21T13:55:44.558962+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09a4\u09a5\u09cd\u09af \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u098f\u0996\u09a8 \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-21T13:55:44.558962+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u0995\u09be\u09a4\u09b2\u09be \u09ae\u09be\u099b \u0995\u09cb\u09a8 \u0996\u09be\u09ac\u09be\u09b0 \u09ac\u09be \u099f\u09cb\u09aa \u09a6\u09bf\u09df\u09c7 \u09a7\u09b0\u09be \u09af\u09be\u09df?",
+        "timestamp": "2026-05-21T13:56:00.148499+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09a4\u09a5\u09cd\u09af \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u098f\u0996\u09a8 \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-21T13:56:00.148499+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u099a\u09bf\u0982\u09a1\u09bc\u09bf \u09ae\u09be\u099b \u0995\u09cb\u09a8 \u099c\u09b2\u09be\u09b6\u09af\u09bc\u09c7 \u09aa\u09be\u0993\u09af\u09bc\u09be \u09af\u09be\u09af\u09bc?",
+        "timestamp": "2026-05-21T14:56:17.154538+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09a4\u09a5\u09cd\u09af \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u098f\u0996\u09a8 \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-21T14:56:17.154538+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u0995\u09be\u09a4\u09b2\u09be \u09ae\u09be\u099b \u0995\u09cb\u09a8 \u0996\u09be\u09ac\u09be\u09b0 \u09ac\u09be \u099f\u09cb\u09aa \u09a6\u09bf\u09df\u09c7 \u09a7\u09b0\u09be \u09af\u09be\u09df?",
+        "timestamp": "2026-05-21T14:56:35.969194+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09a4\u09a5\u09cd\u09af \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u098f\u0996\u09a8 \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-21T14:56:35.969194+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u0995\u09be\u09a4\u09b2\u09be \u09ae\u09be\u099b \u0995\u09cb\u09a8 \u0996\u09be\u09ac\u09be\u09b0 \u09ac\u09be \u099f\u09cb\u09aa \u09a6\u09bf\u09df\u09c7 \u09a7\u09b0\u09be \u09af\u09be\u09df?",
+        "timestamp": "2026-05-21T14:59:54.924222+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09ae\u09c1\u09b9\u09c2\u09b0\u09cd\u09a4\u09c7 \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u09b8\u09c7\u0987 \u09a4\u09a5\u09cd\u09af \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-21T14:59:54.924222+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u0995\u09be\u09a4\u09b2\u09be \u09ae\u09be\u099b \u0995\u09cb\u09a8 \u0996\u09be\u09ac\u09be\u09b0 \u09ac\u09be \u099f\u09cb\u09aa \u09a6\u09bf\u09df\u09c7 \u09a7\u09b0\u09be \u09af\u09be\u09df?",
+        "timestamp": "2026-05-21T15:01:41.112671+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09ae\u09c1\u09b9\u09c2\u09b0\u09cd\u09a4\u09c7 \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u09b8\u09c7\u0987 \u09a4\u09a5\u09cd\u09af \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-21T15:01:41.112671+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u0995\u09be\u09a4\u09b2\u09be \u09ae\u09be\u099b \u0995\u09cb\u09a8 \u0996\u09be\u09ac\u09be\u09b0 \u09ac\u09be \u099f\u09cb\u09aa \u09a6\u09bf\u09df\u09c7 \u09a7\u09b0\u09be \u09af\u09be\u09df?",
+        "timestamp": "2026-05-21T15:06:45.320887+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09ae\u09c1\u09b9\u09c2\u09b0\u09cd\u09a4\u09c7 \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u09b8\u09c7\u0987 \u09a4\u09a5\u09cd\u09af \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-21T15:06:45.320887+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u0995\u09be\u09a4\u09b2\u09be \u09ae\u09be\u099b \u0995\u09cb\u09a8 \u0996\u09be\u09ac\u09be\u09b0 \u09ac\u09be \u099f\u09cb\u09aa \u09a6\u09bf\u09df\u09c7 \u09a7\u09b0\u09be \u09af\u09be\u09df?",
+        "timestamp": "2026-05-21T15:08:33.300772+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09a4\u09a5\u09cd\u09af \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u098f\u0996\u09a8 \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-21T15:08:33.300772+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u0995\u09be\u09a4\u09b2\u09be \u09ae\u09be\u099b \u0995\u09cb\u09a8 \u0996\u09be\u09ac\u09be\u09b0 \u09ac\u09be \u099f\u09cb\u09aa \u09a6\u09bf\u09df\u09c7 \u09a7\u09b0\u09be \u09af\u09be\u09df?",
+        "timestamp": "2026-05-21T15:08:58.901380+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09a4\u09a5\u09cd\u09af \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u098f\u0996\u09a8 \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-21T15:08:58.901380+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u0995\u09be\u09a4\u09b2\u09be \u09ae\u09be\u099b \u0995\u09cb\u09a8 \u0996\u09be\u09ac\u09be\u09b0 \u09ac\u09be \u099f\u09cb\u09aa \u09a6\u09bf\u09df\u09c7 \u09a7\u09b0\u09be \u09af\u09be\u09df?",
+        "timestamp": "2026-05-21T15:09:51.895183+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09ae\u09c1\u09b9\u09c2\u09b0\u09cd\u09a4\u09c7 \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u09b8\u09c7\u0987 \u09a4\u09a5\u09cd\u09af \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-21T15:09:51.895183+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u0995\u09be\u09a4\u09b2\u09be \u09ae\u09be\u099b \u0995\u09cb\u09a8 \u0996\u09be\u09ac\u09be\u09b0 \u09ac\u09be \u099f\u09cb\u09aa \u09a6\u09bf\u09df\u09c7 \u09a7\u09b0\u09be \u09af\u09be\u09df?",
+        "timestamp": "2026-05-21T15:14:16.426787+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09ae\u09c1\u09b9\u09c2\u09b0\u09cd\u09a4\u09c7 \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u09b8\u09c7\u0987 \u09a4\u09a5\u09cd\u09af \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-21T15:14:16.426787+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u0995\u09be\u09a4\u09b2\u09be \u09ae\u09be\u099b \u0995\u09cb\u09a8 \u0996\u09be\u09ac\u09be\u09b0 \u09ac\u09be \u099f\u09cb\u09aa \u09a6\u09bf\u09df\u09c7 \u09a7\u09b0\u09be \u09af\u09be\u09df?",
+        "timestamp": "2026-05-21T15:19:14.640287+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u09a8\u09be, \u0995\u09be\u09a4\u09b2\u09be (\u0995\u09be\u09a4\u09b2\u09be) \u09ae\u09be\u099b \u0995\u09cb\u09a8\u09cb \u0996\u09be\u09ac\u09be\u09b0 \u09ac\u09be \u099f\u09cb\u09aa \u09a6\u09bf\u09af\u09bc\u09c7 \u09a7\u09b0\u09be \u09af\u09be\u09ac\u09c7 \u09a8\u09be\u0964 \u0998\u099f\u09a8\u09be\u0997\u09c1\u09b2\u09bf \u09ac\u09bf\u09b6\u09c7\u09b7\u09ad\u09be\u09ac\u09c7 \u09ac\u09b2\u09c7 \u09af\u09c7 \u0995\u09be\u09a4\u09b2\u09be \u09ae\u09af\u09bc\u09a6\u09be\u09b0 \u099f\u09cb\u09aa\u09c7\u09b0 \u09aa\u09cd\u09b0\u09a4\u09bf \u0986\u0995\u09c3\u09b7\u09cd\u099f\u0964 \u098f\u09ae\u09a8 \u0995\u09cb\u09a8 \u09a4\u09a5\u09cd\u09af \u09a8\u09c7\u0987 \u09af\u09be \u09a8\u09bf\u09b0\u09cd\u09a6\u09c7\u09b6 \u0995\u09b0\u09c7 \u09af\u09c7 \u098f\u099f\u09bf \u09b8\u09ac \u09a7\u09b0\u09a8\u09c7\u09b0 \u099f\u09cb\u09aa \u09ac\u09be \u0996\u09be\u09ac\u09be\u09b0\u09c7 \u09b8\u09be\u09a1\u09bc\u09be \u09a6\u09c7\u09af\u09bc\u0964 \u09aa\u09cd\u09b0\u09a6\u09a4\u09cd\u09a4 \u09a1\u09c7\u099f\u09be\u09b0 \u0989\u09aa\u09b0 \u09ad\u09bf\u09a4\u09cd\u09a4\u09bf \u0995\u09b0\u09c7 \u0985\u09a8\u09cd\u09af\u09be\u09a8\u09cd\u09af \u099f\u09cb\u09aa \u09ac\u09cd\u09af\u09ac\u09b9\u09be\u09b0 \u0995\u09b0\u09be \u0995\u09be\u09b0\u09cd\u09af\u0995\u09b0 \u09a8\u09be\u0993 \u09b9\u09a4\u09c7 \u09aa\u09be\u09b0\u09c7\u0964",
+        "timestamp": "2026-05-21T15:19:14.640287+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09a8\u09a6\u09c0\u09b0 \u09aa\u09be\u09a8\u09bf \u09af\u09a6\u09bf \u0996\u09c1\u09ac \u0998\u09cb\u09b2\u09be \u09a5\u09be\u0995\u09c7 \u098f\u09ac\u0982 \u09b8\u09cd\u09b0\u09cb\u09a4 \u09ac\u09c7\u09b6\u09bf \u09a5\u09be\u0995\u09c7, \u09a4\u09be\u09b9\u09b2\u09c7 \u0995\u09bf \u099c\u09be\u09b2 \u09a6\u09bf\u09df\u09c7 \u09ae\u09be\u099b \u09a7\u09b0\u09be \u09af\u09be\u09ac\u09c7?",
+        "timestamp": "2026-05-21T15:20:02.920107+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09a4\u09a5\u09cd\u09af \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u098f\u0996\u09a8 \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-21T15:20:02.920107+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09ac\u09cb\u09af\u09bc\u09be\u09b2 \u09ae\u09be\u099b \u09a7\u09b0\u09be\u09b0 \u099c\u09a8\u09cd\u09af \u09b8\u09ac\u099a\u09c7\u09af\u09bc\u09c7 \u09ad\u09be\u09b2\u09cb \u099f\u09cb\u09aa \u0995\u09cb\u09a8\u099f\u09bf?",
+        "timestamp": "2026-05-21T15:20:41.614055+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u09ae\u09bf\u09a8\u09cb, \u099a\u09bf\u0982\u09a1\u09bc\u09bf \u098f\u09ac\u0982 \u099b\u09cb\u099f \u0995\u09be\u0981\u0995\u09a1\u09bc\u09be \u09b9\u09b2 \u09ac\u09cb\u09af\u09bc\u09be\u09b2 \u09a7\u09b0\u09be\u09b0 \u099c\u09a8\u09cd\u09af \u0995\u09be\u09b0\u09cd\u09af\u0995\u09b0 \u099f\u09cb\u09aa\u0964",
+        "timestamp": "2026-05-21T15:20:41.614055+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u0987\u09b2\u09bf\u09b6 \u09ae\u09be\u099b \u09a7\u09b0\u09be\u09b0 \u099c\u09a8\u09cd\u09af \u0995\u09cb\u09a8 \u09a7\u09b0\u09a8\u09c7\u09b0 \u099c\u09be\u09b2 \u09b8\u09ac\u099a\u09c7\u09df\u09c7 \u09ad\u09be\u09b2\u09cb?",
+        "timestamp": "2026-05-21T15:21:21.216303+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u0995\u09be\u09b8\u09cd\u099f \u09a8\u09c7\u099f \u098f\u09ac\u0982 \u0997\u09bf\u09b2 \u09a8\u09c7\u099f \u0989\u09ad\u09af\u09bc\u0987 \u0987\u09b2\u09bf\u09b6 \u09ae\u09be\u099b \u09a7\u09b0\u09be\u09b0 \u099c\u09a8\u09cd\u09af \u0989\u09aa\u09af\u09c1\u0995\u09cd\u09a4\u0964",
+        "timestamp": "2026-05-21T15:21:21.216303+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09b8\u09c7\u09aa\u09cd\u099f\u09c7\u09ae\u09cd\u09ac\u09b0 \u09ae\u09be\u09b8\u09c7 \u09ae\u09be\u099b \u09a7\u09b0\u09be \u0995\u09bf \u09a8\u09bf\u09b7\u09bf\u09a6\u09cd\u09a7?",
+        "timestamp": "2026-05-21T15:21:42.351185+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09a4\u09a5\u09cd\u09af \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u098f\u0996\u09a8 \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-21T15:21:42.351185+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u0995\u09b0\u09cd\u09a3\u09ab\u09c1\u09b2\u09c0 \u09a8\u09a6\u09c0\u09a4\u09c7 \u0995\u09bf \u0987\u09b2\u09bf\u09b6 \u09ae\u09be\u099b \u09aa\u09be\u0993\u09af\u09bc\u09be \u09af\u09be\u09af\u09bc?",
+        "timestamp": "2026-05-21T15:23:08.321694+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u09a8\u09be, \u09aa\u09cd\u09b0\u09a6\u09a4\u09cd\u09a4 \u09a4\u09a5\u09cd\u09af \u0985\u09a8\u09c1\u09af\u09be\u09af\u09bc\u09c0 \u0995\u09b0\u09cd\u09a3\u09ab\u09c1\u09b2\u09c0 \u09a8\u09a6\u09c0\u09a4\u09c7 \u0987\u09b2\u09bf\u09b6 \u09aa\u09be\u0993\u09af\u09bc\u09be \u09af\u09be\u09af\u09bc \u09a8\u09be\u0964",
+        "timestamp": "2026-05-21T15:23:08.321694+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09b8\u09c7\u09aa\u09cd\u099f\u09c7\u09ae\u09cd\u09ac\u09b0 \u09ae\u09be\u09b8\u09c7 \u09ae\u09be\u099b \u09a7\u09b0\u09be \u0995\u09bf \u09a8\u09bf\u09b7\u09bf\u09a6\u09cd\u09a7?",
+        "timestamp": "2026-05-21T15:27:33.948795+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09a4\u09a5\u09cd\u09af \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u098f\u0996\u09a8 \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-21T15:27:33.948795+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09b8\u09c7\u09aa\u09cd\u099f\u09c7\u09ae\u09cd\u09ac\u09b0 \u09ae\u09be\u09b8\u09c7 \u09ae\u09be\u099b \u09a7\u09b0\u09be \u0995\u09bf \u09a8\u09bf\u09b7\u09bf\u09a6\u09cd\u09a7?",
+        "timestamp": "2026-05-21T15:37:13.545849+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09ae\u09c1\u09b9\u09c2\u09b0\u09cd\u09a4\u09c7 \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u09b8\u09c7\u0987 \u09a4\u09a5\u09cd\u09af \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-21T15:37:13.545849+00:00"
+      }
+    ],
+    "pinned": false,
+    "created_at": "2026-05-21T11:22:09.909448+00:00",
+    "updated_at": "2026-05-21T15:37:13.545849+00:00"
+  },
+  {
+    "chat_id": "1cea41c6-47ab-4d3d-b64c-064293e5ed03",
+    "user_id": "123",
+    "title": "New Chat",
+    "messages": [
+      {
+        "sender": "user",
+        "content": "\u09a8\u09ad\u09c7\u09ae\u09cd\u09ac\u09b0 \u09ae\u09be\u09b8\u09c7 \u0995\u09cb\u09a8 \u09ae\u09be\u099b \u09a7\u09b0\u09be \u09a8\u09bf\u09b7\u09bf\u09a6\u09cd\u09a7 \u09ac\u09be \u09b8\u09c7\u09b0\u09be \u09b8\u09ae\u09df?",
+        "timestamp": "2026-05-21T12:21:47.858815+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u09a8\u09a6\u09c0\u09a4\u09c7 \u09ae\u09be\u099b \u09a7\u09b0\u09be **\u09a8\u09ad\u09c7\u09ae\u09cd\u09ac\u09b0 \u09ae\u09be\u09b8\u09c7 \u09a8\u09bf\u09b7\u09bf\u09a6\u09cd\u09a7**\u2014\u09b8\u09c7\u0987 \u09ae\u09be\u09b8\u09c7 \"\u09b0\u09bf\u09ad\u09be\u09b0 \u09ab\u09bf\u09b6\u09bf\u0982\" \u0995\u09be\u09b0\u09cd\u09af\u0995\u09b2\u09be\u09aa\u099f\u09bf \u09b8\u09cd\u09aa\u09b7\u09cd\u099f\u09ad\u09be\u09ac\u09c7 \u09a8\u09bf\u09b7\u09bf\u09a6\u09cd\u09a7\u0964  \n\n\u09af\u09be\u0987\u09b9\u09cb\u0995, \u0986\u09aa\u09a8\u09bf \u09af\u09a6\u09bf \u09a8\u09bf\u09b0\u09cd\u09a6\u09bf\u09b7\u09cd\u099f \u09aa\u09cd\u09b0\u099c\u09be\u09a4\u09bf\u0995\u09c7 \u09b2\u0995\u09cd\u09b7\u09cd\u09af \u0995\u09b0\u09c7 \u09a5\u09be\u0995\u09c7\u09a8, \u09a4\u09be\u09b9\u09b2\u09c7 \u09a8\u09ad\u09c7\u09ae\u09cd\u09ac\u09b0 \u09ae\u09be\u09b8\u0995\u09c7 **\u099a\u09bf\u0982\u09b0\u09bf** \u098f\u09ac\u0982 **\u09ad\u09c7\u099f\u0995\u09bf** \u0989\u09ad\u09af\u09bc\u09c7\u09b0 \u099c\u09a8\u09cd\u09af\u0987 **\u09ad\u09be\u09b2\u09cb \u09b8\u09ae\u09af\u09bc** \u09b9\u09bf\u09b8\u09c7\u09ac\u09c7 \u0989\u09b2\u09cd\u09b2\u09c7\u0996 \u0995\u09b0\u09be \u09b9\u09af\u09bc (\u09b8\u09c7\u0997\u09c1\u09b2\u09cb \u09a8\u09ad\u09c7\u09ae\u09cd\u09ac\u09b0\u09c7\u09b0 \u099c\u09a8\u09cd\u09af \"\u09ae\u09be\u09b8\u09c7 \u09b8\u09c7\u09b0\u09be\" \u09b9\u09bf\u09b8\u09c7\u09ac\u09c7 \u09a4\u09be\u09b2\u09bf\u0995\u09be\u09ad\u09c1\u0995\u09cd\u09a4)\u0964 \u09a4\u09be\u0987 \u09a8\u09a6\u09c0\u09a4\u09c7 \u09ae\u09be\u099b \u09a7\u09b0\u09be\u09b0 \u0995\u09cd\u09b0\u09bf\u09af\u09bc\u09be\u0995\u09b2\u09be\u09aa \u09a8\u09bf\u099c\u09c7\u0987 \u09b8\u09c0\u09ae\u09be\u09ac\u09a6\u09cd\u09a7 \u09a8\u09be \u09a5\u09be\u0995\u09b2\u09c7\u0993, \u0986\u09aa\u09a8\u09bf \u09af\u09a6\u09bf \u0985\u09a8\u09cd\u09af \u0995\u09cb\u09a5\u09be\u0993 \u09ac\u09be \u0985\u09a8\u09cd\u09af \u0995\u09cb\u09a8\u0993 \u0985\u09a8\u09c1\u09ae\u09cb\u09a6\u09bf\u09a4 \u09aa\u09a6\u09cd\u09a7\u09a4\u09bf\u09a4\u09c7 \u09ae\u09be\u099b \u09a7\u09b0\u09a4\u09c7 \u09aa\u09be\u09b0\u09c7\u09a8 \u09a4\u09ac\u09c7 \u09b8\u09c7\u0987 \u09ac\u09bf\u09b6\u09c7\u09b7 \u09ae\u09be\u099b\u0997\u09c1\u09b2\u09bf \u09a8\u09ad\u09c7\u09ae\u09cd\u09ac\u09b0\u09c7 \u09a4\u09be\u09a6\u09c7\u09b0 \u09b6\u09c0\u09b0\u09cd\u09b7\u09c7 \u09a5\u09be\u0995\u09c7\u09f7",
+        "timestamp": "2026-05-21T12:21:47.858815+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u0986\u09ae\u09bf \u0995\u09be\u09b8\u09cd\u099f \u09a8\u09c7\u099f \u09a6\u09bf\u09df\u09c7 \u09b0\u09c1\u0987 \u09ae\u09be\u099b \u09a7\u09b0\u09a4\u09c7 \u099a\u09be\u0987, \u098f\u099f\u09be \u0995\u09bf \u09a0\u09bf\u0995 \u09b9\u09ac\u09c7",
+        "timestamp": "2026-05-21T12:40:47.313435+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09a4\u09a5\u09cd\u09af \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u098f\u0996\u09a8 \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-21T12:40:47.313435+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u0986\u09ae\u09bf \u0995\u09be\u09b8\u09cd\u099f \u09a8\u09c7\u099f \u09a6\u09bf\u09df\u09c7 \u09b0\u09c1\u0987 \u09ae\u09be\u099b \u09a7\u09b0\u09a4\u09c7 \u099a\u09be\u0987, \u098f\u099f\u09be \u0995\u09bf \u09a0\u09bf\u0995 \u09b9\u09ac\u09c7",
+        "timestamp": "2026-05-21T12:50:46.417817+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09ae\u09c1\u09b9\u09c2\u09b0\u09cd\u09a4\u09c7 \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u09b8\u09c7\u0987 \u09a4\u09a5\u09cd\u09af \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-21T12:50:46.417817+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u0995\u09be\u09a4\u09b2\u09be \u09ae\u09be\u099b \u0995\u09cb\u09a8 \u0996\u09be\u09ac\u09be\u09b0 \u09ac\u09be \u099f\u09cb\u09aa \u09a6\u09bf\u09df\u09c7 \u09a7\u09b0\u09be \u09af\u09be\u09df?",
+        "timestamp": "2026-05-21T13:54:16.485295+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09ae\u09c1\u09b9\u09c2\u09b0\u09cd\u09a4\u09c7 \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u09b8\u09c7\u0987 \u09a4\u09a5\u09cd\u09af \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-21T13:54:16.485295+00:00"
+      }
+    ],
+    "pinned": false,
+    "created_at": "2026-05-21T12:21:33.074596+00:00",
+    "updated_at": "2026-05-21T13:54:16.485295+00:00"
+  },
+  {
+    "chat_id": "4bddb16b-1d0c-41a3-9121-eadfbdbb9982",
+    "user_id": "123",
+    "title": "New Chat",
+    "messages": [
+      {
+        "sender": "user",
+        "content": "\u09b8\u09c7\u09aa\u09cd\u099f\u09c7\u09ae\u09cd\u09ac\u09b0 \u09ae\u09be\u09b8\u09c7 \u09ae\u09be\u099b \u09a7\u09b0\u09be \u0995\u09bf \u09a8\u09bf\u09b7\u09bf\u09a6\u09cd\u09a7?",
+        "timestamp": "2026-05-21T15:28:03.097758+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09a4\u09a5\u09cd\u09af \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u098f\u0996\u09a8 \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-21T15:28:03.097758+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09b8\u09c7\u09aa\u09cd\u099f\u09c7\u09ae\u09cd\u09ac\u09b0 \u09ae\u09be\u09b8\u09c7 \u09ae\u09be\u099b \u09a7\u09b0\u09be \u0995\u09bf \u09a8\u09bf\u09b7\u09bf\u09a6\u09cd\u09a7?",
+        "timestamp": "2026-05-21T15:29:50.728091+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09a4\u09a5\u09cd\u09af \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u098f\u0996\u09a8 \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-21T15:29:50.728091+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09b8\u09c7\u09aa\u09cd\u099f\u09c7\u09ae\u09cd\u09ac\u09b0 \u09ae\u09be\u09b8\u09c7 \u09ae\u09be\u099b \u09a7\u09b0\u09be \u0995\u09bf \u09a8\u09bf\u09b7\u09bf\u09a6\u09cd\u09a7?",
+        "timestamp": "2026-05-21T15:31:43.192544+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u09b9\u09cd\u09af\u09be\u0981\u2014\u09b8\u09c7\u09aa\u09cd\u099f\u09c7\u09ae\u09cd\u09ac\u09b0\u09c7 \u09a8\u09a6\u09c0\u09a4\u09c7 \u09ae\u09be\u099b \u09a7\u09b0\u09be \u09a8\u09bf\u09b7\u09bf\u09a6\u09cd\u09a7\u0964",
+        "timestamp": "2026-05-21T15:31:43.192544+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09b0\u09c1\u0987 \u09ae\u09be\u099b \u09a7\u09b0\u09be\u09b0 \u099c\u09a8\u09cd\u09af \u0995\u09cb\u09a8 \u099b\u09bf\u09aa \u09ac\u09be \u0997\u09bf\u09af\u09bc\u09be\u09b0 \u09ac\u09cd\u09af\u09ac\u09b9\u09be\u09b0 \u0995\u09b0\u09be \u0989\u099a\u09bf\u09a4",
+        "timestamp": "2026-05-21T15:33:20.460334+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u0989\u0995\u09cd\u09a4\u09bf\u099f\u09bf \u09ad\u09c1\u09b2\u0964 \u09b0\u09a1 \u09ab\u09bf\u09b6\u09bf\u0982 \u09b8\u09cd\u09aa\u09b7\u09cd\u099f\u09ad\u09be\u09ac\u09c7 \u0997\u09bf\u09af\u09bc\u09be\u09b0 \u09ac\u09cd\u09af\u09ac\u09b9\u09be\u09b0 \u0995\u09b0\u09c7\u2014\u09af\u09c7\u09ae\u09a8 \u09b9\u09c1\u0995\u09cd\u09af\u09be\u09a8\u09cd\u09a1\u09b2\u09be\u0987\u09a8, \u09ab\u09cd\u09b2\u09cb\u099f\u09b0\u09a1, \u098f\u09ac\u0982 \u09ac\u099f\u09ae\u09b0\u09bf\u0997\u2014\u098f\u09ac\u0982 \u09b0\u09cb\u09b9\u09c1, \u09a4\u09c7\u09b2\u09be\u09aa\u09bf\u09af\u09bc\u09be \u098f\u09ac\u0982 \u0995\u09be\u09a4\u09b2\u09be\u09b0 \u09ae\u09a4\u09cb \u09aa\u09cd\u09b0\u099c\u09be\u09a4\u09bf\u09b0 \u099c\u09a8\u09cd\u09af \u0989\u09aa\u09af\u09c1\u0995\u09cd\u09a4\u0964 \u0985\u09a4\u098f\u09ac, \u09b0\u09a1 \u098f\u09ac\u0982 \u0997\u09bf\u09af\u09bc\u09be\u09b0 \u09aa\u09cd\u09b0\u0995\u09c3\u09a4\u09aa\u0995\u09cd\u09b7\u09c7 \u098f\u0987 \u09a7\u09b0\u09a8\u09c7\u09b0 \u09ae\u09be\u099b \u09a7\u09b0\u09be\u09b0 \u099c\u09a8\u09cd\u09af \u09ac\u09cd\u09af\u09ac\u09b9\u09c3\u09a4 \u09b9\u09af\u09bc\u0964",
+        "timestamp": "2026-05-21T15:33:20.460334+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u099a\u09bf\u0982\u09dc\u09bf \u099f\u09cb\u09aa \u09a6\u09bf\u09df\u09c7 \u0995\u09cb\u09a8 \u0995\u09cb\u09a8 \u09ae\u09be\u099b \u09a7\u09b0\u09be \u09af\u09be\u09df?",
+        "timestamp": "2026-05-21T15:34:07.294686+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u099a\u09bf\u0982\u09a1\u09bc\u09bf\u09b0 \u099f\u09cb\u09aa \u09ac\u09cb\u09af\u09bc\u09be\u09b2, \u09ad\u09c7\u099f\u0995\u09bf \u098f\u09ac\u0982 \u09aa\u09be\u09ac\u09a6\u09be\u0995\u09c7 \u0986\u0995\u09b0\u09cd\u09b7\u09a3 \u0995\u09b0\u09c7\u0964",
+        "timestamp": "2026-05-21T15:34:07.294686+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09a4\u09c7\u09b2\u09be\u09aa\u09bf\u09af\u09bc\u09be \u09ae\u09be\u099b \u09a7\u09b0\u09be\u09b0 \u099c\u09a8\u09cd\u09af \u09b8\u09ac\u099a\u09c7\u09af\u09bc\u09c7 \u09ad\u09be\u09b2\u09cb \u09ae\u09be\u09b8 \u0995\u09cb\u09a8\u099f\u09bf?",
+        "timestamp": "2026-05-21T15:34:25.180860+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u09ae\u09be\u09b0\u09cd\u099a, \u098f\u09aa\u09cd\u09b0\u09bf\u09b2 \u098f\u09ac\u0982 \u09ae\u09c7 \u09ae\u09be\u09b8 \u09a4\u09c7\u09b2\u09be\u09aa\u09bf\u09af\u09bc\u09be \u09ae\u09be\u099b \u09a7\u09b0\u09be\u09b0 \u099c\u09a8\u09cd\u09af \u09b8\u09c7\u09b0\u09be \u09ae\u09be\u09b8\u0964",
+        "timestamp": "2026-05-21T15:34:25.180860+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09b0\u09be\u09a4\u09c7\u09b0 \u09ac\u09c7\u09b2\u09be \u09ae\u09be\u099b \u09a7\u09b0\u09be\u09b0 \u099c\u09a8\u09cd\u09af \u0995\u09cb\u09a8 \u099f\u09c7\u0995\u09a8\u09bf\u0995 \u09ac\u09be \u0997\u09bf\u09af\u09bc\u09be\u09b0 \u09b8\u09ac\u099a\u09c7\u09af\u09bc\u09c7 \u09ad\u09be\u09b2\u09cb?",
+        "timestamp": "2026-05-21T15:34:48.256068+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09a4\u09a5\u09cd\u09af \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u098f\u0996\u09a8 \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-21T15:34:48.256068+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09b9\u09be\u09b2\u09a6\u09be \u09a8\u09a6\u09c0\u09a4\u09c7 \u09ae\u09be\u099b \u09a7\u09b0\u09a4\u09c7 \u099a\u09be\u0987\u09b2\u09c7 \u0995\u09cb\u09a8 \u09a7\u09b0\u09a8\u09c7\u09b0 \u09ab\u09bf\u09b6\u09bf\u0982 \u0995\u09b0\u09be \u09af\u09be\u09af\u09bc?",
+        "timestamp": "2026-05-21T15:35:27.873026+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u09b9\u09be\u09b2\u09a6\u09be \u09a8\u09a6\u09c0\u09a4\u09c7 \u09b0\u09a1 \u09ab\u09bf\u09b6\u09bf\u0982 \u0993 \u09b0\u09bf\u09ad\u09be\u09b0 \u09ab\u09bf\u09b6\u09bf\u0982 \u0995\u09b0\u09be \u09af\u09be\u09af\u09bc\u0964",
+        "timestamp": "2026-05-21T15:35:27.873026+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09ac\u09cb\u09af\u09bc\u09be\u09b2 \u09ae\u09be\u099b \u09a7\u09b0\u09be\u09b0 \u099f\u09cb\u09aa",
+        "timestamp": "2026-05-21T15:36:04.651959+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u09ae\u09bf\u09a8\u09cb, \u099b\u09cb\u099f \u0995\u09be\u0981\u0995\u09a1\u09bc\u09be, \u099a\u09bf\u0982\u09a1\u09bc\u09bf",
+        "timestamp": "2026-05-21T15:36:04.651959+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09ac\u09cb\u09af\u09bc\u09be\u09b2 \u09ae\u09be\u099b \u09a7\u09b0\u09be\u09b0 \u099f\u09cb\u09aa",
+        "timestamp": "2026-05-22T00:30:32.846793+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09ae\u09c1\u09b9\u09c2\u09b0\u09cd\u09a4\u09c7 \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u09b8\u09c7\u0987 \u09a4\u09a5\u09cd\u09af \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-22T00:30:32.846793+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09ac\u09cb\u09af\u09bc\u09be\u09b2 \u09ae\u09be\u099b \u09a7\u09b0\u09be\u09b0 \u099f\u09cb\u09aa",
+        "timestamp": "2026-05-22T00:41:44.199371+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09a4\u09a5\u09cd\u09af \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u098f\u0996\u09a8 \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-22T00:41:44.199371+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09ac\u09cb\u09af\u09bc\u09be\u09b2 \u09ae\u09be\u099b \u09a7\u09b0\u09be\u09b0 \u099f\u09cb\u09aa",
+        "timestamp": "2026-05-22T00:42:07.529936+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09a4\u09a5\u09cd\u09af \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u098f\u0996\u09a8 \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-22T00:42:07.529936+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09ac\u09cb\u09af\u09bc\u09be\u09b2 \u09ae\u09be\u099b \u09a7\u09b0\u09be\u09b0 \u099f\u09cb\u09aa",
+        "timestamp": "2026-05-22T00:46:33.860822+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09ae\u09c1\u09b9\u09c2\u09b0\u09cd\u09a4\u09c7 \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u09b8\u09c7\u0987 \u09a4\u09a5\u09cd\u09af \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-22T00:46:33.860822+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09ac\u09cb\u09af\u09bc\u09be\u09b2 \u09ae\u09be\u099b \u09a7\u09b0\u09be\u09b0 \u099f\u09cb\u09aa",
+        "timestamp": "2026-05-22T00:49:14.303816+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09ae\u09c1\u09b9\u09c2\u09b0\u09cd\u09a4\u09c7 \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u09b8\u09c7\u0987 \u09a4\u09a5\u09cd\u09af \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-22T00:49:14.303816+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09ac\u09cb\u09af\u09bc\u09be\u09b2 \u09ae\u09be\u099b \u09a7\u09b0\u09be\u09b0 \u099f\u09cb\u09aa",
+        "timestamp": "2026-05-22T00:51:50.490330+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u099b\u09cb\u099f \u0995\u09be\u0981\u0995\u09a1\u09bc\u09be, Minnow, \u099a\u09bf\u0982\u09a1\u09bc\u09bf, \u09a8\u09c0\u099a\u09c7\u09b0 \u09b0\u09bf\u0997, \u09a6\u09c0\u09b0\u09cd\u0998 \u09b2\u09be\u0987\u09a8",
+        "timestamp": "2026-05-22T00:51:50.490330+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09a4\u09c7\u09b2\u09be\u09aa\u09bf\u09af\u09bc\u09be \u09ae\u09be\u099b \u09a7\u09b0\u09be\u09b0 \u099c\u09a8\u09cd\u09af \u09b8\u09ac\u099a\u09c7\u09af\u09bc\u09c7 \u09ad\u09be\u09b2\u09cb \u09ae\u09be\u09b8 \u0995\u09cb\u09a8\u099f\u09bf?",
+        "timestamp": "2026-05-22T00:52:25.798645+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u09ae\u09ce\u09b8\u09cd\u09af\u09aa\u09cd\u09b0\u099c\u09be\u09a4\u09bf '\u09a4\u09bf\u09b2\u09be\u09aa\u09bf\u09af\u09bc\u09be'\u09b0 '\u09ae\u09c7 \u09ae\u09be\u09b8\u09c7\u09b0' \u09b8\u0999\u09cd\u0997\u09c7 '\u09ae\u09be\u09b8\u09c7 \u09b8\u09c7\u09b0\u09be' \u09b8\u09ae\u09cd\u09aa\u09b0\u09cd\u0995 \u09b0\u09af\u09bc\u09c7\u099b\u09c7\u0964",
+        "timestamp": "2026-05-22T00:52:25.798645+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09b8\u09c7\u09aa\u09cd\u099f\u09c7\u09ae\u09cd\u09ac\u09b0 \u09ae\u09be\u09b8\u09c7 \u09ae\u09be\u099b \u09a7\u09b0\u09be \u0995\u09bf \u09a8\u09bf\u09b7\u09bf\u09a6\u09cd\u09a7?",
+        "timestamp": "2026-05-22T00:53:41.659347+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09ae\u09c1\u09b9\u09c2\u09b0\u09cd\u09a4\u09c7 \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u09b8\u09c7\u0987 \u09a4\u09a5\u09cd\u09af \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-22T00:53:41.659347+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09b8\u09c7\u09aa\u09cd\u099f\u09c7\u09ae\u09cd\u09ac\u09b0 \u09ae\u09be\u09b8\u09c7 \u09ae\u09be\u099b \u09a7\u09b0\u09be \u0995\u09bf \u09a8\u09bf\u09b7\u09bf\u09a6\u09cd\u09a7?",
+        "timestamp": "2026-05-22T00:55:54.361548+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09ae\u09c1\u09b9\u09c2\u09b0\u09cd\u09a4\u09c7 \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u09b8\u09c7\u0987 \u09a4\u09a5\u09cd\u09af \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-22T00:55:54.361548+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09b8\u09c7\u09aa\u09cd\u099f\u09c7\u09ae\u09cd\u09ac\u09b0 \u09ae\u09be\u09b8\u09c7 \u09ae\u09be\u099b \u09a7\u09b0\u09be \u0995\u09bf \u09a8\u09bf\u09b7\u09bf\u09a6\u09cd\u09a7?",
+        "timestamp": "2026-05-22T01:14:18.560307+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09ae\u09c1\u09b9\u09c2\u09b0\u09cd\u09a4\u09c7 \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u09b8\u09c7\u0987 \u09a4\u09a5\u09cd\u09af \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-22T01:14:18.560307+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09b8\u09c7\u09aa\u09cd\u099f\u09c7\u09ae\u09cd\u09ac\u09b0 \u09ae\u09be\u09b8\u09c7 \u09ae\u09be\u099b \u09a7\u09b0\u09be \u0995\u09bf \u09a8\u09bf\u09b7\u09bf\u09a6\u09cd\u09a7?",
+        "timestamp": "2026-05-22T01:16:45.563118+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09ae\u09c1\u09b9\u09c2\u09b0\u09cd\u09a4\u09c7 \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u09b8\u09c7\u0987 \u09a4\u09a5\u09cd\u09af \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-22T01:16:45.563118+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09b8\u09c7\u09aa\u09cd\u099f\u09c7\u09ae\u09cd\u09ac\u09b0 \u09ae\u09be\u09b8\u09c7 \u09ae\u09be\u099b \u09a7\u09b0\u09be \u0995\u09bf \u09a8\u09bf\u09b7\u09bf\u09a6\u09cd\u09a7?",
+        "timestamp": "2026-05-22T01:19:04.153238+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u09b9\u09cd\u09af\u09be\u0981, \u09b8\u09c7\u09aa\u09cd\u099f\u09c7\u09ae\u09cd\u09ac\u09b0\u09c7 \u09ae\u09be\u099b \u09a7\u09b0\u09be \u09a8\u09bf\u09b7\u09bf\u09a6\u09cd\u09a7\u0964",
+        "timestamp": "2026-05-22T01:19:04.153238+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u09ac\u0981\u09a1\u09bc\u09b6\u09bf \u09a6\u09bf\u09af\u09bc\u09c7 \u09b0\u09c1\u0987 \u09ae\u09be\u099b \u09a7\u09b0\u09be\u09b0 \u099c\u09a8\u09cd\u09af \u0995\u09cb\u09a8 \u099f\u09cb\u09aa \u09b8\u09ac\u099a\u09c7\u09af\u09bc\u09c7 \u09ad\u09be\u09b2\u09cb?",
+        "timestamp": "2026-05-22T01:20:52.076515+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09ae\u09c1\u09b9\u09c2\u09b0\u09cd\u09a4\u09c7 \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u09b8\u09c7\u0987 \u09a4\u09a5\u09cd\u09af \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-22T01:20:52.076515+00:00"
+      },
+      {
+        "sender": "user",
+        "content": "\u0995\u09be\u09a4\u09b2\u09be \u09ae\u09be\u099b\u09c7\u09b0 \u099f\u09cb\u09aa \u0995\u09c0?",
+        "timestamp": "2026-05-22T01:30:02.837023+00:00"
+      },
+      {
+        "sender": "bot",
+        "content": "\u098f\u0987 \u09ae\u09c1\u09b9\u09c2\u09b0\u09cd\u09a4\u09c7 \u0986\u09ae\u09be\u09b0 \u0995\u09be\u099b\u09c7 \u09b8\u09c7\u0987 \u09a4\u09a5\u09cd\u09af \u09a8\u09c7\u0987\u0964",
+        "timestamp": "2026-05-22T01:30:02.837023+00:00"
+      }
+    ],
+    "pinned": false,
+    "created_at": "2026-05-21T15:27:56.073187+00:00",
+    "updated_at": "2026-05-22T01:30:02.837023+00:00"
   }
 ]
