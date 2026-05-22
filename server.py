@@ -694,25 +694,24 @@ async def chat_endpoint(request: ChatRequest, x_fisherman_id: str = Header(...))
     user_message = request.message.strip()
     chat_id      = request.chat_id
 
-    # 1. Detect language and isolate the immediate message intent
+
     detected_lang   = detect_language(user_message)
     is_bangla       = detected_lang == "bn"
     english_message = translate(user_message, "bn", "en") if is_bangla else user_message
 
-    # 2. Extract database keywords ONLY from the current message
+    
     kg_context = await asyncio.to_thread(query_knowledge_graph, english_message)
     print("\n=== DEBUG: CONTEXT SENT TO LLM ===")
     print(kg_context)
     print("==================================\n")
 
-    # 3. Handle early exit guardrail if database has no info
+    
     if not kg_context:
         fallback_reply = "এই তথ্য আমার কাছে এখন নেই।" if is_bangla else "I don't have that information right now."
         save_chat_message(fisherman_id, chat_id, user_message, fallback_reply)
         return {"reply": fallback_reply}
 
-    # 4. Construct the prompt payload for the LLM
-    # We combine the system instructions and the graph insights into the system role
+    
     llm_messages = [
         {
             "role": "system", 
@@ -724,7 +723,7 @@ async def chat_endpoint(request: ChatRequest, x_fisherman_id: str = Header(...))
         }
     ]
 
-    # 5. Call the local Ollama instance
+    
     try:
         response = await asyncio.to_thread(
             requests.post,
@@ -733,24 +732,24 @@ async def chat_endpoint(request: ChatRequest, x_fisherman_id: str = Header(...))
                 "model": MODEL_NAME,
                 "messages": llm_messages,
                 "stream": False,
-                "options": {"temperature": 0.3} # Low temperature helps keep facts stable
+                "options": {"temperature": 0.3} 
             },
             timeout=15
         )
         response.raise_for_status()
         data = response.json()
         
-        # Parse the reply content safely
+        
         bot_reply_en = ""
         if "message" in data and "content" in data["message"]:
             bot_reply_en = data["message"]["content"].strip()
         elif "response" in data:
             bot_reply_en = data["response"].strip()
 
-        # 6. Translate back to Bangla if the user originally wrote in Bangla
+        
         final_reply = translate(bot_reply_en, "en", "bn") if is_bangla else bot_reply_en
 
-        # 7. Save and return the interaction
+        
         save_chat_message(fisherman_id, chat_id, user_message, final_reply)
         return {"reply": final_reply}
 
